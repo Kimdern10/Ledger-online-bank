@@ -1,0 +1,24 @@
+<?php
+
+return [
+    'title' => 'Pomoc',
+    'start_new' => 'Rozpocznij nową rozmowę',
+    'start_new_confirm' => 'Rozpocząć nową rozmowę? Twój obecny czat zostanie zapisany w Twoich poprzednich rozmowach.',
+    'start_new_button' => 'Rozpocznij nową rozmowę',
+    'viewing_past' => 'Przeglądasz poprzednią rozmowę (tylko do odczytu).',
+    'assistant_intro' => 'Nasz asystent odpowiada jako pierwszy. Prawdziwy członek zespołu włącza się, gdy tylko jest to potrzebne.',
+    'back_to_conversations' => 'Wróć do swoich rozmów',
+    'view_past_conversations' => 'Zobacz poprzednie rozmowy',
+    'greeting' => 'Cześć :name 👋 Jestem tu, aby pomóc. W czym mogę Ci dziś pomóc?',
+    'quick_card_issue' => 'Problem z kartą',
+    'quick_payment_problem' => 'Problem z płatnością',
+    'quick_account_access' => 'Dostęp do konta',
+    'quick_something_else' => 'Coś innego',
+    'attach_file' => 'Załącz zdjęcie lub PDF',
+    'type_message' => 'Wpisz wiadomość…',
+    'not_sent_retry' => ' · nie wysłano, spróbuj ponownie',
+    'closed_admin' => 'Nasz zespół zakończył tę rozmowę.',
+    'closed_customer' => 'Zakończyłeś tę rozmowę.',
+    'closed_timeout' => 'Ta rozmowa została automatycznie zamknięta z powodu braku odpowiedzi na czas.',
+    'closed_default' => 'Ta rozmowa została zakończona.',
+];

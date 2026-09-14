@@ -1,0 +1,24 @@
+<?php
+
+return [
+    'title' => 'Soporte',
+    'start_new' => 'Iniciar una nueva conversación',
+    'start_new_confirm' => '¿Iniciar una nueva conversación? Tu chat actual se guardará en tus conversaciones pasadas.',
+    'start_new_button' => 'Iniciar nueva conversación',
+    'viewing_past' => 'Viendo una conversación pasada (solo lectura).',
+    'assistant_intro' => 'Nuestro asistente responde primero. Un miembro real del equipo interviene en cuanto se le necesita.',
+    'back_to_conversations' => 'Volver a tus conversaciones',
+    'view_past_conversations' => 'Ver conversaciones pasadas',
+    'greeting' => 'Hola :name 👋 Estoy aquí para ayudarte. ¿En qué puedo ayudarte hoy?',
+    'quick_card_issue' => 'Problema con la tarjeta',
+    'quick_payment_problem' => 'Problema de pago',
+    'quick_account_access' => 'Acceso a la cuenta',
+    'quick_something_else' => 'Otra cosa',
+    'attach_file' => 'Adjuntar una foto o PDF',
+    'type_message' => 'Escribe un mensaje…',
+    'not_sent_retry' => ' · no enviado, inténtalo de nuevo',
+    'closed_admin' => 'Nuestro equipo finalizó esta conversación.',
+    'closed_customer' => 'Finalizaste esta conversación.',
+    'closed_timeout' => 'Esta conversación se cerró automáticamente porque no hubo respuesta a tiempo.',
+    'closed_default' => 'Esta conversación ha finalizado.',
+];

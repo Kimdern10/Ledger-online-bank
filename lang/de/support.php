@@ -1,0 +1,24 @@
+<?php
+
+return [
+    'title' => 'Support',
+    'start_new' => 'Neue Unterhaltung starten',
+    'start_new_confirm' => 'Neue Unterhaltung starten? Ihr aktueller Chat wird in Ihren vergangenen Unterhaltungen gespeichert.',
+    'start_new_button' => 'Neue Unterhaltung starten',
+    'viewing_past' => 'Sie sehen eine vergangene Unterhaltung (schreibgeschützt).',
+    'assistant_intro' => 'Unser Assistent antwortet zuerst. Ein echtes Teammitglied übernimmt, sobald es nötig ist.',
+    'back_to_conversations' => 'Zurück zu Ihren Unterhaltungen',
+    'view_past_conversations' => 'Vergangene Unterhaltungen ansehen',
+    'greeting' => 'Hallo :name 👋 Ich bin hier, um zu helfen. Womit kann ich Ihnen heute helfen?',
+    'quick_card_issue' => 'Kartenproblem',
+    'quick_payment_problem' => 'Zahlungsproblem',
+    'quick_account_access' => 'Kontozugriff',
+    'quick_something_else' => 'Etwas anderes',
+    'attach_file' => 'Foto oder PDF anhängen',
+    'type_message' => 'Nachricht eingeben…',
+    'not_sent_retry' => ' · nicht gesendet, erneut versuchen',
+    'closed_admin' => 'Unser Team hat diese Unterhaltung beendet.',
+    'closed_customer' => 'Sie haben diese Unterhaltung beendet.',
+    'closed_timeout' => 'Diese Unterhaltung wurde automatisch geschlossen, da keine Antwort rechtzeitig erfolgte.',
+    'closed_default' => 'Diese Unterhaltung ist beendet.',
+];

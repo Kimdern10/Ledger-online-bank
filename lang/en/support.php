@@ -1,0 +1,24 @@
+<?php
+
+return [
+    'title' => 'Support',
+    'start_new' => 'Start a new conversation',
+    'start_new_confirm' => 'Start a new conversation? Your current chat will be saved to your past conversations.',
+    'start_new_button' => 'Start new conversation',
+    'viewing_past' => 'Viewing a past conversation (read only).',
+    'assistant_intro' => "Our assistant replies first. A real team member steps in as soon as they're needed.",
+    'back_to_conversations' => 'Back to your conversations',
+    'view_past_conversations' => 'View past conversations',
+    'greeting' => "Hi :name 👋 I'm here to help. What can I give you a hand with today?",
+    'quick_card_issue' => 'Card issue',
+    'quick_payment_problem' => 'Payment problem',
+    'quick_account_access' => 'Account access',
+    'quick_something_else' => 'Something else',
+    'attach_file' => 'Attach a photo or PDF',
+    'type_message' => 'Type a message…',
+    'not_sent_retry' => ' · not sent, try again',
+    'closed_admin' => 'Our team ended this conversation.',
+    'closed_customer' => 'You ended this conversation.',
+    'closed_timeout' => 'This conversation closed automatically because there was no reply in time.',
+    'closed_default' => 'This conversation has ended.',
+];
