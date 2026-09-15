@@ -53,4 +53,24 @@ return [
     'bank_search_error' => '暂时无法加载银行列表，请重试。',
     'credit_union' => '信用合作社',
     'bank_fallback' => '银行',
+
+    // International bank transfer form (added in a follow-up audit pass —
+    // these were left hardcoded when the rest of send.blade.php was
+    // translated).
+    'tab_international' => '国际转账',
+    'amount_input_aria' => '转账金额',
+    'intl_bank_name_label' => '银行名称',
+    'intl_bank_name_placeholder' => '收款人的银行',
+    'intl_country_label' => '国家',
+    'intl_country_placeholder' => '例如：英国',
+    'intl_account_label' => '账号 / IBAN',
+    'intl_account_placeholder' => '账号或 IBAN',
+    'intl_swift_label' => 'SWIFT / BIC 代码',
+    'intl_swift_placeholder' => '例如：BARCGB22',
+    'intl_currency_label' => '货币',
+    'intl_currency_placeholder' => '例如：GBP',
+    'intl_converted_prefix' => '收款人将收到约',
+    'intl_transfer_note' => '国际转账的到账时间可能比国内转账或 Ledger 转账更长。',
+    'intl_bank_search_placeholder' => '搜索国际银行',
+    'intl_bank_search_hint' => '开始输入以搜索银行目录。',
 ];

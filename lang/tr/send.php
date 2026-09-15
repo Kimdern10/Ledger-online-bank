@@ -53,4 +53,24 @@ return [
     'bank_search_error' => 'Bankalar şu anda yüklenemedi. Tekrar deneyin.',
     'credit_union' => 'Kredi Birliği',
     'bank_fallback' => 'Banka',
+
+    // International bank transfer form (added in a follow-up audit pass —
+    // these were left hardcoded when the rest of send.blade.php was
+    // translated).
+    'tab_international' => 'Uluslararası',
+    'amount_input_aria' => 'Gönderilecek tutar',
+    'intl_bank_name_label' => 'Banka adı',
+    'intl_bank_name_placeholder' => 'Alıcının bankası',
+    'intl_country_label' => 'Ülke',
+    'intl_country_placeholder' => 'ör. Birleşik Krallık',
+    'intl_account_label' => 'Hesap numarası / IBAN',
+    'intl_account_placeholder' => 'Hesap numarası veya IBAN',
+    'intl_swift_label' => 'SWIFT / BIC kodu',
+    'intl_swift_placeholder' => 'ör. BARCGB22',
+    'intl_currency_label' => 'Para birimi',
+    'intl_currency_placeholder' => 'ör. GBP',
+    'intl_converted_prefix' => 'Alıcının alacağı yaklaşık tutar',
+    'intl_transfer_note' => 'Uluslararası transferler, yurt içi veya Ledger transferine göre ulaşması daha uzun sürebilir.',
+    'intl_bank_search_placeholder' => 'Uluslararası bankalarda ara',
+    'intl_bank_search_hint' => 'Banka dizininde aramak için yazmaya başlayın.',
 ];

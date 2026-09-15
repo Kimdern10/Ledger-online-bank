@@ -6,6 +6,7 @@ return [
     'profile_setting' => 'Профиль',
     'notifications_setting' => 'Уведомления',
     'language' => 'Язык',
+    'no_banks_listed' => 'Банки пока не указаны.',
     'monthly_budget' => 'Ежемесячный бюджет',
     'link_account' => 'Привязать счёт',
     'transaction_pin' => 'PIN-код для транзакций',

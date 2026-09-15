@@ -53,4 +53,24 @@ return [
     'bank_search_error' => '지금은 은행 목록을 불러올 수 없습니다. 다시 시도해 주세요.',
     'credit_union' => '신용조합',
     'bank_fallback' => '은행',
+
+    // International bank transfer form (added in a follow-up audit pass —
+    // these were left hardcoded when the rest of send.blade.php was
+    // translated).
+    'tab_international' => '해외송금',
+    'amount_input_aria' => '송금액',
+    'intl_bank_name_label' => '은행명',
+    'intl_bank_name_placeholder' => '수취인의 은행',
+    'intl_country_label' => '국가',
+    'intl_country_placeholder' => '예: 영국',
+    'intl_account_label' => '계좌번호 / IBAN',
+    'intl_account_placeholder' => '계좌번호 또는 IBAN',
+    'intl_swift_label' => 'SWIFT / BIC 코드',
+    'intl_swift_placeholder' => '예: BARCGB22',
+    'intl_currency_label' => '통화',
+    'intl_currency_placeholder' => '예: GBP',
+    'intl_converted_prefix' => '수취인은 약',
+    'intl_transfer_note' => '해외송금은 국내 송금이나 Ledger 송금보다 도착까지 시간이 더 걸릴 수 있습니다.',
+    'intl_bank_search_placeholder' => '해외 은행 검색',
+    'intl_bank_search_hint' => '입력을 시작하면 은행 목록을 검색할 수 있습니다.',
 ];

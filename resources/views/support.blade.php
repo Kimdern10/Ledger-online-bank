@@ -23,7 +23,7 @@
   <div class="support-status fade-in d2">
     <div class="sa-avatar">LS</div>
     <div class="sa-text">
-      <p class="n">Ledger Support</p>
+      <p class="n">{{ __('support.header_title') }}</p>
       <p class="s">
         @if($isHistoryView)
           {{ __('support.viewing_past') }}

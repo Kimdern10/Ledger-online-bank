@@ -2,13 +2,13 @@
 
 return [
     'title' => 'Tarihi',
-    'money_in' => 'Kudin da suka shigo',
-    'money_out' => 'Kudin da suka fita',
-    'search_placeholder' => 'Nemo ma\'amaloli…',
+    'money_in' => 'Kuɗin Shiga',
+    'money_out' => 'Kuɗin Fita',
+    'search_placeholder' => "Nemo ma'amaloli…",
     'filter_all' => 'Duka',
-    'filter_sent' => 'An aika',
-    'filter_received' => 'An karɓa',
-    'no_transactions_yet' => 'Babu ma\'amaloli tukuna. Da zaran ka aika ko karɓi kudi, za su bayyana a nan.',
-    'no_matches' => 'Babu ma\'amalar da ta dace da binciken ka.',
+    'filter_sent' => 'An Aika',
+    'filter_received' => 'An Karɓa',
+    'no_transactions_yet' => "Babu ma'amaloli tukuna — da zarar ka aika ko karɓi kuɗi, za su bayyana a nan.",
+    'no_matches' => "Babu wata ma'amala da ta dace da nemanka.",
     'cancel' => 'Soke',
 ];

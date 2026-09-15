@@ -19,4 +19,5 @@ return [
     'danger_zone' => 'Eneo la Hatari',
     'delete_account' => 'Futa Akaunti',
     'logout' => 'Toka',
+    'no_banks_listed' => 'Bado hakuna benki zilizoorodheshwa.',
 ];

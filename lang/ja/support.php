@@ -21,4 +21,8 @@ return [
     'closed_customer' => 'この会話を終了しました。',
     'closed_timeout' => '時間内に返信がなかったため、この会話は自動的に終了しました。',
     'closed_default' => 'この会話は終了しました。',
+    'header_title' => 'Ledgerサポート',
+    'past_conversations_title' => '過去の会話',
+    'conversation_from' => ':dateの会話',
+    'no_past_conversations' => '過去の会話はまだありません。終了した会話（または新しく始めた会話）はここに表示されます。',
 ];

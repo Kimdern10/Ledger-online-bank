@@ -13,7 +13,7 @@
     <a href="{{ url()->previous() }}" class="icon-btn">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
     </a>
-    <h1>Link Bank or Card</h1>
+    <h1>{{ __('link.title') }}</h1>
     <a href="{{ route('dashboard') }}" class="icon-btn">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
     </a>
@@ -34,7 +34,7 @@
   @endif
 
   <!-- ============ already linked ============ -->
-  <p class="section-label fade-in d2">Already linked</p>
+  <p class="section-label fade-in d2">{{ __('link.already_linked') }}</p>
   <div class="setting-list fade-in d2" style="margin-bottom:24px;">
     @forelse($accounts as $account)
       <div class="setting-item" style="cursor:default;">
@@ -46,21 +46,21 @@
           @endif
         </div>
         <span class="label">{{ $account->displayLabel() }}<span class="linked-tag">{{ $account->detailLabel() }}</span></span>
-        <form method="POST" action="{{ route('link-account.destroy', $account) }}" style="display:contents;" data-confirm="Remove {{ $account->displayLabel() }} ({{ $account->detailLabel() }})?" data-confirm-danger="1" data-confirm-button="Remove">
+        <form method="POST" action="{{ route('link-account.destroy', $account) }}" style="display:contents;" data-confirm="{{ __('link.remove_confirm', ['label' => $account->displayLabel(), 'detail' => $account->detailLabel()]) }}" data-confirm-danger="1" data-confirm-button="{{ __('link.remove_button') }}">
           @csrf
           @method('DELETE')
-          <button type="submit" class="remove-btn" aria-label="Remove {{ $account->displayLabel() }}">
+          <button type="submit" class="remove-btn" aria-label="{{ __('link.remove_aria', ['label' => $account->displayLabel()]) }}">
             <svg viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12"/></svg>
           </button>
         </form>
       </div>
     @empty
-      <p style="padding:14px 4px; opacity:0.65;">You haven't linked a bank account or card yet.</p>
+      <p style="padding:14px 4px; opacity:0.65;">{{ __('link.empty_state') }}</p>
     @endforelse
   </div>
 
   <!-- ============ add new: bank account or card ============ -->
-  <p class="section-label fade-in d3">Add new</p>
+  <p class="section-label fade-in d3">{{ __('link.add_new') }}</p>
 
   <form method="POST" action="{{ route('link-account.store') }}" id="linkForm" class="fade-in d3">
     @csrf
@@ -69,21 +69,21 @@
     <div class="segmented" style="margin-bottom:18px;">
       <button class="seg-btn active" id="segLinkBank" onclick="setLinkMode('bank')" type="button">
         <svg viewBox="0 0 24 24" fill="none"><path d="M3 21h18M4 21V10l8-6 8 6v11M9 21v-6h6v6"/></svg>
-        Bank account
+        {{ __('link.bank_account_tab') }}
       </button>
       <button class="seg-btn" id="segLinkCard" onclick="setLinkMode('card')" type="button">
         <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
-        Debit / Credit card
+        {{ __('link.card_tab') }}
       </button>
     </div>
 
     <!-- ---- link a bank account ---- -->
     <div id="linkBankPanel">
       <div class="field-group">
-        <p class="label">Bank</p>
+        <p class="label">{{ __('link.bank_label') }}</p>
         <div class="bank-input-row">
-          <input type="text" class="text-input" id="linkBankNameInput" name="bank_name" value="{{ old('bank_name') }}" placeholder="Your bank's name" autocomplete="off" required>
-          <button type="button" class="bank-search-btn" onclick="openSheet()" aria-label="Search banks">
+          <input type="text" class="text-input" id="linkBankNameInput" name="bank_name" value="{{ old('bank_name') }}" placeholder="{{ __('link.bank_name_placeholder') }}" autocomplete="off" required>
+          <button type="button" class="bank-search-btn" onclick="openSheet()" aria-label="{{ __('link.search_banks_aria') }}">
             {{-- Missing stroke="currentColor" here (present on this same
                  icon in send.blade.php) meant the icon had neither a fill
                  nor a stroke — completely invisible even with the button
@@ -93,16 +93,16 @@
         </div>
       </div>
       <div class="field-group">
-        <p class="label">Account holder name</p>
-        <input type="text" class="text-input" name="account_holder_name" value="{{ old('account_holder_name') }}" placeholder="Full name on the account" autocomplete="off" required>
+        <p class="label">{{ __('link.account_holder_name') }}</p>
+        <input type="text" class="text-input" name="account_holder_name" value="{{ old('account_holder_name') }}" placeholder="{{ __('link.account_holder_name_placeholder') }}" autocomplete="off" required>
       </div>
       <div class="field-group">
-        <p class="label">Account number</p>
-        <input type="text" class="text-input" name="account_number" value="{{ old('account_number') }}" placeholder="Account number" inputmode="numeric" autocomplete="off" required>
+        <p class="label">{{ __('link.account_number') }}</p>
+        <input type="text" class="text-input" name="account_number" value="{{ old('account_number') }}" placeholder="{{ __('link.account_number_placeholder') }}" inputmode="numeric" autocomplete="off" required>
       </div>
       <div class="field-group">
-        <p class="label">Routing number</p>
-        <input type="text" class="text-input" id="linkRoutingNumberInput" name="routing_number" value="{{ old('routing_number') }}" placeholder="9-digit ABA routing number" inputmode="numeric" maxlength="9" required>
+        <p class="label">{{ __('link.routing_number') }}</p>
+        <input type="text" class="text-input" id="linkRoutingNumberInput" name="routing_number" value="{{ old('routing_number') }}" placeholder="{{ __('link.routing_number_placeholder') }}" inputmode="numeric" maxlength="9" required>
       </div>
     </div>
 
@@ -129,36 +129,36 @@
         <div>
           <div class="cv-number" id="cvNumber">•••• •••• •••• ••••</div>
           <div class="cv-bottom">
-            <span class="cv-name" id="cvName">CARDHOLDER NAME</span>
-            <span id="cvExpiry">MM/YY</span>
+            <span class="cv-name" id="cvName">{{ __('link.cardholder_name_default') }}</span>
+            <span id="cvExpiry">{{ __('link.expiry_placeholder') }}</span>
           </div>
         </div>
       </div>
 
       <div class="field-group">
-        <p class="label">Card number</p>
-        <input type="text" class="text-input" id="cardNumberInput" name="card_number" value="{{ old('card_number') }}" placeholder="1234 5678 9012 3456"
+        <p class="label">{{ __('link.card_number') }}</p>
+        <input type="text" class="text-input" id="cardNumberInput" name="card_number" value="{{ old('card_number') }}" placeholder="{{ __('link.card_number_placeholder') }}"
                inputmode="numeric" maxlength="19" oninput="formatCardPreview()" required>
       </div>
       <div class="field-group">
-        <p class="label">Cardholder name</p>
-        <input type="text" class="text-input" id="cardNameInput" name="card_name" value="{{ old('card_name') }}" placeholder="Name as shown on card"
+        <p class="label">{{ __('link.cardholder_name') }}</p>
+        <input type="text" class="text-input" id="cardNameInput" name="card_name" value="{{ old('card_name') }}" placeholder="{{ __('link.cardholder_name_placeholder') }}"
                autocomplete="off" oninput="formatCardPreview()" required>
       </div>
       <div style="display:flex; gap:12px;">
         <div class="field-group" style="flex:1;">
-          <p class="label">Expiry</p>
-          <input type="text" class="text-input" id="cardExpiryInput" name="card_expiry" value="{{ old('card_expiry') }}" placeholder="MM/YY" maxlength="5" oninput="formatCardPreview()" required>
+          <p class="label">{{ __('link.expiry') }}</p>
+          <input type="text" class="text-input" id="cardExpiryInput" name="card_expiry" value="{{ old('card_expiry') }}" placeholder="{{ __('link.expiry_placeholder') }}" maxlength="5" oninput="formatCardPreview()" required>
         </div>
         <div class="field-group" style="flex:1;">
-          <p class="label">CVV</p>
-          <input type="text" class="text-input" name="cvv" placeholder="123" inputmode="numeric" maxlength="4" required>
+          <p class="label">{{ __('link.cvv') }}</p>
+          <input type="text" class="text-input" name="cvv" placeholder="{{ __('link.cvv_placeholder') }}" inputmode="numeric" maxlength="4" required>
         </div>
       </div>
     </div>
 
     <div class="pay-btn-wrap">
-      <button type="submit" class="pay-btn">Link account</button>
+      <button type="submit" class="pay-btn">{{ __('link.link_account_button') }}</button>
     </div>
   </form>
 
@@ -169,14 +169,14 @@
   <div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
     <div class="sheet-head">
-      <h4>Select a bank</h4>
+      <h4>{{ __('link.select_a_bank') }}</h4>
       <div class="icon-btn" onclick="closeSheet()">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </div>
     </div>
     <div class="sheet-search">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
-      <input type="text" id="bankSearch" placeholder="Search by bank name…" oninput="onBankSearchInput(this.value)">
+      <input type="text" id="bankSearch" placeholder="{{ __('link.bank_search_placeholder') }}" oninput="onBankSearchInput(this.value)">
     </div>
     <div id="bankOptionList">
       {{-- Populated live from the admin-managed bank directory (the same
@@ -188,17 +188,17 @@
            that fixed list of nine just came up empty with no way forward. --}}
     </div>
     <p id="bankSearchLoading" style="display:none; text-align:center; font-size:13px; color:var(--text-3); padding:18px 0;">
-      Searching…
+      {{ __('link.bank_search_loading') }}
     </p>
     <p id="noBankResults" style="display:none; text-align:center; font-size:13px; color:var(--text-3); padding:18px 0;">
-      No banks matched your search.
+      {{ __('link.no_bank_results') }}
     </p>
   </div>
 </div>
 
 <div class="ledger-toast" id="ledgerToast">
   <svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5"/></svg>
-  <span id="toastText">Linked</span>
+  <span id="toastText">{{ __('link.toast_linked') }}</span>
 </div>
 
 {{-- .bank-input-row / .bank-search-btn style the "Bank" field's search
@@ -303,7 +303,7 @@
         if(err.name === 'AbortError') return;
         document.getElementById('bankSearchLoading').style.display = 'none';
         document.getElementById('bankOptionList').innerHTML = '';
-        document.getElementById('noBankResults').textContent = 'Something went wrong searching banks — try again.';
+        document.getElementById('noBankResults').textContent = @json(__('link.bank_search_error'));
         document.getElementById('noBankResults').style.display = 'block';
       });
   }
@@ -385,10 +385,10 @@
     document.getElementById('cvNumber').textContent = grouped;
 
     const name = document.getElementById('cardNameInput').value.trim();
-    document.getElementById('cvName').textContent = name ? name.toUpperCase() : 'CARDHOLDER NAME';
+    document.getElementById('cvName').textContent = name ? name.toUpperCase() : @json(__('link.cardholder_name_default'));
 
     const exp = document.getElementById('cardExpiryInput').value.trim();
-    document.getElementById('cvExpiry').textContent = exp || 'MM/YY';
+    document.getElementById('cvExpiry').textContent = exp || @json(__('link.expiry_placeholder'));
   }
 
   function showToast(msg){

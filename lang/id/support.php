@@ -2,6 +2,10 @@
 
 return [
     'title' => 'Dukungan',
+    'header_title' => 'Dukungan Ledger',
+    'past_conversations_title' => 'Percakapan lalu',
+    'conversation_from' => 'Percakapan dari :date',
+    'no_past_conversations' => 'Belum ada percakapan lalu. Percakapan yang Anda akhiri (atau mulai ulang) akan muncul di sini.',
     'start_new' => 'Mulai percakapan baru',
     'start_new_confirm' => 'Mulai percakapan baru? Obrolan Anda saat ini akan disimpan ke percakapan lalu Anda.',
     'start_new_button' => 'Mulai percakapan baru',

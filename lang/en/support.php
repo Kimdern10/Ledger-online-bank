@@ -2,6 +2,10 @@
 
 return [
     'title' => 'Support',
+    'header_title' => 'Ledger Support',
+    'past_conversations_title' => 'Past conversations',
+    'conversation_from' => 'Conversation from :date',
+    'no_past_conversations' => 'No past conversations yet. Anything you end (or start over from) will show up here.',
     'start_new' => 'Start a new conversation',
     'start_new_confirm' => 'Start a new conversation? Your current chat will be saved to your past conversations.',
     'start_new_button' => 'Start new conversation',

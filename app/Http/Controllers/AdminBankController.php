@@ -8,13 +8,19 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 /**
- * Admin CRUD for the bank directory (see App\Models\Bank and its
- * migration's doc comment for why this exists instead of a live
- * third-party "list every bank" API). Every bank created here shows up
- * for customers in two places: type=external ones in the "Another bank"
- * picker on Send Money, type=international ones in the new
- * "International bank" tab — and both together on the read-only
- * Settings > Banks page (see BankListController).
+ * Admin CRUD for the hand-curated half of the bank directory (see
+ * App\Models\Bank). Every bank created here shows up for customers in two
+ * places: type=external ones in the "Another bank" picker on Send Money,
+ * type=international ones in the "International bank" tab — and both
+ * together on the read-only Settings > Banks page (see BankListController).
+ *
+ * As of App\Services\BankProviders, the Send Money pickers ALSO merge in
+ * live results from third-party APIs (Plaid for domestic, TrueLayer/
+ * Token.io/Open Payments for international — see
+ * BankDirectoryController::merge()) whenever those are configured. This
+ * admin list stays the reliable fallback either way: it's what a customer
+ * sees even with zero live-API credentials configured, and it's the only
+ * way to add a bank none of those APIs happen to cover.
  */
 class AdminBankController extends Controller
 {

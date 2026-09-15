@@ -11,10 +11,10 @@
     $primaryAccountType = null;
     $primaryAccountNumber = null;
     if (! empty($user->checking_account_number)) {
-        $primaryAccountType = 'Checking';
+        $primaryAccountType = __('paybills.account_type_checking');
         $primaryAccountNumber = $user->checking_account_number;
     } elseif (! empty($user->savings_account_number)) {
-        $primaryAccountType = 'Savings';
+        $primaryAccountType = __('paybills.account_type_savings');
         $primaryAccountNumber = $user->savings_account_number;
     }
     $primaryAccountLast4 = $primaryAccountNumber ? substr($primaryAccountNumber, -4) : '----';
@@ -100,29 +100,29 @@
     <a href="{{ url()->previous() }}" class="icon-btn">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
     </a>
-    <h1>Pay Bills</h1>
+    <h1>{{ __('paybills.page_title') }}</h1>
     <a href="{{ route('dashboard') }}" class="icon-btn">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
     </a>
   </div>
 
-  <p class="section-label">From</p>
+  <p class="section-label">{{ __('paybills.from_label') }}</p>
   <div class="from-row fade-in d2">
     <div class="bank-mark">L</div>
     <div class="bank-info">
       <p class="name">Ledger Federal Credit Union</p>
-      <p class="meta">{{ $primaryAccountType ?? 'Account' }} •••• {{ $primaryAccountLast4 }}</p>
+      <p class="meta">{{ $primaryAccountType ?? __('paybills.account_fallback') }} •••• {{ $primaryAccountLast4 }}</p>
     </div>
     <div class="bank-balance">
       <p class="amt">${{ number_format($userBalance, 2) }}</p>
-      <p class="tag">Available</p>
+      <p class="tag">{{ __('paybills.available') }}</p>
     </div>
   </div>
 
   @if($hasChecking)
     <div class="bills-section-head fade-in d3">
-      <p class="section-label" style="margin:0;">Upcoming bills</p>
-      <button type="button" class="add-bill-link" onclick="openAddBillSheet()">+ Add bill</button>
+      <p class="section-label" style="margin:0;">{{ __('paybills.upcoming_bills') }}</p>
+      <button type="button" class="add-bill-link" onclick="openAddBillSheet()">{{ __('paybills.add_bill_link') }}</button>
     </div>
 
     {{-- New users (and anyone who's paid off/removed everything) see this
@@ -131,9 +131,9 @@
       <div class="bills-empty-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">{!! $defaultBillIcon !!}</svg>
       </div>
-      <p class="bills-empty-title">No bills yet</p>
-      <p class="bills-empty-sub">Add a bill to start tracking what's due and pay it right from here.</p>
-      <button type="button" class="bill-pay-btn" onclick="openAddBillSheet()">+ Add bill</button>
+      <p class="bills-empty-title">{{ __('paybills.no_bills_yet') }}</p>
+      <p class="bills-empty-sub">{{ __('paybills.no_bills_sub') }}</p>
+      <button type="button" class="bill-pay-btn" onclick="openAddBillSheet()">{{ __('paybills.add_bill_link') }}</button>
     </div>
 
     <div class="bill-card fade-in d3" id="billCard" @if($bills->isEmpty()) style="display:none;" @endif>
@@ -145,13 +145,13 @@
             </div>
             <div class="b-mid">
               <p class="name">{{ $bill->category }}</p>
-              <p class="meta">{{ $bill->biller }} · Due {{ $bill->due_date->format('M j') }}</p>
+              <p class="meta">{{ $bill->biller }} · {{ __('paybills.due_prefix') }} {{ $bill->due_date->format('M j') }}</p>
             </div>
             <div class="b-right">
               <p class="amt">${{ number_format($bill->amount, 2) }}</p>
-              <button type="button" class="bill-pay-btn" data-category="{{ $bill->category }}" data-biller="{{ $bill->biller }}" data-amount="{{ number_format($bill->amount, 2) }}">Pay</button>
+              <button type="button" class="bill-pay-btn" data-category="{{ $bill->category }}" data-biller="{{ $bill->biller }}" data-amount="{{ number_format($bill->amount, 2) }}">{{ __('paybills.pay_btn') }}</button>
             </div>
-            <button type="button" class="bill-remove-btn" data-bill-id="{{ $bill->id }}" aria-label="Remove {{ $bill->category }}">
+            <button type="button" class="bill-remove-btn" data-bill-id="{{ $bill->id }}" aria-label="{{ __('paybills.remove_bill_aria', ['category' => $bill->category]) }}">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
             </button>
           </div>
@@ -161,13 +161,13 @@
   @else
     {{-- Savings-only accounts land here — no add/pay UI at all, since
          BillController::store() would reject it anyway. --}}
-    <p class="section-label">Upcoming bills</p>
+    <p class="section-label">{{ __('paybills.upcoming_bills') }}</p>
     <div class="bills-empty-state fade-in d3">
       <div class="bills-empty-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
       </div>
-      <p class="bills-empty-title">Checking account required</p>
-      <p class="bills-empty-sub">Bills can only be added and paid from a checking account. Your account is savings-only, so this page is read-only for you.</p>
+      <p class="bills-empty-title">{{ __('paybills.checking_required_title') }}</p>
+      <p class="bills-empty-sub">{{ __('paybills.checking_required_sub') }}</p>
     </div>
   @endif
 </div>
@@ -177,52 +177,52 @@
   <div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
     <div class="sheet-head">
-      <h4>Add bill</h4>
+      <h4>{{ __('paybills.add_bill_heading') }}</h4>
       <div class="icon-btn" onclick="closeAddBillSheet()">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </div>
     </div>
 
     <div class="field-group">
-      <p class="label">Bill type</p>
+      <p class="label">{{ __('paybills.bill_type_label') }}</p>
       <div class="select-wrap">
         <select id="addBillCategory" class="text-input" onchange="onAddBillCategoryChange()">
-          <option value="Rent / Mortgage">Rent / Mortgage</option>
-          <option value="Credit Card">Credit Card</option>
-          <option value="Medical Insurance">Medical Insurance</option>
-          <option value="Taxes">Taxes</option>
-          <option value="Student Loan">Student Loan</option>
-          <option value="Other">Other</option>
+          <option value="Rent / Mortgage">{{ __('paybills.bill_type_rent_mortgage') }}</option>
+          <option value="Credit Card">{{ __('paybills.bill_type_credit_card') }}</option>
+          <option value="Medical Insurance">{{ __('paybills.bill_type_medical_insurance') }}</option>
+          <option value="Taxes">{{ __('paybills.bill_type_taxes') }}</option>
+          <option value="Student Loan">{{ __('paybills.bill_type_student_loan') }}</option>
+          <option value="Other">{{ __('paybills.bill_type_other') }}</option>
         </select>
       </div>
     </div>
 
     <div class="field-group" id="addBillCustomCategoryGroup" style="display:none;">
-      <p class="label">Bill name</p>
-      <input type="text" id="addBillCustomCategory" class="text-input" placeholder="e.g. Gym Membership" maxlength="100">
+      <p class="label">{{ __('paybills.bill_name_label') }}</p>
+      <input type="text" id="addBillCustomCategory" class="text-input" placeholder="{{ __('paybills.bill_name_placeholder') }}" maxlength="100">
     </div>
 
     <div class="field-group">
-      <p class="label">Biller</p>
-      <input type="text" id="addBillBiller" class="text-input" placeholder="Who you're paying" maxlength="150">
+      <p class="label">{{ __('paybills.biller_label') }}</p>
+      <input type="text" id="addBillBiller" class="text-input" placeholder="{{ __('paybills.biller_placeholder') }}" maxlength="150">
     </div>
 
     <div class="field-group">
-      <p class="label">Amount</p>
+      <p class="label">{{ __('paybills.amount_label') }}</p>
       <div class="select-wrap" style="padding:0;">
         <input type="text" id="addBillAmount" class="text-input" inputmode="decimal" placeholder="0.00">
       </div>
     </div>
 
     <div class="field-group">
-      <p class="label">Due date</p>
+      <p class="label">{{ __('paybills.due_date_label') }}</p>
       <input type="date" id="addBillDueDate" class="text-input">
     </div>
 
     <p class="add-bill-error" id="addBillError"></p>
 
     <div class="pay-btn-wrap">
-      <button type="button" class="pay-btn" id="addBillSubmitBtn" onclick="submitAddBill()">Add bill</button>
+      <button type="button" class="pay-btn" id="addBillSubmitBtn" onclick="submitAddBill()">{{ __('paybills.add_bill_submit') }}</button>
     </div>
   </div>
 </div>
@@ -232,39 +232,39 @@
   <div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
     <div class="sheet-head">
-      <h4 id="payCategory">Pay bill</h4>
+      <h4 id="payCategory">{{ __('paybills.pay_bill_heading') }}</h4>
       <div class="icon-btn" onclick="closePaySheet()">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </div>
     </div>
 
-    <p class="section-label" id="payBiller" style="margin-bottom:16px;">Biller</p>
+    <p class="section-label" id="payBiller" style="margin-bottom:16px;">{{ __('paybills.biller_label') }}</p>
 
     <div class="field-group">
-      <p class="label">Amount</p>
+      <p class="label">{{ __('paybills.amount_label') }}</p>
       <div class="select-wrap" style="padding:0;">
         <input type="text" id="payAmount" class="text-input" inputmode="decimal" value="">
       </div>
     </div>
 
-    <p class="from-label">Pay from</p>
+    <p class="from-label">{{ __('paybills.pay_from') }}</p>
     <div class="from-row" style="margin-bottom:6px;">
       <div class="bank-mark">L</div>
       <div class="bank-info">
         <p class="name">Ledger Federal Credit Union</p>
-        <p class="meta">{{ $primaryAccountType ?? 'Account' }} •••• {{ $primaryAccountLast4 }}</p>
+        <p class="meta">{{ $primaryAccountType ?? __('paybills.account_fallback') }} •••• {{ $primaryAccountLast4 }}</p>
       </div>
     </div>
 
     <div class="pay-btn-wrap">
-      <button type="button" class="pay-btn" onclick="confirmPayment()">Confirm payment</button>
+      <button type="button" class="pay-btn" onclick="confirmPayment()">{{ __('paybills.confirm_payment') }}</button>
     </div>
   </div>
 </div>
 
 <div class="ledger-toast" id="ledgerToast">
   <svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5"/></svg>
-  <span id="toastText">Payment scheduled</span>
+  <span id="toastText">{{ __('paybills.payment_scheduled_toast') }}</span>
 </div>
 
 <!-- Powers the "Remove bill?" confirmation dialog below, in place of the
@@ -272,6 +272,25 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+  // Translated strings shared by this script and the one below — declared
+  // once here so both can reference them (top-level const/let in one
+  // classic <script> tag is visible to later <script> tags on the page).
+  const I18N_PAYMENT_SCHEDULED_SUFFIX = @json(__('paybills.payment_scheduled_suffix'));
+  const I18N_PAY_BTN = @json(__('paybills.pay_btn'));
+  const I18N_THIS_BILL_FALLBACK = @json(__('paybills.this_bill_fallback'));
+  const I18N_REMOVE_CONFIRM_TEXT = @json(__('paybills.remove_confirm_text'));
+  const I18N_REMOVE_CONFIRM_BUTTON = @json(__('paybills.remove_confirm_button'));
+  const I18N_REMOVE_CANCEL_BUTTON = @json(__('paybills.remove_cancel_button'));
+  const I18N_ERROR_REMOVE_FAILED = @json(__('paybills.error_remove_bill_failed'));
+  const I18N_ERROR_REMOVE_CONNECTION = @json(__('paybills.error_remove_bill_connection'));
+  // Templates carry a literal placeholder token that JS swaps out at
+  // runtime with .replace() — same pattern as dashboard.acct_aria, since
+  // the real value (a bill name/category) is only known client-side.
+  const I18N_REMOVE_ARIA_TEMPLATE = @json(__('paybills.remove_bill_aria', ['category' => '__CATEGORY__']));
+  const I18N_REMOVE_CONFIRM_TITLE_TEMPLATE = @json(__('paybills.remove_confirm_title', ['name' => '__NAME__']));
+  const I18N_BILL_REMOVED_TOAST_TEMPLATE = @json(__('paybills.bill_removed_toast', ['name' => '__NAME__']));
+  const I18N_BILL_ADDED_TOAST_TEMPLATE = @json(__('paybills.bill_added_toast', ['category' => '__CATEGORY__']));
+
   function openPaySheet(category, biller, amount){
     document.getElementById('payCategory').textContent = category;
     document.getElementById('payBiller').textContent = biller;
@@ -284,7 +303,7 @@
   }
   function confirmPayment(){
     closePaySheet();
-    showBillToast(document.getElementById('payCategory').textContent + ' payment scheduled');
+    showBillToast(document.getElementById('payCategory').textContent + ' ' + I18N_PAYMENT_SCHEDULED_SUFFIX);
   }
 
   function showBillToast(message){
@@ -355,9 +374,9 @@
         '</div>' +
         '<div class="b-right">' +
           '<p class="amt">$' + amount + '</p>' +
-          '<button type="button" class="bill-pay-btn" data-category="' + category + '" data-biller="' + biller + '" data-amount="' + amount + '">Pay</button>' +
+          '<button type="button" class="bill-pay-btn" data-category="' + category + '" data-biller="' + biller + '" data-amount="' + amount + '">' + I18N_PAY_BTN + '</button>' +
         '</div>' +
-        '<button type="button" class="bill-remove-btn" data-bill-id="' + bill.id + '" aria-label="Remove ' + category + '">' +
+        '<button type="button" class="bill-remove-btn" data-bill-id="' + bill.id + '" aria-label="' + escapeAttr(I18N_REMOVE_ARIA_TEMPLATE.replace('__CATEGORY__', bill.category)) + '">' +
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>' +
         '</button>' +
       '</div>'
@@ -388,15 +407,15 @@
   async function removeBill(button){
     const row = button.closest('.bill-row');
     const billId = row.dataset.billId;
-    const name = row.querySelector('.b-mid .name')?.textContent || 'this bill';
+    const name = row.querySelector('.b-mid .name')?.textContent || I18N_THIS_BILL_FALLBACK;
 
     const confirmResult = await Swal.fire({
-      title: 'Remove ' + name + '?',
-      text: 'You can always add it back later.',
+      title: I18N_REMOVE_CONFIRM_TITLE_TEMPLATE.replace('__NAME__', name),
+      text: I18N_REMOVE_CONFIRM_TEXT,
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Remove',
-      cancelButtonText: 'Cancel',
+      confirmButtonText: I18N_REMOVE_CONFIRM_BUTTON,
+      cancelButtonText: I18N_REMOVE_CANCEL_BUTTON,
       confirmButtonColor: '#C1503C',
       cancelButtonColor: '#2F6F62',
       reverseButtons: true,
@@ -416,7 +435,7 @@
       });
 
       if (!response.ok) {
-        showBillToast('Could not remove that bill — try again');
+        showBillToast(I18N_ERROR_REMOVE_FAILED);
         button.disabled = false;
         return;
       }
@@ -430,9 +449,9 @@
         }
       }, 200);
 
-      showBillToast(name + ' removed');
+      showBillToast(I18N_BILL_REMOVED_TOAST_TEMPLATE.replace('__NAME__', name));
     } catch (err) {
-      showBillToast('Could not remove that bill — check your connection');
+      showBillToast(I18N_ERROR_REMOVE_CONNECTION);
       button.disabled = false;
     }
   }
@@ -445,14 +464,14 @@
     const amount = document.getElementById('addBillAmount').value.trim();
     const dueDate = document.getElementById('addBillDueDate').value;
 
-    if (!category) return showAddBillError(isOther ? 'Enter a name for this bill.' : 'Choose a bill type.');
-    if (!biller) return showAddBillError('Enter who you\'re paying.');
-    if (!amount || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) return showAddBillError('Enter a valid amount.');
-    if (!dueDate) return showAddBillError('Pick a due date.');
+    if (!category) return showAddBillError(isOther ? @json(__('paybills.error_enter_bill_name')) : @json(__('paybills.error_choose_bill_type')));
+    if (!biller) return showAddBillError(@json(__('paybills.error_enter_biller')));
+    if (!amount || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) return showAddBillError(@json(__('paybills.error_enter_valid_amount')));
+    if (!dueDate) return showAddBillError(@json(__('paybills.error_pick_due_date')));
 
     const submitBtn = document.getElementById('addBillSubmitBtn');
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Adding…';
+    submitBtn.textContent = @json(__('paybills.adding'));
 
     try {
       const response = await fetch("{{ route('bills.store') }}", {
@@ -470,7 +489,7 @@
         // 422 (validation) puts the message under body.errors; 403 (the
         // "checking account required" case) puts it under body.message.
         const firstError = body && body.errors ? Object.values(body.errors)[0]?.[0] : (body ? body.message : null);
-        showAddBillError(firstError || 'Could not add that bill — try again.');
+        showAddBillError(firstError || @json(__('paybills.error_add_bill_failed')));
         return;
       }
 
@@ -488,12 +507,12 @@
       document.getElementById('addBillAmount').value = '';
       document.getElementById('addBillDueDate').value = '';
       closeAddBillSheet();
-      showBillToast(bill.category + ' added');
+      showBillToast(I18N_BILL_ADDED_TOAST_TEMPLATE.replace('__CATEGORY__', bill.category));
     } catch (err) {
-      showAddBillError('Could not add that bill — check your connection and try again.');
+      showAddBillError(@json(__('paybills.error_add_bill_connection')));
     } finally {
       submitBtn.disabled = false;
-      submitBtn.textContent = 'Add bill';
+      submitBtn.textContent = @json(__('paybills.add_bill_submit'));
     }
   }
 </script>

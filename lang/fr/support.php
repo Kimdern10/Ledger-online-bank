@@ -21,4 +21,8 @@ return [
     'closed_customer' => 'Vous avez mis fin à cette conversation.',
     'closed_timeout' => 'Cette conversation s\'est fermée automatiquement faute de réponse à temps.',
     'closed_default' => 'Cette conversation est terminée.',
+    'header_title' => 'Assistance Ledger',
+    'past_conversations_title' => 'Conversations précédentes',
+    'conversation_from' => 'Conversation du :date',
+    'no_past_conversations' => 'Aucune conversation précédente pour le moment. Tout ce que vous terminez (ou recommencez) apparaîtra ici.',
 ];

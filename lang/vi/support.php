@@ -21,4 +21,9 @@ return [
     'closed_customer' => 'Bạn đã kết thúc cuộc trò chuyện này.',
     'closed_timeout' => 'Cuộc trò chuyện này đã tự động đóng do không có phản hồi kịp thời.',
     'closed_default' => 'Cuộc trò chuyện này đã kết thúc.',
+
+    'header_title' => 'Hỗ trợ Ledger',
+    'past_conversations_title' => 'Các cuộc trò chuyện trước đây',
+    'conversation_from' => 'Cuộc trò chuyện từ :date',
+    'no_past_conversations' => 'Chưa có cuộc trò chuyện nào trước đây. Bất kỳ cuộc trò chuyện nào bạn kết thúc (hoặc bắt đầu lại) sẽ xuất hiện ở đây.',
 ];

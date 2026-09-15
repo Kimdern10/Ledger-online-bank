@@ -53,4 +53,24 @@ return [
     'bank_search_error' => 'Hiện không thể tải danh sách ngân hàng. Vui lòng thử lại.',
     'credit_union' => 'Hiệp hội tín dụng',
     'bank_fallback' => 'Ngân hàng',
+
+    // International bank transfer form (added in a follow-up audit pass —
+    // these were left hardcoded when the rest of send.blade.php was
+    // translated).
+    'tab_international' => 'Quốc tế',
+    'amount_input_aria' => 'Số tiền cần gửi',
+    'intl_bank_name_label' => 'Tên ngân hàng',
+    'intl_bank_name_placeholder' => 'Ngân hàng của người nhận',
+    'intl_country_label' => 'Quốc gia',
+    'intl_country_placeholder' => 'ví dụ: Vương quốc Anh',
+    'intl_account_label' => 'Số tài khoản / IBAN',
+    'intl_account_placeholder' => 'Số tài khoản hoặc IBAN',
+    'intl_swift_label' => 'Mã SWIFT / BIC',
+    'intl_swift_placeholder' => 'ví dụ: BARCGB22',
+    'intl_currency_label' => 'Loại tiền tệ',
+    'intl_currency_placeholder' => 'ví dụ: GBP',
+    'intl_converted_prefix' => 'Người nhận sẽ nhận được khoảng',
+    'intl_transfer_note' => 'Chuyển khoản quốc tế có thể mất nhiều thời gian hơn để đến nơi so với chuyển khoản trong nước hoặc chuyển khoản Ledger.',
+    'intl_bank_search_placeholder' => 'Tìm kiếm ngân hàng quốc tế',
+    'intl_bank_search_hint' => 'Bắt đầu nhập để tìm trong danh mục ngân hàng.',
 ];

@@ -6,6 +6,7 @@ return [
     'profile_setting' => 'प्रोफ़ाइल',
     'notifications_setting' => 'सूचनाएं',
     'language' => 'भाषा',
+    'no_banks_listed' => 'अभी तक कोई बैंक सूचीबद्ध नहीं है।',
     'monthly_budget' => 'मासिक बजट',
     'link_account' => 'खाता लिंक करें',
     'transaction_pin' => 'लेन-देन पिन',

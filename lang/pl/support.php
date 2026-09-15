@@ -2,6 +2,10 @@
 
 return [
     'title' => 'Pomoc',
+    'header_title' => 'Pomoc techniczna Ledger',
+    'past_conversations_title' => 'Poprzednie rozmowy',
+    'conversation_from' => 'Rozmowa z :date',
+    'no_past_conversations' => 'Nie masz jeszcze żadnych poprzednich rozmów. Wszystko, co zakończysz (lub rozpoczniesz od nowa), pojawi się tutaj.',
     'start_new' => 'Rozpocznij nową rozmowę',
     'start_new_confirm' => 'Rozpocząć nową rozmowę? Twój obecny czat zostanie zapisany w Twoich poprzednich rozmowach.',
     'start_new_button' => 'Rozpocznij nową rozmowę',

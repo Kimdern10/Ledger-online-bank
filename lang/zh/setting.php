@@ -6,6 +6,7 @@ return [
     'profile_setting' => '个人资料',
     'notifications_setting' => '通知',
     'language' => '语言',
+    'no_banks_listed' => '暂无已列出的银行。',
     'monthly_budget' => '每月预算',
     'link_account' => '关联账户',
     'transaction_pin' => '交易密码',

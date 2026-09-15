@@ -2,13 +2,13 @@
 
 return [
     'title' => 'Ìtàn',
-    'money_in' => 'Owó tí ó wọlé',
-    'money_out' => 'Owó tí ó jáde',
-    'search_placeholder' => 'Wá àwọn ìṣòwò…',
-    'filter_all' => 'Gbogbo rẹ̀',
-    'filter_sent' => 'Àwọn tí a fi ránṣẹ́',
-    'filter_received' => 'Àwọn tí a gbà',
-    'no_transactions_yet' => 'Kò tíì sí ìṣòwò kankan. Ní kété tí o bá fi ránṣẹ́ tàbí gbà owó, yóò farahàn níhìn-ín.',
-    'no_matches' => 'Kò sí ìṣòwò kankan tí ó bá ohun tí o ń wá mu.',
+    'money_in' => 'Owó Tí Ń Wọlé',
+    'money_out' => 'Owó Tí Ń Jáde',
+    'search_placeholder' => 'Wá àwọn ìdúnàádúrà…',
+    'filter_all' => 'Gbogbo Rẹ̀',
+    'filter_sent' => 'Tí A Rán',
+    'filter_received' => 'Tí A Gbà',
+    'no_transactions_yet' => "Kò tíì sí ìdúnàádúrà kankan — ní kété tí o bá fi owó ránṣẹ́ tàbí gbà á, yóò farahàn níbí.",
+    'no_matches' => 'Kò sí ìdúnàádúrà tí ó bá ìwádìí rẹ mu.',
     'cancel' => 'Fagilé',
 ];

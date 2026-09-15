@@ -21,4 +21,8 @@ return [
     'closed_customer' => 'Finalizaste esta conversación.',
     'closed_timeout' => 'Esta conversación se cerró automáticamente porque no hubo respuesta a tiempo.',
     'closed_default' => 'Esta conversación ha finalizado.',
+    'header_title' => 'Soporte de Ledger',
+    'past_conversations_title' => 'Conversaciones pasadas',
+    'conversation_from' => 'Conversación del :date',
+    'no_past_conversations' => 'Aún no hay conversaciones pasadas. Todo lo que finalices (o vuelvas a iniciar) aparecerá aquí.',
 ];

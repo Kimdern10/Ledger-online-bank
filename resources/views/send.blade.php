@@ -101,7 +101,7 @@
         </button>
         <button class="seg-btn" id="segInternational" onclick="setReceiveMode('international')" type="button">
           <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18Z"/></svg>
-          International
+          {{ __('send.tab_international') }}
         </button>
         <button class="seg-btn" id="segLinked" onclick="setReceiveMode('linked')" type="button">
           <svg viewBox="0 0 24 24" fill="none"><path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.5-1.5"/></svg>
@@ -161,10 +161,10 @@
            only (see BankDirectoryController::searchInternational()). ============ -->
       <div id="internationalOption" style="display:none;">
         <div class="field-group">
-          <p class="label">Bank name</p>
+          <p class="label">{{ __('send.intl_bank_name_label') }}</p>
           <div class="bank-input-row">
-            <input type="text" class="text-input" id="intlBankNameInput" name="intl_bank_name" value="{{ old('intl_bank_name') }}" placeholder="Recipient's bank" autocomplete="off">
-            <button type="button" class="bank-search-btn" onclick="openIntlSheet()" aria-label="Select a bank">
+            <input type="text" class="text-input" id="intlBankNameInput" name="intl_bank_name" value="{{ old('intl_bank_name') }}" placeholder="{{ __('send.intl_bank_name_placeholder') }}" autocomplete="off">
+            <button type="button" class="bank-search-btn" onclick="openIntlSheet()" aria-label="{{ __('send.select_bank') }}">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
             </button>
           </div>
@@ -174,20 +174,20 @@
           <input type="text" class="text-input" id="intlRecipientNameInput" name="intl_recipient_name" value="{{ old('intl_recipient_name') }}" placeholder="{{ __('send.recipient_placeholder') }}" autocomplete="off">
         </div>
         <div class="field-group">
-          <p class="label">Country</p>
-          <input type="text" class="text-input" id="intlCountryInput" name="intl_country" value="{{ old('intl_country') }}" placeholder="e.g. United Kingdom" autocomplete="off">
+          <p class="label">{{ __('send.intl_country_label') }}</p>
+          <input type="text" class="text-input" id="intlCountryInput" name="intl_country" value="{{ old('intl_country') }}" placeholder="{{ __('send.intl_country_placeholder') }}" autocomplete="off">
         </div>
         <div class="field-group">
-          <p class="label">Account number / IBAN</p>
-          <input type="text" class="text-input" id="intlAccountInput" name="intl_account_number" value="{{ old('intl_account_number') }}" placeholder="Account number or IBAN" autocomplete="off">
+          <p class="label">{{ __('send.intl_account_label') }}</p>
+          <input type="text" class="text-input" id="intlAccountInput" name="intl_account_number" value="{{ old('intl_account_number') }}" placeholder="{{ __('send.intl_account_placeholder') }}" autocomplete="off">
         </div>
         <div class="field-group">
-          <p class="label">SWIFT / BIC code</p>
-          <input type="text" class="text-input" id="intlSwiftInput" name="intl_swift_code" value="{{ old('intl_swift_code') }}" placeholder="e.g. BARCGB22" autocomplete="off" style="text-transform:uppercase;">
+          <p class="label">{{ __('send.intl_swift_label') }}</p>
+          <input type="text" class="text-input" id="intlSwiftInput" name="intl_swift_code" value="{{ old('intl_swift_code') }}" placeholder="{{ __('send.intl_swift_placeholder') }}" autocomplete="off" style="text-transform:uppercase;">
         </div>
         <div class="field-group">
-          <p class="label">Currency</p>
-          <input type="text" class="text-input" id="intlCurrencyInput" name="intl_currency" value="{{ old('intl_currency', 'USD') }}" placeholder="e.g. GBP" maxlength="3" autocomplete="off" style="text-transform:uppercase;" oninput="scheduleIntlConversion()">
+          <p class="label">{{ __('send.intl_currency_label') }}</p>
+          <input type="text" class="text-input" id="intlCurrencyInput" name="intl_currency" value="{{ old('intl_currency', 'USD') }}" placeholder="{{ __('send.intl_currency_placeholder') }}" maxlength="3" autocomplete="off" style="text-transform:uppercase;" oninput="scheduleIntlConversion()">
         </div>
         {{-- Live preview only — see TransferController::convertPreview().
              The rate actually locked in on the transfer (and shown on its
@@ -195,11 +195,11 @@
              scheduled, not carried over from here. --}}
         <p class="receive-note" id="intlConvertedNote" style="display:none;">
           <svg viewBox="0 0 24 24" fill="none"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
-          Recipient receives approximately <strong id="intlConvertedAmount"></strong>
+          {{ __('send.intl_converted_prefix') }} <strong id="intlConvertedAmount"></strong>
         </p>
         <p class="receive-note">
           <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
-          International transfers may take longer to arrive than a domestic or Ledger transfer.
+          {{ __('send.intl_transfer_note') }}
         </p>
       </div>
 
@@ -238,7 +238,7 @@
     <div class="amount-card fade-in d3">
       <div class="amount-field">
         <span class="cur">$</span>
-        <input type="text" id="amountInput" inputmode="decimal" value="" placeholder="0.00" aria-label="Amount to send">
+        <input type="text" id="amountInput" inputmode="decimal" value="" placeholder="0.00" aria-label="{{ __('send.amount_input_aria') }}">
       </div>
       <div class="amount-underline"></div>
       <div class="quick-amounts">
@@ -380,7 +380,7 @@
   <div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
     <div class="sheet-head">
-      <h4>Select a bank</h4>
+      <h4>{{ __('send.select_bank') }}</h4>
       <div class="icon-btn" onclick="closeIntlSheet()">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </div>
@@ -388,13 +388,13 @@
 
     <div class="sheet-search">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
-      <input type="text" id="intlBankSearch" placeholder="Search international banks" oninput="onIntlBankSearchInput(this.value)">
+      <input type="text" id="intlBankSearch" placeholder="{{ __('send.intl_bank_search_placeholder') }}" oninput="onIntlBankSearchInput(this.value)">
     </div>
 
     <div id="intlBankOptionList"></div>
 
     <p id="intlBankSearchHint" style="text-align:center; font-size:13px; color:var(--text-3); padding:18px 0;">
-      Start typing to search the bank directory.
+      {{ __('send.intl_bank_search_hint') }}
     </p>
     <p id="intlBankSearchLoading" style="display:none; text-align:center; font-size:13px; color:var(--text-3); padding:18px 0;">
       {{ __('send.bank_search_loading') }}

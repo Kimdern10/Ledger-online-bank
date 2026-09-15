@@ -21,4 +21,9 @@ return [
     'closed_customer' => 'Umemaliza mazungumzo haya.',
     'closed_timeout' => 'Mazungumzo haya yalifungwa kiotomatiki kwa sababu hakukuwa na jibu kwa wakati.',
     'closed_default' => 'Mazungumzo haya yamemalizika.',
+
+    'header_title' => 'Msaada wa Ledger',
+    'past_conversations_title' => 'Mazungumzo ya zamani',
+    'conversation_from' => 'Mazungumzo kutoka :date',
+    'no_past_conversations' => 'Bado hakuna mazungumzo ya zamani. Chochote unachomaliza (au kuanzisha upya) kitaonekana hapa.',
 ];

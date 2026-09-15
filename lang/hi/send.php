@@ -53,4 +53,24 @@ return [
     'bank_search_error' => 'अभी बैंक लोड नहीं हो सके। पुनः प्रयास करें।',
     'credit_union' => 'क्रेडिट यूनियन',
     'bank_fallback' => 'बैंक',
+
+    // International bank transfer form (added in a follow-up audit pass —
+    // these were left hardcoded when the rest of send.blade.php was
+    // translated).
+    'tab_international' => 'अंतरराष्ट्रीय',
+    'amount_input_aria' => 'भेजी जाने वाली राशि',
+    'intl_bank_name_label' => 'बैंक का नाम',
+    'intl_bank_name_placeholder' => 'प्राप्तकर्ता का बैंक',
+    'intl_country_label' => 'देश',
+    'intl_country_placeholder' => 'जैसे. United Kingdom',
+    'intl_account_label' => 'खाता संख्या / IBAN',
+    'intl_account_placeholder' => 'खाता संख्या या IBAN',
+    'intl_swift_label' => 'SWIFT / BIC कोड',
+    'intl_swift_placeholder' => 'जैसे. BARCGB22',
+    'intl_currency_label' => 'मुद्रा',
+    'intl_currency_placeholder' => 'जैसे. GBP',
+    'intl_converted_prefix' => 'प्राप्तकर्ता को लगभग मिलेगा',
+    'intl_transfer_note' => 'अंतरराष्ट्रीय ट्रांसफर में घरेलू या Ledger ट्रांसफर की तुलना में अधिक समय लग सकता है।',
+    'intl_bank_search_placeholder' => 'अंतरराष्ट्रीय बैंक खोजें',
+    'intl_bank_search_hint' => 'बैंक निर्देशिका में खोजने के लिए टाइप करना शुरू करें।',
 ];

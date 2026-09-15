@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'title' => 'Ìrànlọ́wọ́',
+    'header_title' => 'Ìrànlọ́wọ́ Ledger',
+    'past_conversations_title' => 'Àwọn Ìbánisọ̀rọ̀ Àtijọ́',
+    'conversation_from' => 'Ìbánisọ̀rọ̀ láti :date',
+    'no_past_conversations' => 'Kò tíì sí ìbánisọ̀rọ̀ àtijọ́ kankan. Ohunkóhun tí o bá parí (tàbí bẹ̀rẹ̀ padà láti inú rẹ̀) yóò fara hàn níbí.',
+    'start_new' => 'Bẹ̀rẹ̀ Ìbánisọ̀rọ̀ Tuntun',
+    'start_new_confirm' => 'Ṣé o fẹ́ bẹ̀rẹ̀ ìbánisọ̀rọ̀ tuntun? A óò fi ìbánisọ̀rọ̀ rẹ tí ó wà lọ́wọ́lọ́wọ́ pamọ́ sínú àwọn ìbánisọ̀rọ̀ àtijọ́ rẹ.',
+    'start_new_button' => 'Bẹ̀rẹ̀ Ìbánisọ̀rọ̀ Tuntun',
+    'viewing_past' => 'Ìwọ ń wo ìbánisọ̀rọ̀ àtijọ́ kan (kíkà nìkan).',
+    'assistant_intro' => "Olùrànlọ́wọ́ wa ni yóò kọ́kọ́ dáhùn. Ọmọ ẹgbẹ́ gidi kan yóò dá sí i ní kété tí wọ́n bá nílò rẹ̀.",
+    'back_to_conversations' => 'Padà sí àwọn ìbánisọ̀rọ̀ rẹ',
+    'view_past_conversations' => 'Wo àwọn ìbánisọ̀rọ̀ àtijọ́',
+    'greeting' => "Bawo :name 👋 Mo wà níbí láti ràn ọ́ lọ́wọ́. Kí ni mo lè ràn ọ́ lọ́wọ́ pẹ̀lú lónìí?",
+    'quick_card_issue' => 'Ìṣòro Káàdì',
+    'quick_payment_problem' => 'Ìṣòro Ìsanwó',
+    'quick_account_access' => 'Wíwọlé sí Àkọọ́lẹ̀',
+    'quick_something_else' => 'Òmíràn',
+    'attach_file' => 'Fi Fọ́tò tàbí PDF Kún',
+    'type_message' => 'Kọ ìránṣẹ́…',
+    'not_sent_retry' => ' · a kò fi ránṣẹ́, tún gbìyànjú',
+    'closed_admin' => 'Ẹgbẹ́ wa ti parí ìbánisọ̀rọ̀ yìí.',
+    'closed_customer' => 'O ti parí ìbánisọ̀rọ̀ yìí.',
+    'closed_timeout' => 'Ìbánisọ̀rọ̀ yìí ti parí fúnra rẹ̀ nítorí pé kò sí èsì láàrin àkókò.',
+    'closed_default' => 'Ìbánisọ̀rọ̀ yìí ti parí.',
+];

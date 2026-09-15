@@ -53,4 +53,24 @@ return [
     'bank_search_error' => 'Impossibile caricare le banche in questo momento. Riprova.',
     'credit_union' => 'Cooperativa di credito',
     'bank_fallback' => 'Banca',
+
+    // International bank transfer form (added in a follow-up audit pass —
+    // these were left hardcoded when the rest of send.blade.php was
+    // translated).
+    'tab_international' => 'Internazionale',
+    'amount_input_aria' => 'Importo da inviare',
+    'intl_bank_name_label' => 'Nome della banca',
+    'intl_bank_name_placeholder' => 'Banca del destinatario',
+    'intl_country_label' => 'Paese',
+    'intl_country_placeholder' => 'es. Regno Unito',
+    'intl_account_label' => 'Numero di conto / IBAN',
+    'intl_account_placeholder' => 'Numero di conto o IBAN',
+    'intl_swift_label' => 'Codice SWIFT / BIC',
+    'intl_swift_placeholder' => 'es. BARCGB22',
+    'intl_currency_label' => 'Valuta',
+    'intl_currency_placeholder' => 'es. GBP',
+    'intl_converted_prefix' => 'Il destinatario riceve circa',
+    'intl_transfer_note' => 'I trasferimenti internazionali possono richiedere più tempo per arrivare rispetto a un trasferimento nazionale o Ledger.',
+    'intl_bank_search_placeholder' => 'Cerca banche internazionali',
+    'intl_bank_search_hint' => 'Inizia a digitare per cercare nell\'elenco delle banche.',
 ];

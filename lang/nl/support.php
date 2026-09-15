@@ -21,4 +21,8 @@ return [
     'closed_customer' => 'U heeft dit gesprek beëindigd.',
     'closed_timeout' => 'Dit gesprek is automatisch gesloten omdat er niet op tijd is gereageerd.',
     'closed_default' => 'Dit gesprek is beëindigd.',
+    'header_title' => 'Ledger-ondersteuning',
+    'past_conversations_title' => 'Eerdere gesprekken',
+    'conversation_from' => 'Gesprek van :date',
+    'no_past_conversations' => 'Nog geen eerdere gesprekken. Alles wat u beëindigt (of opnieuw start) verschijnt hier.',
 ];

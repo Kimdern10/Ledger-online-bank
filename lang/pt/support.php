@@ -2,6 +2,10 @@
 
 return [
     'title' => 'Suporte',
+    'header_title' => 'Suporte Ledger',
+    'past_conversations_title' => 'Conversas anteriores',
+    'conversation_from' => 'Conversa de :date',
+    'no_past_conversations' => 'Ainda não há conversas anteriores. Tudo o que você encerrar (ou recomeçar) aparecerá aqui.',
     'start_new' => 'Iniciar uma nova conversa',
     'start_new_confirm' => 'Iniciar uma nova conversa? Sua conversa atual será salva nas suas conversas anteriores.',
     'start_new_button' => 'Iniciar nova conversa',

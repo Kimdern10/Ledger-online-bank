@@ -27,7 +27,7 @@
     </div>
 
     @if($banks->isEmpty())
-      <p style="margin:0; padding:24px 18px; text-align:center; font-size:13px; color:var(--text-3);">No banks are listed yet.</p>
+      <p style="margin:0; padding:24px 18px; text-align:center; font-size:13px; color:var(--text-3);">{{ __('setting.no_banks_listed') }}</p>
     @else
       @foreach($banks as $bank)
         <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 18px; border-top:1px solid var(--mist);">

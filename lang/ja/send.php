@@ -53,4 +53,24 @@ return [
     'bank_search_error' => '現在銀行を読み込めません。もう一度お試しください。',
     'credit_union' => '信用組合',
     'bank_fallback' => '銀行',
+
+    // International bank transfer form (added in a follow-up audit pass —
+    // these were left hardcoded when the rest of send.blade.php was
+    // translated).
+    'tab_international' => '海外送金',
+    'amount_input_aria' => '送金額',
+    'intl_bank_name_label' => '銀行名',
+    'intl_bank_name_placeholder' => '受取人の銀行',
+    'intl_country_label' => '国',
+    'intl_country_placeholder' => '例：イギリス',
+    'intl_account_label' => '口座番号 / IBAN',
+    'intl_account_placeholder' => '口座番号またはIBAN',
+    'intl_swift_label' => 'SWIFT / BICコード',
+    'intl_swift_placeholder' => '例：BARCGB22',
+    'intl_currency_label' => '通貨',
+    'intl_currency_placeholder' => '例：GBP',
+    'intl_converted_prefix' => '受取人の受取額は約',
+    'intl_transfer_note' => '海外送金は、国内送金やLedger送金に比べて着金までに時間がかかる場合があります。',
+    'intl_bank_search_placeholder' => '海外の銀行を検索',
+    'intl_bank_search_hint' => '入力を開始すると銀行一覧を検索できます。',
 ];

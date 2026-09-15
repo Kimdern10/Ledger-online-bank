@@ -21,4 +21,8 @@ return [
     'closed_customer' => 'आपने यह बातचीत समाप्त कर दी है।',
     'closed_timeout' => 'समय पर जवाब न मिलने के कारण यह बातचीत अपने आप बंद हो गई।',
     'closed_default' => 'यह बातचीत समाप्त हो गई है।',
+    'header_title' => 'Ledger सहायता',
+    'past_conversations_title' => 'पिछली बातचीत',
+    'conversation_from' => ':date की बातचीत',
+    'no_past_conversations' => 'अभी तक कोई पिछली बातचीत नहीं है। आप जो भी बातचीत समाप्त करेंगे (या फिर से शुरू करेंगे) वह यहां दिखाई देगी।',
 ];

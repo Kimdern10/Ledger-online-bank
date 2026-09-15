@@ -6,6 +6,7 @@ return [
     'profile_setting' => 'Profilo',
     'notifications_setting' => 'Notifiche',
     'language' => 'Lingua',
+    'no_banks_listed' => 'Nessuna banca elencata al momento.',
     'monthly_budget' => 'Budget mensile',
     'link_account' => 'Collega account',
     'transaction_pin' => 'PIN di transazione',

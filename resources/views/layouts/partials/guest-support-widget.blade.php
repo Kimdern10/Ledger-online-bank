@@ -13,7 +13,7 @@
   "End chat" confirmation.
 --}}
 <div class="gs-widget">
-  <button type="button" class="gs-launcher" id="gsLauncher" aria-label="{{ __('guestsupport.chat_with_support') }}">
+  <button type="button" class="gs-launcher" id="gsLauncher" aria-label="Chat with support">
     <svg class="gs-icon-chat" viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
     <svg class="gs-icon-close" viewBox="0 0 24 24" fill="none"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
     <span class="gs-badge" id="gsBadge" hidden></span>
@@ -22,12 +22,12 @@
   <div class="gs-panel" id="gsPanel" hidden>
     <div class="gs-panel-header">
       <div>
-        <p class="gs-panel-title">{{ __('guestsupport.panel_title') }}</p>
-        <p class="gs-panel-sub">{{ __('guestsupport.panel_sub') }}</p>
+        <p class="gs-panel-title">Ledger Support</p>
+        <p class="gs-panel-sub">We usually reply within a few minutes</p>
       </div>
       <div class="gs-header-actions">
-        <button type="button" class="gs-end-chat-btn" id="gsEndChatBtn" hidden>{{ __('guestsupport.end_chat') }}</button>
-        <button type="button" class="gs-panel-close" id="gsPanelClose" aria-label="{{ __('guestsupport.close_chat') }}">
+        <button type="button" class="gs-end-chat-btn" id="gsEndChatBtn" hidden>End chat</button>
+        <button type="button" class="gs-panel-close" id="gsPanelClose" aria-label="Close chat">
           <svg viewBox="0 0 24 24" fill="none"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
       </div>
@@ -226,23 +226,6 @@
     end: '{{ route('support.guest.end') }}'
   };
 
-  // Resolved server-side with __() and handed over as JSON, same pattern
-  // used by verify-code.blade.php's I18N and forgot-password-code.blade.php.
-  var I18N = {
-    yourName: @json(__('guestsupport.field_your_name')),
-    emailAddress: @json(__('guestsupport.field_email')),
-    howCanWeHelp: @json(__('guestsupport.field_how_can_we_help')),
-    startChat: @json(__('guestsupport.start_chat')),
-    somethingWentWrong: @json(__('guestsupport.error_generic')),
-    attachAPhoto: @json(__('guestsupport.attach_a_photo')),
-    typeAMessage: @json(__('guestsupport.type_a_message')),
-    send: @json(__('guestsupport.send')),
-    conversationEndedHtml: @json(__('guestsupport.conversation_ended')),
-    startNewConversation: @json(__('guestsupport.start_new_conversation')),
-    endChatConfirm: @json(__('guestsupport.end_chat_confirm')),
-    endChatButton: @json(__('guestsupport.end_chat')),
-  };
-
   var launcher = document.getElementById('gsLauncher');
   var panel = document.getElementById('gsPanel');
   var closeBtn = document.getElementById('gsPanelClose');
@@ -363,7 +346,7 @@
 
   endChatBtn.addEventListener('click', function(){
     window.ledgerConfirm(
-      I18N.endChatConfirm,
+      "End this conversation? You'll need to start a new one to reach us again.",
       function(){
         fetch(routes.end, {
           method:'POST',
@@ -376,7 +359,7 @@
           showEndedBanner();
         }).catch(function(){});
       },
-      { confirmButtonText: I18N.endChatButton, danger: true }
+      { confirmButtonText: 'End chat', danger: true }
     );
   });
 
@@ -401,13 +384,13 @@
     body.innerHTML =
       '<form class="gs-form" id="gsStartForm">' +
         (errorText ? '<div class="gs-form-error">' + escapeHtml(errorText) + '</div>' : '') +
-        '<div class="gs-field"><label for="gsName">' + escapeHtml(I18N.yourName) + '</label>' +
+        '<div class="gs-field"><label for="gsName">Your name</label>' +
           '<input type="text" id="gsName" name="guest_name" maxlength="100" required></div>' +
-        '<div class="gs-field"><label for="gsEmail">' + escapeHtml(I18N.emailAddress) + '</label>' +
+        '<div class="gs-field"><label for="gsEmail">Email address</label>' +
           '<input type="email" id="gsEmail" name="guest_email" maxlength="255" required></div>' +
-        '<div class="gs-field"><label for="gsMessage">' + escapeHtml(I18N.howCanWeHelp) + '</label>' +
+        '<div class="gs-field"><label for="gsMessage">How can we help?</label>' +
           '<textarea id="gsMessage" name="body" rows="3" maxlength="2000" required></textarea></div>' +
-        '<button type="submit" class="btn btn-primary btn-block" id="gsStartSubmit">' + escapeHtml(I18N.startChat) + '</button>' +
+        '<button type="submit" class="btn btn-primary btn-block" id="gsStartSubmit">Start chat</button>' +
       '</form>';
 
     document.getElementById('gsStartForm').addEventListener('submit', submitStartForm);
@@ -437,7 +420,7 @@
       .then(function(r){ return r.json().then(function(data){ return { ok:r.ok, data:data }; }); })
       .then(function(res){
         if(!res.ok){
-          var firstError = res.data.errors ? Object.values(res.data.errors)[0][0] : (res.data.message || I18N.somethingWentWrong);
+          var firstError = res.data.errors ? Object.values(res.data.errors)[0][0] : (res.data.message || 'Something went wrong. Try again.');
           renderStartForm(firstError);
           return;
         }
@@ -484,17 +467,17 @@
     if(isOpen){
       html +=
         '<div class="gs-input-row">' +
-          '<button type="button" class="gs-attach-btn" id="gsAttachBtn" title="' + escapeHtml(I18N.attachAPhoto) + '" aria-label="' + escapeHtml(I18N.attachAPhoto) + '">' +
+          '<button type="button" class="gs-attach-btn" id="gsAttachBtn" title="Attach a photo" aria-label="Attach a photo">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05 12.25 20.24a5 5 0 0 1-7.07-7.07l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95L10.83 17.44a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>' +
           '</button>' +
           '<input type="file" id="gsAttachInput" accept="image/png,image/jpeg,image/gif,image/webp,application/pdf" hidden>' +
-          '<textarea id="gsInput" rows="1" placeholder="' + escapeHtml(I18N.typeAMessage) + '" maxlength="2000"></textarea>' +
-          '<button type="button" class="gs-send-btn" id="gsSendBtn" aria-label="' + escapeHtml(I18N.send) + '">' +
+          '<textarea id="gsInput" rows="1" placeholder="Type a message&hellip;" maxlength="2000"></textarea>' +
+          '<button type="button" class="gs-send-btn" id="gsSendBtn" aria-label="Send">' +
             '<svg viewBox="0 0 24 24" fill="none"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
           '</button>' +
         '</div>';
     } else {
-      html += '<div class="gs-ended-banner">' + escapeHtml(I18N.conversationEndedHtml) + '<br><a href="#" id="gsStartNew" style="color:var(--sage); font-weight:600;">' + escapeHtml(I18N.startNewConversation) + '</a></div>';
+      html += '<div class="gs-ended-banner">This conversation has ended.<br><a href="#" id="gsStartNew" style="color:var(--sage); font-weight:600;">Start a new conversation</a></div>';
     }
 
     body.innerHTML = html;
@@ -538,7 +521,7 @@
     setTyping(false);
     var banner = document.createElement('div');
     banner.className = 'gs-ended-banner';
-    banner.innerHTML = escapeHtml(I18N.conversationEndedHtml) + '<br><a href="#" id="gsStartNew" style="color:var(--sage); font-weight:600;">' + escapeHtml(I18N.startNewConversation) + '</a>';
+    banner.innerHTML = 'This conversation has ended.<br><a href="#" id="gsStartNew" style="color:var(--sage); font-weight:600;">Start a new conversation</a>';
     var inputRow = body.querySelector('.gs-input-row');
     if(inputRow) inputRow.remove();
     body.appendChild(banner);

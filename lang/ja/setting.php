@@ -19,4 +19,5 @@ return [
     'danger_zone' => '危険な操作',
     'delete_account' => 'アカウントを削除',
     'logout' => 'ログアウト',
+    'no_banks_listed' => '銀行はまだ登録されていません。',
 ];

@@ -53,4 +53,24 @@ return [
     'bank_search_error' => 'Banken kunnen momenteel niet worden geladen. Probeer het opnieuw.',
     'credit_union' => 'Kredietvereniging',
     'bank_fallback' => 'Bank',
+
+    // International bank transfer form (added in a follow-up audit pass —
+    // these were left hardcoded when the rest of send.blade.php was
+    // translated).
+    'tab_international' => 'Internationaal',
+    'amount_input_aria' => 'Te versturen bedrag',
+    'intl_bank_name_label' => 'Banknaam',
+    'intl_bank_name_placeholder' => 'Bank van de ontvanger',
+    'intl_country_label' => 'Land',
+    'intl_country_placeholder' => 'bijv. Verenigd Koninkrijk',
+    'intl_account_label' => 'Rekeningnummer / IBAN',
+    'intl_account_placeholder' => 'Rekeningnummer of IBAN',
+    'intl_swift_label' => 'SWIFT-/BIC-code',
+    'intl_swift_placeholder' => 'bijv. BARCGB22',
+    'intl_currency_label' => 'Valuta',
+    'intl_currency_placeholder' => 'bijv. GBP',
+    'intl_converted_prefix' => 'Ontvanger krijgt ongeveer',
+    'intl_transfer_note' => 'Internationale overboekingen kunnen langer duren dan een binnenlandse overboeking of een Ledger-overboeking.',
+    'intl_bank_search_placeholder' => 'Internationale banken zoeken',
+    'intl_bank_search_hint' => 'Begin met typen om de bankenlijst te doorzoeken.',
 ];

@@ -6,6 +6,7 @@ return [
     'profile_setting' => 'Profil',
     'notifications_setting' => 'Notifications',
     'language' => 'Langue',
+    'no_banks_listed' => "Aucune banque n'est répertoriée pour le moment.",
     'monthly_budget' => 'Budget mensuel',
     'link_account' => 'Lier un compte',
     'transaction_pin' => 'Code PIN de transaction',

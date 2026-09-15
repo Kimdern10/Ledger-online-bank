@@ -21,4 +21,9 @@ return [
     'closed_customer' => 'Bu görüşmeyi sonlandırdınız.',
     'closed_timeout' => 'Zamanında yanıt alınamadığı için bu görüşme otomatik olarak kapatıldı.',
     'closed_default' => 'Bu görüşme sona erdi.',
+
+    'header_title' => 'Ledger Destek',
+    'past_conversations_title' => 'Geçmiş görüşmeler',
+    'conversation_from' => ':date tarihli görüşme',
+    'no_past_conversations' => 'Henüz geçmiş görüşme yok. Sonlandırdığınız (veya yeniden başladığınız) her şey burada görünecek.',
 ];

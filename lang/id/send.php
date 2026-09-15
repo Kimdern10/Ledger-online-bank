@@ -53,4 +53,24 @@ return [
     'bank_search_error' => 'Tidak dapat memuat daftar bank saat ini. Coba lagi.',
     'credit_union' => 'Koperasi Kredit',
     'bank_fallback' => 'Bank',
+
+    // International bank transfer form (added in a follow-up audit pass —
+    // these were left hardcoded when the rest of send.blade.php was
+    // translated).
+    'tab_international' => 'Internasional',
+    'amount_input_aria' => 'Jumlah yang akan dikirim',
+    'intl_bank_name_label' => 'Nama bank',
+    'intl_bank_name_placeholder' => 'Bank penerima',
+    'intl_country_label' => 'Negara',
+    'intl_country_placeholder' => 'mis. Britania Raya',
+    'intl_account_label' => 'Nomor rekening / IBAN',
+    'intl_account_placeholder' => 'Nomor rekening atau IBAN',
+    'intl_swift_label' => 'Kode SWIFT / BIC',
+    'intl_swift_placeholder' => 'mis. BARCGB22',
+    'intl_currency_label' => 'Mata uang',
+    'intl_currency_placeholder' => 'mis. GBP',
+    'intl_converted_prefix' => 'Penerima menerima kira-kira',
+    'intl_transfer_note' => 'Transfer internasional mungkin memerlukan waktu lebih lama untuk sampai dibandingkan transfer domestik atau Ledger.',
+    'intl_bank_search_placeholder' => 'Cari bank internasional',
+    'intl_bank_search_hint' => 'Mulai mengetik untuk mencari direktori bank.',
 ];

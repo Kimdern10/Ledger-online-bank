@@ -19,4 +19,5 @@ return [
     'danger_zone' => 'Gefahrenzone',
     'delete_account' => 'Konto löschen',
     'logout' => 'Abmelden',
+    'no_banks_listed' => 'Es sind noch keine Banken aufgeführt.',
 ];

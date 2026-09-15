@@ -53,4 +53,24 @@ return [
     'bank_search_error' => 'Banken konnten gerade nicht geladen werden. Versuchen Sie es erneut.',
     'credit_union' => 'Kreditgenossenschaft',
     'bank_fallback' => 'Bank',
+
+    // Formular für internationale Banküberweisung (in einer
+    // Nachprüfung ergänzt — diese Texte waren im Code fest
+    // hinterlegt, als der Rest von send.blade.php übersetzt wurde)
+    'tab_international' => 'International',
+    'amount_input_aria' => 'Zu sendender Betrag',
+    'intl_bank_name_label' => 'Bankname',
+    'intl_bank_name_placeholder' => 'Bank des Empfängers',
+    'intl_country_label' => 'Land',
+    'intl_country_placeholder' => 'z. B. Vereinigtes Königreich',
+    'intl_account_label' => 'Kontonummer / IBAN',
+    'intl_account_placeholder' => 'Kontonummer oder IBAN',
+    'intl_swift_label' => 'SWIFT- / BIC-Code',
+    'intl_swift_placeholder' => 'z. B. BARCGB22',
+    'intl_currency_label' => 'Währung',
+    'intl_currency_placeholder' => 'z. B. GBP',
+    'intl_converted_prefix' => 'Der Empfänger erhält ungefähr',
+    'intl_transfer_note' => 'Internationale Überweisungen können länger dauern als eine Inlandsüberweisung oder eine Ledger-Überweisung.',
+    'intl_bank_search_placeholder' => 'Internationale Banken suchen',
+    'intl_bank_search_hint' => 'Beginnen Sie mit der Eingabe, um das Bankenverzeichnis zu durchsuchen.',
 ];

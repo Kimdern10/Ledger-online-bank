@@ -19,4 +19,5 @@ return [
     'danger_zone' => '위험 구역',
     'delete_account' => '계정 삭제',
     'logout' => '로그아웃',
+    'no_banks_listed' => '아직 등록된 은행이 없습니다.',
 ];

@@ -18,7 +18,7 @@
     <a href="{{ url()->previous() }}" class="icon-btn">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
     </a>
-    <h1>Withdraw</h1>
+    <h1>{{ __('withdraw.title') }}</h1>
     <a href="{{ route('dashboard') }}" class="icon-btn">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
     </a>
@@ -30,8 +30,8 @@
   {{-- No transaction PIN created yet — see RequiresTransactionPin. --}}
   @if(session('pinRequired'))
     <div class="send-alert fade-in d1">
-      You need a transaction PIN before this can go through.
-      <a href="{{ route('setting.transaction-pin') }}" style="text-decoration:underline; color:inherit;">Create one in Settings</a>.
+      {{ __('withdraw.pin_required_prefix') }}
+      <a href="{{ route('setting.transaction-pin') }}" style="text-decoration:underline; color:inherit;">{{ __('withdraw.pin_required_link') }}</a>.
     </div>
   @endif
   @if($errors->any())
@@ -44,7 +44,7 @@
     </div>
   @endif
 
-  <p class="section-label">From</p>
+  <p class="section-label">{{ __('withdraw.from') }}</p>
   <div class="from-row fade-in d2">
     <div class="bank-mark">L</div>
     <div class="bank-info">
@@ -53,7 +53,7 @@
     </div>
     <div class="bank-balance">
       <p class="amt">${{ number_format((float) $user->balance, 2) }}</p>
-      <p class="tag">Available</p>
+      <p class="tag">{{ __('withdraw.available') }}</p>
     </div>
   </div>
 
@@ -63,23 +63,23 @@
     <input type="hidden" name="linked_account_id" id="linkedAccountIdInput" value="{{ optional($bankAccounts->first())->id }}">
     <input type="hidden" name="amount" id="amountHidden" value="0">
 
-    <p class="section-label">Withdraw to</p>
+    <p class="section-label">{{ __('withdraw.withdraw_to') }}</p>
     <div class="fade-in d2">
       <div class="segmented" style="margin-bottom:14px;">
         <button class="seg-btn active" id="segToBank" onclick="setWithdrawMode('bank')" type="button">
           <svg viewBox="0 0 24 24" fill="none"><path d="M3 21h18M4 21V10l8-6 8 6v11M9 21v-6h6v6"/></svg>
-          Linked bank
+          {{ __('withdraw.linked_bank') }}
         </button>
         <button class="seg-btn" id="segToCard" onclick="setWithdrawMode('card')" type="button">
           <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
-          Debit card
+          {{ __('withdraw.debit_card') }}
         </button>
       </div>
 
       <div id="withdrawBankPanel">
         @if($bankAccounts->isEmpty())
           <p style="padding:10px 4px; opacity:0.65; font-size:13px;">
-            You haven't linked a bank account yet. <a href="{{ route('link-account') }}" style="color:inherit; text-decoration:underline;">Link one first</a>.
+            {{ __('withdraw.no_linked_bank') }} <a href="{{ route('link-account') }}" style="color:inherit; text-decoration:underline;">{{ __('withdraw.link_one_first') }}</a>.
           </p>
         @else
           <div class="linked-chips">
@@ -91,7 +91,7 @@
           </div>
           <p class="receive-note instant">
             <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-            Arrives in 1–3 business days · No fee
+            {{ __('withdraw.bank_note') }}
           </p>
         @endif
       </div>
@@ -99,7 +99,7 @@
       <div id="withdrawCardPanel" style="display:none;">
         @if($cardAccounts->isEmpty())
           <p style="padding:10px 4px; opacity:0.65; font-size:13px;">
-            You haven't linked a card yet. <a href="{{ route('link-account') }}" style="color:inherit; text-decoration:underline;">Link one first</a>.
+            {{ __('withdraw.no_linked_card') }} <a href="{{ route('link-account') }}" style="color:inherit; text-decoration:underline;">{{ __('withdraw.link_one_first') }}</a>.
           </p>
         @else
           <div class="linked-chips">
@@ -111,17 +111,17 @@
           </div>
           <p class="receive-note">
             <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-            Instant to your debit card · $1.50 fee
+            {{ __('withdraw.card_note') }}
           </p>
         @endif
       </div>
     </div>
 
-    <p class="section-label">Amount</p>
+    <p class="section-label">{{ __('withdraw.amount') }}</p>
     <div class="amount-card fade-in d3">
       <div class="amount-field">
         <span class="cur">$</span>
-        <input type="text" id="amountInput" inputmode="decimal" value="200" aria-label="Amount to withdraw">
+        <input type="text" id="amountInput" inputmode="decimal" value="200" aria-label="{{ __('withdraw.amount_aria_label') }}">
       </div>
       <div class="amount-underline"></div>
       <div class="quick-amounts">
@@ -133,22 +133,22 @@
 
       <div class="fee-breakdown" id="feeBreakdown">
         <div class="fee-row">
-          <span>Amount</span>
+          <span>{{ __('withdraw.fee_amount') }}</span>
           <span id="feeAmountDisplay">$200.00</span>
         </div>
         <div class="fee-row">
-          <span>Instant withdrawal fee</span>
+          <span>{{ __('withdraw.fee_instant_withdrawal') }}</span>
           <span id="feeFeeDisplay">$1.50</span>
         </div>
         <div class="fee-row total">
-          <span>You'll receive</span>
+          <span>{{ __('withdraw.fee_you_will_receive') }}</span>
           <span id="feeTotalDisplay">$198.50</span>
         </div>
       </div>
     </div>
 
     <div class="pay-btn-wrap fade-in d3">
-      <button type="submit" class="pay-btn" id="withdrawSubmitBtn" {{ $bankAccounts->isEmpty() && $cardAccounts->isEmpty() ? 'disabled' : '' }}>Withdraw funds</button>
+      <button type="submit" class="pay-btn" id="withdrawSubmitBtn" {{ $bankAccounts->isEmpty() && $cardAccounts->isEmpty() ? 'disabled' : '' }}>{{ __('withdraw.withdraw_btn') }}</button>
     </div>
   </form>
 
@@ -156,8 +156,8 @@
 
 <div class="processing-overlay" id="processingOverlay">
   <div class="processing-spinner"></div>
-  <p class="processing-text">Processing your withdrawal&hellip;</p>
-  <p class="processing-sub">Please don't close or refresh this page.</p>
+  <p class="processing-text">{{ __('withdraw.processing') }}</p>
+  <p class="processing-sub">{{ __('withdraw.processing_sub') }}</p>
 </div>
 
 {{-- ============ transaction PIN confirmation ============
@@ -168,16 +168,16 @@
   <div class="sheet" onclick="event.stopPropagation()" style="max-width:340px; margin:0 auto;">
     <div class="sheet-handle"></div>
     <div class="sheet-head">
-      <h4>Enter your transaction PIN</h4>
+      <h4>{{ __('withdraw.pin_modal_title') }}</h4>
       <div class="icon-btn" onclick="closePinModal()">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </div>
     </div>
     <div style="padding:4px 20px 22px;">
-      <p style="margin:0 0 14px; font-size:13px; color:var(--text-3);">Confirm this withdrawal with your 4-digit transaction PIN.</p>
+      <p style="margin:0 0 14px; font-size:13px; color:var(--text-3);">{{ __('withdraw.pin_modal_body') }}</p>
       <input type="password" class="text-input" id="pinModalInput" inputmode="numeric" maxlength="4" placeholder="••••" style="text-align:center; font-size:22px; letter-spacing:10px;" autocomplete="off">
       <p id="pinModalError" style="display:none; color:#B4121B; font-size:12.5px; margin:8px 0 0;"></p>
-      <button type="button" class="pay-btn" style="margin-top:16px; width:100%;" onclick="confirmPin()">Confirm</button>
+      <button type="button" class="pay-btn" style="margin-top:16px; width:100%;" onclick="confirmPin()">{{ __('withdraw.pin_confirm') }}</button>
     </div>
   </div>
 </div>
@@ -262,7 +262,7 @@
       e.preventDefault();
 
       if(!document.getElementById('linkedAccountIdInput').value){
-        alert('Link a bank account or card first.');
+        alert(@json(__('withdraw.link_account_first_alert')));
         return;
       }
 
@@ -291,7 +291,7 @@
     const pin = document.getElementById('pinModalInput').value.trim();
     if(!/^\d{4}$/.test(pin)){
       const err = document.getElementById('pinModalError');
-      err.textContent = 'Enter your 4-digit PIN.';
+      err.textContent = @json(__('withdraw.pin_error'));
       err.style.display = 'block';
       return;
     }

@@ -53,4 +53,24 @@ return [
     'bank_search_error' => 'Imeshindwa kupakia benki sasa. Jaribu tena.',
     'credit_union' => 'Chama cha Ushirika wa Akiba',
     'bank_fallback' => 'Benki',
+
+    // International bank transfer form (added in a follow-up audit pass —
+    // these were left hardcoded when the rest of send.blade.php was
+    // translated).
+    'tab_international' => 'Kimataifa',
+    'amount_input_aria' => 'Kiasi cha kutuma',
+    'intl_bank_name_label' => 'Jina la benki',
+    'intl_bank_name_placeholder' => 'Benki ya mpokeaji',
+    'intl_country_label' => 'Nchi',
+    'intl_country_placeholder' => 'mfano: Uingereza',
+    'intl_account_label' => 'Nambari ya akaunti / IBAN',
+    'intl_account_placeholder' => 'Nambari ya akaunti au IBAN',
+    'intl_swift_label' => 'Msimbo wa SWIFT / BIC',
+    'intl_swift_placeholder' => 'mfano: BARCGB22',
+    'intl_currency_label' => 'Sarafu',
+    'intl_currency_placeholder' => 'mfano: GBP',
+    'intl_converted_prefix' => 'Mpokeaji atapokea takriban',
+    'intl_transfer_note' => 'Uhamisho wa kimataifa unaweza kuchukua muda mrefu zaidi kufika kuliko uhamisho wa ndani ya nchi au wa Ledger.',
+    'intl_bank_search_placeholder' => 'Tafuta benki za kimataifa',
+    'intl_bank_search_hint' => 'Anza kuandika ili kutafuta orodha ya benki.',
 ];

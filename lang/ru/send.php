@@ -53,4 +53,24 @@ return [
     'bank_search_error' => 'Не удалось загрузить список банков. Попробуйте снова.',
     'credit_union' => 'Кредитный союз',
     'bank_fallback' => 'Банк',
+
+    // International bank transfer form (added in a follow-up audit pass —
+    // these were left hardcoded when the rest of send.blade.php was
+    // translated).
+    'tab_international' => 'Международный',
+    'amount_input_aria' => 'Сумма перевода',
+    'intl_bank_name_label' => 'Название банка',
+    'intl_bank_name_placeholder' => 'Банк получателя',
+    'intl_country_label' => 'Страна',
+    'intl_country_placeholder' => 'например, Великобритания',
+    'intl_account_label' => 'Номер счёта / IBAN',
+    'intl_account_placeholder' => 'Номер счёта или IBAN',
+    'intl_swift_label' => 'Код SWIFT / BIC',
+    'intl_swift_placeholder' => 'например, BARCGB22',
+    'intl_currency_label' => 'Валюта',
+    'intl_currency_placeholder' => 'например, GBP',
+    'intl_converted_prefix' => 'Получатель получит приблизительно',
+    'intl_transfer_note' => 'Международные переводы могут поступать дольше, чем внутренний перевод или перевод Ledger.',
+    'intl_bank_search_placeholder' => 'Поиск международных банков',
+    'intl_bank_search_hint' => 'Начните вводить текст для поиска в каталоге банков.',
 ];

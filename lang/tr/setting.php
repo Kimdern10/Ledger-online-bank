@@ -19,4 +19,5 @@ return [
     'danger_zone' => 'Tehlikeli Bölge',
     'delete_account' => 'Hesabı Sil',
     'logout' => 'Çıkış Yap',
+    'no_banks_listed' => 'Henüz listelenmiş banka yok.',
 ];

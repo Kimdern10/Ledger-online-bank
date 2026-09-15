@@ -19,4 +19,5 @@ return [
     'danger_zone' => 'Khu vực nguy hiểm',
     'delete_account' => 'Xóa tài khoản',
     'logout' => 'Đăng xuất',
+    'no_banks_listed' => 'Chưa có ngân hàng nào được liệt kê.',
 ];

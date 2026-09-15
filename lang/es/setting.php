@@ -19,4 +19,5 @@ return [
     'danger_zone' => 'Zona de peligro',
     'delete_account' => 'Eliminar cuenta',
     'logout' => 'Cerrar sesión',
+    'no_banks_listed' => 'Aún no hay bancos disponibles.',
 ];

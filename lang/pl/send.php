@@ -53,4 +53,24 @@ return [
     'bank_search_error' => 'Nie można obecnie wczytać listy banków. Spróbuj ponownie.',
     'credit_union' => 'Unia kredytowa',
     'bank_fallback' => 'Bank',
+
+    // International bank transfer form (added in a follow-up audit pass —
+    // these were left hardcoded when the rest of send.blade.php was
+    // translated).
+    'tab_international' => 'Międzynarodowy',
+    'amount_input_aria' => 'Kwota do wysłania',
+    'intl_bank_name_label' => 'Nazwa banku',
+    'intl_bank_name_placeholder' => 'Bank odbiorcy',
+    'intl_country_label' => 'Kraj',
+    'intl_country_placeholder' => 'np. Wielka Brytania',
+    'intl_account_label' => 'Numer konta / IBAN',
+    'intl_account_placeholder' => 'Numer konta lub IBAN',
+    'intl_swift_label' => 'Kod SWIFT / BIC',
+    'intl_swift_placeholder' => 'np. BARCGB22',
+    'intl_currency_label' => 'Waluta',
+    'intl_currency_placeholder' => 'np. GBP',
+    'intl_converted_prefix' => 'Odbiorca otrzyma w przybliżeniu',
+    'intl_transfer_note' => 'Przelewy międzynarodowe mogą dotrzeć wolniej niż przelew krajowy lub przelew Ledger.',
+    'intl_bank_search_placeholder' => 'Szukaj banków międzynarodowych',
+    'intl_bank_search_hint' => 'Zacznij pisać, aby przeszukać katalog banków.',
 ];

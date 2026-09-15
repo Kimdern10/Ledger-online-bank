@@ -17,7 +17,7 @@
     <a href="{{ url()->previous() }}" class="icon-btn">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
     </a>
-    <h1>Top Up</h1>
+    <h1>{{ __('topup.title') }}</h1>
     <a href="{{ route('dashboard') }}" class="icon-btn">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
     </a>
@@ -29,8 +29,8 @@
   {{-- No transaction PIN created yet — see RequiresTransactionPin. --}}
   @if(session('pinRequired'))
     <div class="send-alert fade-in d1">
-      You need a transaction PIN before this can go through.
-      <a href="{{ route('setting.transaction-pin') }}" style="text-decoration:underline; color:inherit;">Create one in Settings</a>.
+      {{ __('topup.pin_required_prefix') }}
+      <a href="{{ route('setting.transaction-pin') }}" style="text-decoration:underline; color:inherit;">{{ __('topup.pin_required_link') }}</a>.
     </div>
   @endif
   @if($errors->any())
@@ -43,7 +43,7 @@
     </div>
   @endif
 
-  <p class="section-label">To</p>
+  <p class="section-label">{{ __('topup.to') }}</p>
   <div class="from-row fade-in d2">
     <div class="bank-mark">L</div>
     <div class="bank-info">
@@ -52,7 +52,7 @@
     </div>
     <div class="bank-balance">
       <p class="amt">${{ number_format((float) $user->balance, 2) }}</p>
-      <p class="tag">Current balance</p>
+      <p class="tag">{{ __('topup.current_balance') }}</p>
     </div>
   </div>
 
@@ -62,23 +62,23 @@
     <input type="hidden" name="linked_account_id" id="linkedAccountIdInput" value="{{ optional($bankAccounts->first())->id }}">
     <input type="hidden" name="amount" id="amountHidden" value="0">
 
-    <p class="section-label">Top up from</p>
+    <p class="section-label">{{ __('topup.top_up_from') }}</p>
     <div class="fade-in d2">
       <div class="segmented" style="margin-bottom:14px;">
         <button class="seg-btn active" id="segFromBank" onclick="setTopUpMode('bank')" type="button">
           <svg viewBox="0 0 24 24" fill="none"><path d="M3 21h18M4 21V10l8-6 8 6v11M9 21v-6h6v6"/></svg>
-          Linked bank
+          {{ __('topup.linked_bank') }}
         </button>
         <button class="seg-btn" id="segFromCard" onclick="setTopUpMode('card')" type="button">
           <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
-          Debit / Credit card
+          {{ __('topup.debit_credit_card') }}
         </button>
       </div>
 
       <div id="topUpBankPanel">
         @if($bankAccounts->isEmpty())
           <p style="padding:10px 4px; opacity:0.65; font-size:13px;">
-            You haven't linked a bank account yet. <a href="{{ route('link-account') }}" style="color:inherit; text-decoration:underline;">Link one first</a>.
+            {{ __('topup.no_linked_bank') }} <a href="{{ route('link-account') }}" style="color:inherit; text-decoration:underline;">{{ __('topup.link_one_first') }}</a>.
           </p>
         @else
           <div class="linked-chips">
@@ -90,7 +90,7 @@
           </div>
           <p class="receive-note instant">
             <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-            Arrives in 1–3 business days · No fee
+            {{ __('topup.bank_note') }}
           </p>
         @endif
       </div>
@@ -98,7 +98,7 @@
       <div id="topUpCardPanel" style="display:none;">
         @if($cardAccounts->isEmpty())
           <p style="padding:10px 4px; opacity:0.65; font-size:13px;">
-            You haven't linked a card yet. <a href="{{ route('link-account') }}" style="color:inherit; text-decoration:underline;">Link one first</a>.
+            {{ __('topup.no_linked_card') }} <a href="{{ route('link-account') }}" style="color:inherit; text-decoration:underline;">{{ __('topup.link_one_first') }}</a>.
           </p>
         @else
           <div class="linked-chips">
@@ -110,17 +110,17 @@
           </div>
           <p class="receive-note">
             <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-            Instant · 2.9% card processing fee
+            {{ __('topup.card_note') }}
           </p>
         @endif
       </div>
     </div>
 
-    <p class="section-label">Amount</p>
+    <p class="section-label">{{ __('topup.amount') }}</p>
     <div class="amount-card fade-in d3">
       <div class="amount-field">
         <span class="cur">$</span>
-        <input type="text" id="amountInput" inputmode="decimal" value="100" aria-label="Amount to add">
+        <input type="text" id="amountInput" inputmode="decimal" value="100" aria-label="{{ __('topup.amount_aria_label') }}">
       </div>
       <div class="amount-underline"></div>
       <div class="quick-amounts">
@@ -132,22 +132,22 @@
 
       <div class="fee-breakdown" id="feeBreakdown">
         <div class="fee-row">
-          <span>Amount</span>
+          <span>{{ __('topup.fee_amount') }}</span>
           <span id="feeAmountDisplay">$100.00</span>
         </div>
         <div class="fee-row">
-          <span>Card processing fee (2.9%)</span>
+          <span>{{ __('topup.fee_card_processing') }}</span>
           <span id="feeFeeDisplay">$2.90</span>
         </div>
         <div class="fee-row total">
-          <span>Total charged</span>
+          <span>{{ __('topup.fee_total_charged') }}</span>
           <span id="feeTotalDisplay">$102.90</span>
         </div>
       </div>
     </div>
 
     <div class="pay-btn-wrap fade-in d3">
-      <button type="submit" class="pay-btn" id="topUpSubmitBtn" {{ $bankAccounts->isEmpty() && $cardAccounts->isEmpty() ? 'disabled' : '' }}>Add money</button>
+      <button type="submit" class="pay-btn" id="topUpSubmitBtn" {{ $bankAccounts->isEmpty() && $cardAccounts->isEmpty() ? 'disabled' : '' }}>{{ __('topup.add_money_btn') }}</button>
     </div>
   </form>
 
@@ -155,8 +155,8 @@
 
 <div class="processing-overlay" id="processingOverlay">
   <div class="processing-spinner"></div>
-  <p class="processing-text">Processing your top-up&hellip;</p>
-  <p class="processing-sub">Please don't close or refresh this page.</p>
+  <p class="processing-text">{{ __('topup.processing') }}</p>
+  <p class="processing-sub">{{ __('topup.processing_sub') }}</p>
 </div>
 
 {{-- ============ transaction PIN confirmation ============
@@ -165,16 +165,16 @@
   <div class="sheet" onclick="event.stopPropagation()" style="max-width:340px; margin:0 auto;">
     <div class="sheet-handle"></div>
     <div class="sheet-head">
-      <h4>Enter your transaction PIN</h4>
+      <h4>{{ __('topup.pin_modal_title') }}</h4>
       <div class="icon-btn" onclick="closePinModal()">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </div>
     </div>
     <div style="padding:4px 20px 22px;">
-      <p style="margin:0 0 14px; font-size:13px; color:var(--text-3);">Confirm this top-up with your 4-digit transaction PIN.</p>
+      <p style="margin:0 0 14px; font-size:13px; color:var(--text-3);">{{ __('topup.pin_modal_body') }}</p>
       <input type="password" class="text-input" id="pinModalInput" inputmode="numeric" maxlength="4" placeholder="••••" style="text-align:center; font-size:22px; letter-spacing:10px;" autocomplete="off">
       <p id="pinModalError" style="display:none; color:#B4121B; font-size:12.5px; margin:8px 0 0;"></p>
-      <button type="button" class="pay-btn" style="margin-top:16px; width:100%;" onclick="confirmPin()">Confirm</button>
+      <button type="button" class="pay-btn" style="margin-top:16px; width:100%;" onclick="confirmPin()">{{ __('topup.pin_confirm') }}</button>
     </div>
   </div>
 </div>
@@ -260,7 +260,7 @@
       e.preventDefault();
 
       if(!document.getElementById('linkedAccountIdInput').value){
-        alert('Link a bank account or card first.');
+        alert(@json(__('topup.link_account_first_alert')));
         return;
       }
 
@@ -289,7 +289,7 @@
     const pin = document.getElementById('pinModalInput').value.trim();
     if(!/^\d{4}$/.test(pin)){
       const err = document.getElementById('pinModalError');
-      err.textContent = 'Enter your 4-digit PIN.';
+      err.textContent = @json(__('topup.pin_error'));
       err.style.display = 'block';
       return;
     }

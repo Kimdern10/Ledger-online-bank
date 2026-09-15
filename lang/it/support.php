@@ -2,6 +2,10 @@
 
 return [
     'title' => 'Assistenza',
+    'header_title' => 'Assistenza Ledger',
+    'past_conversations_title' => 'Conversazioni passate',
+    'conversation_from' => 'Conversazione del :date',
+    'no_past_conversations' => 'Nessuna conversazione passata al momento. Tutto ciò che termini (o che ricominci) apparirà qui.',
     'start_new' => 'Avvia una nuova conversazione',
     'start_new_confirm' => 'Avviare una nuova conversazione? La chat attuale verrà salvata tra le tue conversazioni passate.',
     'start_new_button' => 'Avvia nuova conversazione',

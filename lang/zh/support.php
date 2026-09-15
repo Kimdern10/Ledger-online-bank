@@ -2,6 +2,10 @@
 
 return [
     'title' => '支持',
+    'header_title' => 'Ledger 支持',
+    'past_conversations_title' => '历史对话',
+    'conversation_from' => ':date 的对话',
+    'no_past_conversations' => '暂无历史对话。您结束的对话（或从中重新开始的对话）将显示在这里。',
     'start_new' => '开始新对话',
     'start_new_confirm' => '要开始新对话吗？您当前的聊天记录将保存到您的历史对话中。',
     'start_new_button' => '开始新对话',

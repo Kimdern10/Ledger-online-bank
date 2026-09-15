@@ -21,4 +21,8 @@ return [
     'closed_customer' => '이 대화를 종료하셨습니다.',
     'closed_timeout' => '제시간에 응답이 없어 이 대화가 자동으로 종료되었습니다.',
     'closed_default' => '이 대화가 종료되었습니다.',
+    'header_title' => 'Ledger 지원',
+    'past_conversations_title' => '지난 대화',
+    'conversation_from' => ':date 대화',
+    'no_past_conversations' => '아직 지난 대화가 없습니다. 종료했거나 새로 시작한 대화가 여기에 표시됩니다.',
 ];

@@ -21,4 +21,8 @@ return [
     'closed_customer' => 'Sie haben diese Unterhaltung beendet.',
     'closed_timeout' => 'Diese Unterhaltung wurde automatisch geschlossen, da keine Antwort rechtzeitig erfolgte.',
     'closed_default' => 'Diese Unterhaltung ist beendet.',
+    'header_title' => 'Ledger-Support',
+    'past_conversations_title' => 'Vergangene Unterhaltungen',
+    'conversation_from' => 'Unterhaltung vom :date',
+    'no_past_conversations' => 'Noch keine vergangenen Unterhaltungen. Alles, was Sie beenden (oder neu starten), erscheint hier.',
 ];

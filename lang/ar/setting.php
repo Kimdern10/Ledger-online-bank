@@ -19,4 +19,5 @@ return [
     'danger_zone' => 'منطقة الخطر',
     'delete_account' => 'حذف الحساب',
     'logout' => 'تسجيل الخروج',
+    'no_banks_listed' => 'لا توجد بنوك مدرجة بعد.',
 ];

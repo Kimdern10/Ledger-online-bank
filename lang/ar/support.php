@@ -21,4 +21,8 @@ return [
     'closed_customer' => 'أنهيت هذه المحادثة.',
     'closed_timeout' => 'أُغلقت هذه المحادثة تلقائياً بسبب عدم الرد في الوقت المحدد.',
     'closed_default' => 'انتهت هذه المحادثة.',
+    'header_title' => 'دعم Ledger',
+    'past_conversations_title' => 'المحادثات السابقة',
+    'conversation_from' => 'محادثة بتاريخ :date',
+    'no_past_conversations' => 'لا توجد محادثات سابقة بعد. أي محادثة تنهيها (أو تبدأ من جديد) ستظهر هنا.',
 ];

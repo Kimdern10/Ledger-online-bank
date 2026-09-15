@@ -53,4 +53,24 @@ return [
     'bank_search_error' => "Couldn't load banks right now. Try again.",
     'credit_union' => 'Credit union',
     'bank_fallback' => 'Bank',
+
+    // International bank transfer form (added in a follow-up audit pass —
+    // these were left hardcoded when the rest of send.blade.php was
+    // translated).
+    'tab_international' => 'International',
+    'amount_input_aria' => 'Amount to send',
+    'intl_bank_name_label' => 'Bank name',
+    'intl_bank_name_placeholder' => "Recipient's bank",
+    'intl_country_label' => 'Country',
+    'intl_country_placeholder' => 'e.g. United Kingdom',
+    'intl_account_label' => 'Account number / IBAN',
+    'intl_account_placeholder' => 'Account number or IBAN',
+    'intl_swift_label' => 'SWIFT / BIC code',
+    'intl_swift_placeholder' => 'e.g. BARCGB22',
+    'intl_currency_label' => 'Currency',
+    'intl_currency_placeholder' => 'e.g. GBP',
+    'intl_converted_prefix' => 'Recipient receives approximately',
+    'intl_transfer_note' => 'International transfers may take longer to arrive than a domestic or Ledger transfer.',
+    'intl_bank_search_placeholder' => 'Search international banks',
+    'intl_bank_search_hint' => 'Start typing to search the bank directory.',
 ];

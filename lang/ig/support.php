@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'title' => 'Nkwado',
+    'header_title' => 'Nkwado Ledger',
+    'past_conversations_title' => 'Mkparịta ụka gara aga',
+    'conversation_from' => 'Mkparịta ụka site na :date',
+    'no_past_conversations' => 'Enwebeghị mkparịta ụka gara aga. Ihe ọ bụla ị kwụsịrị (ma ọ bụ malitegharịa) ga-apụta ebe a.',
+    'start_new' => 'Malite mkparịta ụka ọhụrụ',
+    'start_new_confirm' => 'Malite mkparịta ụka ọhụrụ? A ga-echekwa mkparịta ụka gị ugbu a n\'ime mkparịta ụka gara aga gị.',
+    'start_new_button' => 'Malite mkparịta ụka ọhụrụ',
+    'viewing_past' => 'Ị na-ele mkparịta ụka gara aga (ịgụ naanị).',
+    'assistant_intro' => 'Onye enyemaka anyị na-aza ozi mbụ. Otu onye n\'otu anyị ga-abanye ozugbo achọrọ ha.',
+    'back_to_conversations' => 'Laghachi na mkparịta ụka gị',
+    'view_past_conversations' => 'Lelee mkparịta ụka gara aga',
+    'greeting' => 'Ndewo :name 👋 Adị m ebe a inyere gị aka. Kedu ihe m ga-enyere gị aka ya taa?',
+    'quick_card_issue' => 'Nsogbu kaadị',
+    'quick_payment_problem' => 'Nsogbu ịkwụ ụgwọ',
+    'quick_account_access' => 'Ohere ịbanye n\'akaụntụ',
+    'quick_something_else' => 'Ihe ọzọ',
+    'attach_file' => 'Tinye foto ma ọ bụ PDF',
+    'type_message' => 'Pịnye ozi…',
+    'not_sent_retry' => ' · ezigaghị, nwaa ọzọ',
+    'closed_admin' => 'Otu anyị akwụsịla mkparịta ụka a.',
+    'closed_customer' => 'Ị kwụsịla mkparịta ụka a.',
+    'closed_timeout' => 'Mkparịta ụka a mechiri onwe ya n\'ihi na enwebeghị nzaghachi n\'oge.',
+    'closed_default' => 'Mkparịta ụka a agwụla.',
+];

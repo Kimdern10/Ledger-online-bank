@@ -6,6 +6,7 @@ return [
     'profile_setting' => 'Profil',
     'notifications_setting' => 'Notifikasi',
     'language' => 'Bahasa',
+    'no_banks_listed' => 'Belum ada bank yang tercantum.',
     'monthly_budget' => 'Anggaran Bulanan',
     'link_account' => 'Tautkan Akun',
     'transaction_pin' => 'PIN Transaksi',

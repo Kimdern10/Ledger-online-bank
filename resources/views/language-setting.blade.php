@@ -7,7 +7,7 @@
     <a href="{{ route('setting') }}" class="icon-btn">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
     </a>
-    <h1>Language</h1>
+    <h1>{{ __('setting.language') }}</h1>
     <a href="{{ route('dashboard') }}" class="icon-btn">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
     </a>
@@ -28,7 +28,7 @@
       @csrf
 
       <div class="field-group" style="margin:0;">
-        <p class="label">Language</p>
+        <p class="label">{{ __('setting.language') }}</p>
         <div class="select-wrap">
           <select name="language" class="text-input" onchange="this.form.submit()" required>
             @foreach($languages as $code => $label)

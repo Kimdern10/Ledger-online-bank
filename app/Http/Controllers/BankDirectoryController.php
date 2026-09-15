@@ -3,19 +3,38 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bank;
+use App\Services\BankProviders\BankProviderInterface;
+use App\Services\BankProviders\OpenPaymentsBankProvider;
+use App\Services\BankProviders\PlaidBankProvider;
+use App\Services\BankProviders\SaltEdgeBankProvider;
+use App\Services\BankProviders\TokenIoBankProvider;
+use App\Services\BankProviders\TrueLayerBankProvider;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * Backs the "Select a bank" pickers on the Send Money page — the "Another
  * bank" tab's domestic picker and the "International bank" tab's picker.
- * Both search the same admin-managed Bank directory (see App\Models\Bank),
- * filtered by type — there's no live third-party "list every bank" API
- * behind this any more. That's a deliberate choice, not a missing feature:
- * no free/feasible API actually covers "every domestic AND international
- * bank", so admins curate this list by hand instead (see
- * AdminBankController) and it's what customers see here, on the read-only
- * Settings > Banks page (see BankListController), and nowhere else.
+ *
+ * Each picker merges TWO kinds of source, always in this order:
+ *
+ *  1. The admin-managed Bank directory (see App\Models\Bank /
+ *     AdminBankController) — hand-curated entries, always included, always
+ *     listed first. This is what keeps working even if every live API
+ *     below is unconfigured, misconfigured, or down.
+ *  2. One or more live third-party bank-directory APIs (see
+ *     App\Services\BankProviders) — domestic search uses Plaid; the
+ *     international search merges TrueLayer + Token.io + Open Payments
+ *     (Europe) with Salt Edge (Asia-Pacific by default), since no single
+ *     one of those covers every country. Any provider without credentials
+ *     configured (see config/services.php) is silently skipped — it
+ *     contributes zero results, never an error.
+ *
+ * Results are de-duplicated by a normalized bank name (so a bank an admin
+ * already added by hand doesn't also show up a second time from a live
+ * API) and briefly cached per (type, query) to avoid re-hitting live APIs
+ * on every debounced keystroke from the picker's search box.
  */
 class BankDirectoryController extends Controller
 {
@@ -30,7 +49,19 @@ class BankDirectoryController extends Controller
      */
     public function search(Request $request): JsonResponse
     {
-        return response()->json(['banks' => $this->searchDirectory($request, 'external')]);
+        $query = trim((string) $request->query('q', ''));
+
+        $results = Cache::remember(
+            'banks:external:'.mb_strtolower($query),
+            now()->addMinutes(5),
+            fn () => $this->merge(
+                $this->localResults($query, 'external'),
+                $query,
+                [app(PlaidBankProvider::class)]
+            )
+        );
+
+        return response()->json(['banks' => $results]);
     }
 
     /**
@@ -38,13 +69,28 @@ class BankDirectoryController extends Controller
      */
     public function searchInternational(Request $request): JsonResponse
     {
-        return response()->json(['banks' => $this->searchDirectory($request, 'international')]);
-    }
-
-    private function searchDirectory(Request $request, string $type): array
-    {
         $query = trim((string) $request->query('q', ''));
 
+        $results = Cache::remember(
+            'banks:international:'.mb_strtolower($query),
+            now()->addMinutes(5),
+            fn () => $this->merge(
+                $this->localResults($query, 'international'),
+                $query,
+                [
+                    app(TrueLayerBankProvider::class),
+                    app(TokenIoBankProvider::class),
+                    app(OpenPaymentsBankProvider::class),
+                    app(SaltEdgeBankProvider::class),
+                ]
+            )
+        );
+
+        return response()->json(['banks' => $results]);
+    }
+
+    private function localResults(string $query, string $type): array
+    {
         $banks = Bank::query()->active()->ofType($type);
 
         if ($query !== '') {
@@ -52,7 +98,6 @@ class BankDirectoryController extends Controller
         }
 
         return $banks->orderBy('name')
-            ->limit(self::MAX_RESULTS)
             ->get()
             ->map(fn (Bank $bank) => [
                 'id' => $bank->id,
@@ -70,5 +115,45 @@ class BankDirectoryController extends Controller
                     : ($bank->routing_number ? 'Routing '.$bank->routing_number : ''),
             ])
             ->all();
+    }
+
+    /**
+     * @param  array  $local  Already-formatted local Bank rows (see localResults()).
+     * @param  BankProviderInterface[]  $providers
+     */
+    private function merge(array $local, string $query, array $providers): array
+    {
+        $combined = $local;
+
+        foreach ($providers as $provider) {
+            if (! $provider->isConfigured()) {
+                continue;
+            }
+
+            foreach ($provider->search($query) as $result) {
+                $combined[] = $result;
+            }
+        }
+
+        $seen = [];
+        $deduped = [];
+
+        foreach ($combined as $bank) {
+            $key = mb_strtolower(trim($bank['name'] ?? ''));
+
+            if ($key === '' || isset($seen[$key])) {
+                continue;
+            }
+
+            $seen[$key] = true;
+            unset($bank['source']); // internal only — never sent to the browser
+            $deduped[] = $bank;
+
+            if (count($deduped) >= self::MAX_RESULTS) {
+                break;
+            }
+        }
+
+        return $deduped;
     }
 }

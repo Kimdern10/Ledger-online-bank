@@ -6,6 +6,7 @@ return [
     'profile_setting' => 'Profile Setting',
     'notifications_setting' => 'Notifications Setting',
     'language' => 'Language',
+    'no_banks_listed' => 'No banks are listed yet.',
     'monthly_budget' => 'Monthly Budget',
     'link_account' => 'Link Account',
     'transaction_pin' => 'Transaction PIN',
