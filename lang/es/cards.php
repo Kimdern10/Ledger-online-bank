@@ -91,8 +91,10 @@ return [
     'confirm_replace_card_button' => 'Reemplazar tarjeta',
 
     'toast_request_already_pending' => 'Ya tienes una solicitud de tarjeta esperando aprobación.',
-    'prompt_request_card_type' => '¿Solicitar una tarjeta "física" o "virtual"?',
-    'toast_type_physical_or_virtual' => 'Escribe "física" o "virtual"',
+    'prompt_request_card_type' => '¿Qué tipo de tarjeta te gustaría solicitar?',
+    'toast_type_physical_or_virtual' => 'Elige un tipo de tarjeta',
+    'option_physical_card' => 'Tarjeta física',
+    'option_virtual_card' => 'Tarjeta virtual',
     'confirm_request_card_prefix' => '¿Solicitar una tarjeta',
     'confirm_request_card_suffix' => '? Un administrador deberá aprobarla antes de que aparezca aquí.',
     'confirm_request_card_button' => 'Solicitar tarjeta',

@@ -91,8 +91,10 @@ return [
     'confirm_replace_card_button' => 'Rọ́pò Káàdì',
 
     'toast_request_already_pending' => 'O ti ní ìbéèrè káàdì kan tí ń dúró de ìfọwọ́sí.',
-    'prompt_request_card_type' => 'Ṣé o fẹ́ béèrè fún káàdì "physical" tàbí "virtual"?',
-    'toast_type_physical_or_virtual' => 'Tẹ "physical" tàbí "virtual"',
+    'prompt_request_card_type' => 'Iru káàdì wo ni o fẹ́ béèrè fún?',
+    'toast_type_physical_or_virtual' => 'Jọ̀wọ́ yan iru káàdì',
+    'option_physical_card' => 'Káàdì gidi',
+    'option_virtual_card' => 'Káàdì onítàn',
     'confirm_request_card_prefix' => 'Béèrè fún',
     'confirm_request_card_suffix' => 'káàdì? Alábojútó gbọ́dọ̀ fọwọ́sí i kí ó tó fara hàn níbí.',
     'confirm_request_card_button' => 'Béèrè Káàdì',

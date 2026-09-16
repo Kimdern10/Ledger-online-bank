@@ -6,7 +6,7 @@
   <div class="admin-header">
     <p class="eyebrow">User management</p>
     <h1>Users</h1>
-    <p><?= e($users->total()) ?> registered accounts.</p>
+    <p>{{ $users->total() }} registered accounts.</p>
   </div>
 
   <div class="admin-card">
@@ -24,9 +24,9 @@
   </div>
 
   <div class="admin-card" style="padding:0; overflow-x:auto;">
-    <?php if ($users->isEmpty()): ?>
+    @if($users->isEmpty())
       <p class="admin-empty">No users yet.</p>
-    <?php else: ?>
+    @else
       <table class="admin-table" id="usersTable">
         <thead>
           <tr>
@@ -38,31 +38,31 @@
           </tr>
         </thead>
         <tbody>
-          <?php foreach ($users as $u): ?>
-            <tr class="user-row" data-status="<?= e($u->account_status) ?>" data-search="<?= e(strtolower($u->name.' '.$u->email)) ?>" onclick="window.location='<?= e(route('admin.users.show', $u)) ?>'" style="cursor:pointer;">
+          @foreach($users as $u)
+            <tr class="user-row" data-status="{{ $u->account_status }}" data-search="{{ strtolower($u->name.' '.$u->email) }}" onclick="window.location='{{ route('admin.users.show', $u) }}'" style="cursor:pointer;">
               <td>
                 <div style="display:flex; align-items:center; gap:11px;">
-                  <div class="admin-avatar"><?= e($u->initials()) ?></div>
+                  <div class="admin-avatar">{{ $u->initials() }}</div>
                   <div>
-                    <p style="margin:0; font-weight:600;"><?= e($u->name) ?></p>
-                    <p style="margin:0; font-size:12.5px; color:var(--admin-text-2);"><?= e($u->email) ?></p>
+                    <p style="margin:0; font-weight:600;">{{ $u->name }}</p>
+                    <p style="margin:0; font-size:12.5px; color:var(--admin-text-2);">{{ $u->email }}</p>
                   </div>
                 </div>
               </td>
-              <td>$<?= e(number_format((float) $u->balance, 2)) ?></td>
-              <td><?= e($u->created_at->format('M j, Y')) ?></td>
-              <td><span class="admin-pill status-<?= e($u->account_status) ?>"><?= e($u->accountStatusLabel()) ?></span></td>
+              <td>${{ number_format((float) $u->balance, 2) }}</td>
+              <td>{{ $u->created_at->format('M j, Y') }}</td>
+              <td><span class="admin-pill status-{{ $u->account_status }}">{{ $u->accountStatusLabel() }}</span></td>
               <td style="text-align:right; color:var(--admin-text-2);">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:16px; height:16px;"><path d="M9 18l6-6-6-6"/></svg>
               </td>
             </tr>
-          <?php endforeach; ?>
+          @endforeach
         </tbody>
       </table>
       <p id="userNoResults" style="display:none;" class="admin-empty">No users match your search.</p>
       <div style="padding:0 20px 16px;">
         @include('partials.admin-pagination', ['paginator' => $users])
       </div>
-    <?php endif; ?>
+    @endif
   </div>
 @endsection

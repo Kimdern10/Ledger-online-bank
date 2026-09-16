@@ -59,7 +59,7 @@
     ];
 ?>
 
-<a href="<?= e(route('admin.users')) ?>" class="admin-back-link">
+<a href="{{ route('admin.users') }}" class="admin-back-link">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
   Back to users
 </a>
@@ -69,30 +69,30 @@
     <div class="admin-card profile-card">
       <div class="profile-banner">
         <div class="profile-avatar">
-          <?php if ($user->avatar): ?>
-            <img src="<?= e($user->avatar) ?>" alt="<?= e($user->name) ?>" style="width:100%; height:100%; border-radius:inherit; object-fit:cover;">
-          <?php else: ?>
-            <?= e($user->initials()) ?>
-          <?php endif; ?>
+          @if($user->avatar)
+            <img src="{{ $user->avatar }}" alt="{{ $user->name }}" style="width:100%; height:100%; border-radius:inherit; object-fit:cover;">
+          @else
+            {{ $user->initials() }}
+          @endif
         </div>
       </div>
       <div class="profile-body">
-        <p class="profile-name"><?= e($user->name) ?></p>
-        <p class="profile-email"><?= e($user->email) ?></p>
+        <p class="profile-name">{{ $user->name }}</p>
+        <p class="profile-email">{{ $user->email }}</p>
 
-        <?php if ($primaryAccountNumber): ?>
+        @if($primaryAccountNumber)
           <div class="profile-ac">
-            <span>A/C <?= e($primaryAccountNumber) ?></span>
-            <button type="button" onclick="copyAccountNumber(this)" data-value="<?= e($primaryAccountNumber) ?>" aria-label="Copy account number">
+            <span>A/C {{ $primaryAccountNumber }}</span>
+            <button type="button" onclick="copyAccountNumber(this)" data-value="{{ $primaryAccountNumber }}" aria-label="Copy account number">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
             </button>
           </div>
-        <?php endif; ?>
+        @endif
 
         <div class="profile-actions">
-          <a href="mailto:<?= e($user->email) ?>" class="admin-btn admin-btn-outline">Email</a>
-          <form method="POST" action="<?= e(route('admin.users.password-reset', $user)) ?>" data-confirm="Send a password reset email to this user?" data-confirm-button="Send email">
-            <?= csrf_field() ?>
+          <a href="mailto:{{ $user->email }}" class="admin-btn admin-btn-outline">Email</a>
+          <form method="POST" action="{{ route('admin.users.password-reset', $user) }}" data-confirm="Send a password reset email to this user?" data-confirm-button="Send email">
+            @csrf
             <button type="submit" class="admin-btn admin-btn-outline">Password</button>
           </form>
         </div>
@@ -106,27 +106,27 @@
         <div>
           <p class="label">Email verification</p>
         </div>
-        <form method="POST" action="<?= e(route('admin.users.email-verification', $user)) ?>">
-          <?= csrf_field() ?>
-          <button type="submit" class="admin-toggle <?= e($user->email_verified_at ? 'on' : '') ?>" aria-label="Toggle email verification"></button>
+        <form method="POST" action="{{ route('admin.users.email-verification', $user) }}">
+          @csrf
+          <button type="submit" class="admin-toggle {{ $user->email_verified_at ? 'on' : '' }}" aria-label="Toggle email verification"></button>
         </form>
       </div>
 
       <div class="verify-row">
         <div>
           <p class="label">Two-factor authentication</p>
-          <?php if (! $user->two_factor_confirmed_at): ?>
+          @if(! $user->two_factor_confirmed_at)
             <p class="sub">Off: password-only sign in. Only the user can turn this on, from their own account.</p>
-          <?php endif; ?>
+          @endif
         </div>
-        <?php if ($user->two_factor_confirmed_at): ?>
-          <form method="POST" action="<?= e(route('admin.users.two-factor.reset', $user)) ?>" data-confirm="Reset two-factor authentication for this user? They will sign in with just their password until they set it up again." data-confirm-danger="1" data-confirm-button="Reset 2FA">
-            <?= csrf_field() ?>
+        @if($user->two_factor_confirmed_at)
+          <form method="POST" action="{{ route('admin.users.two-factor.reset', $user) }}" data-confirm="Reset two-factor authentication for this user? They will sign in with just their password until they set it up again." data-confirm-danger="1" data-confirm-button="Reset 2FA">
+            @csrf
             <button type="submit" class="admin-btn admin-btn-outline" style="white-space:nowrap;">Reset 2FA</button>
           </form>
-        <?php else: ?>
+        @else
           <span style="font-size:12px; color:var(--admin-text-2); font-weight:600;">Off</span>
-        <?php endif; ?>
+        @endif
       </div>
     </div>
 
@@ -136,34 +136,34 @@
       <div class="verify-row">
         <div>
           <p class="label">Status</p>
-          <?php if ($userKyc): ?>
-            <p class="sub"><?= e($userKyc->documentTypeLabel()) ?> &middot; submitted <?= e($userKyc->created_at->diffForHumans()) ?></p>
-          <?php else: ?>
+          @if($userKyc)
+            <p class="sub">{{ $userKyc->documentTypeLabel() }} &middot; submitted {{ $userKyc->created_at->diffForHumans() }}</p>
+          @else
             <p class="sub">Hasn't submitted an ID yet.</p>
-          <?php endif; ?>
+          @endif
         </div>
-        <span class="admin-pill <?= e($user->kyc_status === 'approved' ? 'status-active' : ($user->kyc_status === 'rejected' ? 'status-disabled' : 'status-frozen')) ?>">
-          <?= e($userKyc ? $userKyc->statusLabel() : 'Not submitted') ?>
+        <span class="admin-pill {{ $user->kyc_status === 'approved' ? 'status-active' : ($user->kyc_status === 'rejected' ? 'status-disabled' : 'status-frozen') }}">
+          {{ $userKyc ? $userKyc->statusLabel() : 'Not submitted' }}
         </span>
       </div>
-      <?php if ($userKyc && $userKyc->isPending()): ?>
-        <a href="<?= e(route('admin.kyc')) ?>" class="admin-btn admin-btn-outline" style="margin-top:8px; display:inline-block;">Review in queue</a>
-      <?php endif; ?>
+      @if($userKyc && $userKyc->isPending())
+        <a href="{{ route('admin.kyc') }}" class="admin-btn admin-btn-outline" style="margin-top:8px; display:inline-block;">Review in queue</a>
+      @endif
     </div>
 
     <div class="admin-card">
       <p style="margin:0 0 2px; font-weight:700; font-size:13.5px;">Feature access</p>
       <p class="feature-row-sub" style="margin-bottom:8px;">What this user can open. Off shows a "not available" message instead of the page.</p>
 
-      <?php foreach ($features as $slug => $label): ?>
+      @foreach($features as $slug => $label)
         <div class="verify-row">
-          <p class="label"><?= e($label) ?></p>
-          <form method="POST" action="<?= e(route('admin.users.features.toggle', [$user, $slug])) ?>">
-            <?= csrf_field() ?>
-            <button type="submit" class="admin-toggle <?= e($user->{$featureColumns[$slug]} ? 'on' : '') ?>" aria-label="Toggle <?= e($label) ?>"></button>
+          <p class="label">{{ $label }}</p>
+          <form method="POST" action="{{ route('admin.users.features.toggle', [$user, $slug]) }}">
+            @csrf
+            <button type="submit" class="admin-toggle {{ $user->{$featureColumns[$slug]} ? 'on' : '' }}" aria-label="Toggle {{ $label }}"></button>
           </form>
         </div>
-      <?php endforeach; ?>
+      @endforeach
     </div>
   </div>
 
@@ -172,34 +172,34 @@
       <div class="status-row">
         <div>
           <p style="margin:0 0 6px; font-size:12px; color:var(--admin-text-2); font-weight:600;">Account status</p>
-          <span class="admin-pill status-<?= e($user->account_status) ?>"><?= e($user->accountStatusLabel()) ?></span>
-          <?php if ($user->isRestricted()): ?>
+          <span class="admin-pill status-{{ $user->account_status }}">{{ $user->accountStatusLabel() }}</span>
+          @if($user->isRestricted())
             <span class="admin-pill status-disabled" style="margin-left:6px;">Restricted</span>
-          <?php endif; ?>
+          @endif
         </div>
         <div class="status-actions">
-          <?php foreach ($otherStatuses as $value => $label): ?>
-            <form method="POST" action="<?= e(route('admin.users.status', $user)) ?>" data-confirm="Are you sure you want to <?= e($statusConfirmText[$value]) ?> this account?" <?php if ($value !== 'active'): ?> data-confirm-danger="1" <?php endif; ?> data-confirm-button="Confirm">
-              <?= csrf_field() ?>
-              <input type="hidden" name="account_status" value="<?= e($value) ?>">
-              <button type="submit" class="admin-btn <?= e($statusButtonClass[$value]) ?>"><?= e($label) ?></button>
+          @foreach($otherStatuses as $value => $label)
+            <form method="POST" action="{{ route('admin.users.status', $user) }}" data-confirm="Are you sure you want to {{ $statusConfirmText[$value] }} this account?" @if($value !== 'active') data-confirm-danger="1" @endif data-confirm-button="Confirm">
+              @csrf
+              <input type="hidden" name="account_status" value="{{ $value }}">
+              <button type="submit" class="admin-btn {{ $statusButtonClass[$value] }}">{{ $label }}</button>
             </form>
-          <?php endforeach; ?>
+          @endforeach
         </div>
       </div>
 
-      <?php /* Separate from account_status above — this doesn't sign the user
+      {{-- Separate from account_status above — this doesn't sign the user
            out or stop them opening their dashboard, it only blocks Send,
            Withdraw, Top Up, and Scan (see EnsureAccountIsNotRestricted).
-           They see a popup pointing to Support instead of each form. */ ?>
+           They see a popup pointing to Support instead of each form. --}}
       <div class="verify-row" style="margin-top:4px;">
         <div>
           <p class="label">Restrict transactions</p>
           <p class="sub">Blocks Send, Withdraw, Top Up &amp; Scan to Pay. Sign-in and the dashboard stay unaffected.</p>
         </div>
-        <form method="POST" action="<?= e(route('admin.users.restriction.toggle', $user)) ?>" data-confirm="Are you sure you want to <?= e($user->isRestricted() ? 'remove the restriction from' : 'restrict') ?> this account?" data-confirm-danger="1" data-confirm-button="Confirm">
-          <?= csrf_field() ?>
-          <button type="submit" class="admin-toggle <?= e($user->isRestricted() ? 'on' : '') ?>" aria-label="Toggle account restriction"></button>
+        <form method="POST" action="{{ route('admin.users.restriction.toggle', $user) }}" data-confirm="Are you sure you want to {{ $user->isRestricted() ? 'remove the restriction from' : 'restrict' }} this account?" data-confirm-danger="1" data-confirm-button="Confirm">
+          @csrf
+          <button type="submit" class="admin-toggle {{ $user->isRestricted() ? 'on' : '' }}" aria-label="Toggle account restriction"></button>
         </form>
       </div>
     </div>
@@ -207,16 +207,16 @@
     <div class="wallet-card">
       <div class="wallet-card-head">
         <p>Cash wallet</p>
-        <span class="admin-pill status-<?= e($user->account_status) ?>" style="background:rgba(255,255,255,0.16); color:#fff;"><?= e($user->accountStatusLabel()) ?></span>
+        <span class="admin-pill status-{{ $user->account_status }}" style="background:rgba(255,255,255,0.16); color:#fff;">{{ $user->accountStatusLabel() }}</span>
       </div>
       <div class="wallet-figures">
         <div>
           <p class="label">Available</p>
-          <p class="value">$<?= e(number_format((float) $user->balance, 2)) ?></p>
+          <p class="value">${{ number_format((float) $user->balance, 2) }}</p>
         </div>
       </div>
       <div class="wallet-meta">
-        <div class="wallet-meta-row"><span>Account</span><span><?= e($primaryAccountNumber ?? 'Not set up yet') ?></span></div>
+        <div class="wallet-meta-row"><span>Account</span><span>{{ $primaryAccountNumber ?? 'Not set up yet' }}</span></div>
         <div class="wallet-meta-row"><span>Bank</span><span>Ledger Federal Credit Union</span></div>
       </div>
     </div>
@@ -225,19 +225,19 @@
 
     <div class="admin-card" style="margin-top:18px;">
       <p style="margin:0 0 4px; font-weight:700; font-size:13.5px;">Recent balance adjustments</p>
-      <?php if ($adjustments->isEmpty()): ?>
+      @if($adjustments->isEmpty())
         <p class="admin-empty" style="padding:14px 0;">No admin adjustments yet.</p>
-      <?php else: ?>
-        <?php foreach ($adjustments as $adj): ?>
+      @else
+        @foreach($adjustments as $adj)
           <div class="adjustment-row">
             <span>
-              <?= e(ucfirst($adj->direction)) ?> · <?= e($adj->balance_pot === 'account' ? 'Account balance' : 'Available balance') ?>
-              <?php if ($adj->sender_name): ?> · from <?= e($adj->sender_name) ?> <?php endif; ?>
+              {{ ucfirst($adj->direction) }} · {{ $adj->balance_pot === 'account' ? 'Account balance' : 'Available balance' }}
+              @if($adj->sender_name) · from {{ $adj->sender_name }} @endif
             </span>
-            <span style="white-space:nowrap; font-weight:600;">$<?= e(number_format((float) $adj->amount, 2)) ?></span>
+            <span style="white-space:nowrap; font-weight:600;">${{ number_format((float) $adj->amount, 2) }}</span>
           </div>
-        <?php endforeach; ?>
-      <?php endif; ?>
+        @endforeach
+      @endif
     </div>
   </div>
 </div>
@@ -245,70 +245,70 @@
 <div class="admin-card" style="margin-top:18px;">
   <p style="margin:0 0 4px; font-weight:700; font-size:13.5px;">Linked accounts</p>
   <p style="margin:0 0 14px; font-size:12px; color:var(--admin-text-2);">Read-only: banks and cards this user has linked themselves from the Link Account page.</p>
-  <?php if ($linkedAccounts->isEmpty()): ?>
+  @if($linkedAccounts->isEmpty())
     <p class="admin-empty" style="padding:14px 0;">No linked accounts yet.</p>
-  <?php else: ?>
-    <?php foreach ($linkedAccounts as $account): ?>
+  @else
+    @foreach($linkedAccounts as $account)
       <div class="adjustment-row">
-        <span><?= e($account->typeLabel()) ?> · <?= e($account->displayLabel()) ?> <?= e($account->detailLabel()) ?></span>
-        <span style="white-space:nowrap; color:var(--admin-text-2);"><?= e($account->created_at->format('M j, Y')) ?></span>
+        <span>{{ $account->typeLabel() }} · {{ $account->displayLabel() }} {{ $account->detailLabel() }}</span>
+        <span style="white-space:nowrap; color:var(--admin-text-2);">{{ $account->created_at->format('M j, Y') }}</span>
       </div>
-    <?php endforeach; ?>
-  <?php endif; ?>
+    @endforeach
+  @endif
 </div>
 
 <div class="admin-card" style="margin-top:18px;">
   <p style="margin:0 0 4px; font-weight:700; font-size:13.5px;">Recent withdrawals &amp; top-ups</p>
   <p style="margin:0 0 14px; font-size:12px; color:var(--admin-text-2);">Read-only: these process instantly for the user, same as Send Money.</p>
-  <?php if ($withdrawals->isEmpty() && $topUps->isEmpty()): ?>
+  @if($withdrawals->isEmpty() && $topUps->isEmpty())
     <p class="admin-empty" style="padding:14px 0;">No withdrawals or top-ups yet.</p>
-  <?php else: ?>
-    <?php foreach ($withdrawals as $withdrawal): ?>
+  @else
+    @foreach($withdrawals as $withdrawal)
       <div class="adjustment-row">
-        <span>Withdrawal to <?= e($withdrawal->destination_label) ?> •••• <?= e($withdrawal->destination_last4) ?> · <?= e($withdrawal->created_at->format('M j, Y')) ?></span>
-        <span style="white-space:nowrap; font-weight:600;">–$<?= e(number_format((float) $withdrawal->amount, 2)) ?></span>
+        <span>Withdrawal to {{ $withdrawal->destination_label }} •••• {{ $withdrawal->destination_last4 }} · {{ $withdrawal->created_at->format('M j, Y') }}</span>
+        <span style="white-space:nowrap; font-weight:600;">–${{ number_format((float) $withdrawal->amount, 2) }}</span>
       </div>
-    <?php endforeach; ?>
-    <?php foreach ($topUps as $topUp): ?>
+    @endforeach
+    @foreach($topUps as $topUp)
       <div class="adjustment-row">
-        <span>Top-up from <?= e($topUp->source_label) ?> •••• <?= e($topUp->source_last4) ?> · <?= e($topUp->created_at->format('M j, Y')) ?></span>
-        <span style="white-space:nowrap; font-weight:600;">+$<?= e(number_format((float) $topUp->amount, 2)) ?></span>
+        <span>Top-up from {{ $topUp->source_label }} •••• {{ $topUp->source_last4 }} · {{ $topUp->created_at->format('M j, Y') }}</span>
+        <span style="white-space:nowrap; font-weight:600;">+${{ number_format((float) $topUp->amount, 2) }}</span>
       </div>
-    <?php endforeach; ?>
-  <?php endif; ?>
+    @endforeach
+  @endif
 </div>
 
 <div class="admin-card" style="margin-top:18px;">
   <p style="margin:0 0 4px; font-weight:700; font-size:13.5px;">Edit information</p>
   <p style="margin:0 0 18px; font-size:12px; color:var(--admin-text-2);">Account details, plus the employment &amp; finance answers collected during onboarding. Editable here.</p>
 
-  <form method="POST" action="<?= e(route('admin.users.profile.update', $user)) ?>">
-    <?= csrf_field() ?>
+  <form method="POST" action="{{ route('admin.users.profile.update', $user) }}">
+    @csrf
 
     <p class="section-label">Account</p>
     <div class="admin-form-grid">
       <label class="admin-field">
         <span>First name</span>
-        <input type="text" name="first_name" value="<?= e(old('first_name', $user->first_name)) ?>" required>
-        <?php if ($errors->has('first_name')): $message = $errors->first('first_name'); ?> <span class="admin-field-error"><?= e($message) ?></span> <?php endif; ?>
+        <input type="text" name="first_name" value="{{ old('first_name', $user->first_name) }}" required>
+        @error('first_name') <span class="admin-field-error">{{ $message }}</span> @enderror
       </label>
       <label class="admin-field">
         <span>Last name</span>
-        <input type="text" name="last_name" value="<?= e(old('last_name', $user->last_name)) ?>" required>
-        <?php if ($errors->has('last_name')): $message = $errors->first('last_name'); ?> <span class="admin-field-error"><?= e($message) ?></span> <?php endif; ?>
+        <input type="text" name="last_name" value="{{ old('last_name', $user->last_name) }}" required>
+        @error('last_name') <span class="admin-field-error">{{ $message }}</span> @enderror
       </label>
       <label class="admin-field">
         <span>Middle name</span>
-        <input type="text" name="middle_name" value="<?= e(old('middle_name', $user->middle_name)) ?>">
+        <input type="text" name="middle_name" value="{{ old('middle_name', $user->middle_name) }}">
       </label>
       <label class="admin-field">
         <span>Email</span>
-        <input type="email" name="email" value="<?= e(old('email', $user->email)) ?>" required>
-        <?php if ($errors->has('email')): $message = $errors->first('email'); ?> <span class="admin-field-error"><?= e($message) ?></span> <?php endif; ?>
+        <input type="email" name="email" value="{{ old('email', $user->email) }}" required>
+        @error('email') <span class="admin-field-error">{{ $message }}</span> @enderror
       </label>
       <label class="admin-field">
         <span>Phone</span>
-        <input type="text" name="phone" value="<?= e(old('phone', $user->phone)) ?>">
+        <input type="text" name="phone" value="{{ old('phone', $user->phone) }}">
       </label>
     </div>
 
@@ -316,34 +316,34 @@
     <div class="admin-form-grid">
       <label class="admin-field">
         <span>Employment status</span>
-        <input type="text" name="employment_status" value="<?= e(old('employment_status', $user->profile?->employment_status)) ?>" placeholder="e.g. Self-employed">
+        <input type="text" name="employment_status" value="{{ old('employment_status', $user->profile?->employment_status) }}" placeholder="e.g. Self-employed">
       </label>
       <label class="admin-field">
         <span>Occupation</span>
-        <input type="text" name="occupation" value="<?= e(old('occupation', $user->profile?->occupation)) ?>">
+        <input type="text" name="occupation" value="{{ old('occupation', $user->profile?->occupation) }}">
       </label>
       <label class="admin-field">
         <span>Industry</span>
-        <input type="text" name="industry" value="<?= e(old('industry', $user->profile?->industry)) ?>">
+        <input type="text" name="industry" value="{{ old('industry', $user->profile?->industry) }}">
       </label>
       <label class="admin-field">
         <span>Source of income</span>
-        <input type="text" name="main_source_of_income" value="<?= e(old('main_source_of_income', $user->profile?->main_source_of_income)) ?>">
+        <input type="text" name="main_source_of_income" value="{{ old('main_source_of_income', $user->profile?->main_source_of_income) }}">
       </label>
       <label class="admin-field">
         <span>Annual income</span>
-        <input type="text" inputmode="decimal" name="annual_income" value="<?= e(old('annual_income', $user->profile?->annual_income)) ?>" placeholder="0.00">
-        <?php if ($errors->has('annual_income')): $message = $errors->first('annual_income'); ?> <span class="admin-field-error"><?= e($message) ?></span> <?php endif; ?>
+        <input type="text" inputmode="decimal" name="annual_income" value="{{ old('annual_income', $user->profile?->annual_income) }}" placeholder="0.00">
+        @error('annual_income') <span class="admin-field-error">{{ $message }}</span> @enderror
       </label>
       <label class="admin-field">
         <span>Expected annual income</span>
-        <input type="text" inputmode="decimal" name="expected_annual_income" value="<?= e(old('expected_annual_income', $user->profile?->expected_annual_income)) ?>" placeholder="0.00">
-        <?php if ($errors->has('expected_annual_income')): $message = $errors->first('expected_annual_income'); ?> <span class="admin-field-error"><?= e($message) ?></span> <?php endif; ?>
+        <input type="text" inputmode="decimal" name="expected_annual_income" value="{{ old('expected_annual_income', $user->profile?->expected_annual_income) }}" placeholder="0.00">
+        @error('expected_annual_income') <span class="admin-field-error">{{ $message }}</span> @enderror
       </label>
       <label class="admin-field">
         <span>Net worth</span>
-        <input type="text" inputmode="decimal" name="net_worth" value="<?= e(old('net_worth', $user->profile?->net_worth)) ?>" placeholder="0.00">
-        <?php if ($errors->has('net_worth')): $message = $errors->first('net_worth'); ?> <span class="admin-field-error"><?= e($message) ?></span> <?php endif; ?>
+        <input type="text" inputmode="decimal" name="net_worth" value="{{ old('net_worth', $user->profile?->net_worth) }}" placeholder="0.00">
+        @error('net_worth') <span class="admin-field-error">{{ $message }}</span> @enderror
       </label>
     </div>
 
@@ -357,15 +357,15 @@
   <div class="slideover-head">
     <div>
       <h3>Credit / Debit cash wallet</h3>
-      <p><?= e($user->name) ?> - <?= e($primaryAccountNumber ?? 'No account') ?></p>
+      <p>{{ $user->name }} - {{ $primaryAccountNumber ?? 'No account' }}</p>
     </div>
     <button type="button" class="slideover-close" onclick="closeCreditDebit()" aria-label="Close">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
     </button>
   </div>
 
-  <form method="POST" action="<?= e(route('admin.users.balance', $user)) ?>">
-    <?= csrf_field() ?>
+  <form method="POST" action="{{ route('admin.users.balance', $user) }}">
+    @csrf
     <input type="hidden" name="direction" id="cbDirection" value="credit">
 
     <p class="slideover-label">Direction</p>
@@ -376,9 +376,9 @@
 
     <p class="slideover-label">Amount</p>
     <input type="text" name="amount" inputmode="decimal" class="slideover-input" placeholder="0.00" required>
-    <?php if ($errors->has('amount')): $message = $errors->first('amount'); ?>
-      <p class="admin-field-error"><?= e($message) ?></p>
-    <?php endif; ?>
+    @error('amount')
+      <p class="admin-field-error">{{ $message }}</p>
+    @enderror
 
     <div id="senderDetailsSection">
       <p class="slideover-label" style="margin-top:0;">Sender details <span class="slideover-sub">(optional: describes where a credit came from)</span></p>

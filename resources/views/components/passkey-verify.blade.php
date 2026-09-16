@@ -33,8 +33,8 @@
             try {
                 const response = await window.Passkeys.verify({
                     routes: {
-                        options: '<?= e(route($optionsRoute)) ?>',
-                        submit: '<?= e(route($submitRoute)) ?>',
+                        options: '{{ route($optionsRoute) }}',
+                        submit: '{{ route($submitRoute) }}',
                     },
                 });
                 Livewire.navigate(response.redirect || '/dashboard');
@@ -58,8 +58,8 @@
                     x-on:click="verify()"
                     x-bind:disabled="loading"
                 >
-                    <span x-show="!loading"><?= e($label) ?></span>
-                    <span x-show="loading" x-cloak><?= e($loadingLabel) ?></span>
+                    <span x-show="!loading">{{ $label }}</span>
+                    <span x-show="loading" x-cloak>{{ $loadingLabel }}</span>
                 </flux:button>
                 <p x-show="error" x-text="error" x-cloak
                    class="text-sm text-center text-red-600 dark:text-red-400"></p>
@@ -71,7 +71,7 @@
                 </div>
                 <div class="relative flex justify-center text-xs uppercase">
                     <span class="px-2 text-zinc-500 dark:text-zinc-400 bg-white dark:bg-zinc-900">
-                        <?= e($separator) ?>
+                        {{ $separator }}
                     </span>
                 </div>
             </div>

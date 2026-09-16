@@ -91,8 +91,10 @@ return [
     'confirm_replace_card_button' => 'Ganti kartu',
 
     'toast_request_already_pending' => 'Anda sudah memiliki permintaan kartu yang menunggu persetujuan.',
-    'prompt_request_card_type' => 'Ajukan kartu "fisik" atau "virtual"?',
-    'toast_type_physical_or_virtual' => 'Ketik "fisik" atau "virtual"',
+    'prompt_request_card_type' => 'Jenis kartu apa yang ingin Anda ajukan?',
+    'toast_type_physical_or_virtual' => 'Silakan pilih jenis kartu',
+    'option_physical_card' => 'Kartu fisik',
+    'option_virtual_card' => 'Kartu virtual',
     'confirm_request_card_prefix' => 'Ajukan kartu',
     'confirm_request_card_suffix' => '? Admin perlu menyetujuinya terlebih dahulu sebelum muncul di sini.',
     'confirm_request_card_button' => 'Ajukan kartu',

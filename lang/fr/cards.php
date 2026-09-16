@@ -91,8 +91,10 @@ return [
     'confirm_replace_card_button' => 'Remplacer la carte',
 
     'toast_request_already_pending' => "Vous avez déjà une demande de carte en attente d'approbation.",
-    'prompt_request_card_type' => 'Demander une carte "physical" ou "virtual" ?',
-    'toast_type_physical_or_virtual' => 'Tapez "physical" ou "virtual"',
+    'prompt_request_card_type' => 'Quel type de carte souhaitez-vous demander ?',
+    'toast_type_physical_or_virtual' => 'Veuillez choisir un type de carte',
+    'option_physical_card' => 'Carte physique',
+    'option_virtual_card' => 'Carte virtuelle',
     'confirm_request_card_prefix' => 'Demander une carte',
     'confirm_request_card_suffix' => " ? Un administrateur devra l'approuver avant qu'elle n'apparaisse ici.",
     'confirm_request_card_button' => 'Demander la carte',

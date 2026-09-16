@@ -91,8 +91,10 @@ return [
     'confirm_replace_card_button' => '更换卡片',
 
     'toast_request_already_pending' => '您已有一张正在等待审批的卡片申请。',
-    'prompt_request_card_type' => '要申请 "physical" 还是 "virtual" 卡？',
-    'toast_type_physical_or_virtual' => '请输入 "physical" 或 "virtual"',
+    'prompt_request_card_type' => '您想申请哪种类型的卡？',
+    'toast_type_physical_or_virtual' => '请选择卡片类型',
+    'option_physical_card' => '实体卡',
+    'option_virtual_card' => '虚拟卡',
     'confirm_request_card_prefix' => '要申请一张',
     'confirm_request_card_suffix' => '卡吗？管理员需要先审批，之后才会显示在这里。',
     'confirm_request_card_button' => '申请卡片',

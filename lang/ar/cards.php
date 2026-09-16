@@ -91,8 +91,10 @@ return [
     'confirm_replace_card_button' => 'استبدال البطاقة',
 
     'toast_request_already_pending' => 'لديك بالفعل طلب بطاقة قيد انتظار الموافقة.',
-    'prompt_request_card_type' => 'هل ترغب في طلب بطاقة "فعلية" أم "افتراضية"؟',
-    'toast_type_physical_or_virtual' => 'اكتب "فعلية" أو "افتراضية"',
+    'prompt_request_card_type' => 'ما نوع البطاقة التي ترغب في طلبها؟',
+    'toast_type_physical_or_virtual' => 'الرجاء اختيار نوع البطاقة',
+    'option_physical_card' => 'بطاقة فعلية',
+    'option_virtual_card' => 'بطاقة افتراضية',
     'confirm_request_card_prefix' => 'طلب بطاقة',
     'confirm_request_card_suffix' => '؟ سيحتاج أحد المسؤولين إلى الموافقة عليها قبل أن تظهر هنا.',
     'confirm_request_card_button' => 'طلب البطاقة',

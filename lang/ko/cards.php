@@ -91,8 +91,10 @@ return [
     'confirm_replace_card_button' => '카드 교체',
 
     'toast_request_already_pending' => '이미 승인 대기 중인 카드 신청이 있습니다.',
-    'prompt_request_card_type' => '"physical" 또는 "virtual" 카드 중 어느 것을 신청하시겠습니까?',
-    'toast_type_physical_or_virtual' => '"physical" 또는 "virtual"을 입력하세요',
+    'prompt_request_card_type' => '어떤 종류의 카드를 신청하시겠습니까?',
+    'toast_type_physical_or_virtual' => '카드 종류를 선택해 주세요',
+    'option_physical_card' => '실물 카드',
+    'option_virtual_card' => '가상 카드',
     'confirm_request_card_prefix' => '신청할 카드 종류는',
     'confirm_request_card_suffix' => '인가요? 이곳에 표시되려면 먼저 관리자의 승인이 필요합니다.',
     'confirm_request_card_button' => '카드 신청',

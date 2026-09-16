@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="<?= e(str_replace('_', '-', app()->getLocale())) ?>" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
     <head>
         @include('partials.head')
 
-        <?php /* Ledger onboarding theme: fonts + palette, scoped to this layout only. */ ?>
+        {{-- Ledger onboarding theme: fonts + palette, scoped to this layout only. --}}
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -317,7 +317,7 @@
     </head>
     <body class="min-h-screen antialiased ledger-onboarding-shell">
         <div class="ledger-onboarding-page">
-            <?= $slot ?>
+            {!! $slot !!}
         </div>
 
         @persist('toast')

@@ -1,4 +1,4 @@
-<?php /*
+{{--
   Floating "chat with us" widget for the public marketing page. Included
   once from layouts/apps.blade.php (right alongside back-to-top, the other
   fixed-position control that layout already has), so it shows up on every
@@ -11,7 +11,7 @@
   page refresh or a return visit. Uses the site-wide SweetAlert2 helper
   (partials/sweetalert.blade.php, included by this same layout) for the
   "End chat" confirmation.
-*/ ?>
+--}}
 <div class="gs-widget">
   <button type="button" class="gs-launcher" id="gsLauncher" aria-label="Chat with support">
     <svg class="gs-icon-chat" viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -41,13 +41,13 @@
 
 <script>
   window.LedgerGuestSupportConfig = {
-    csrfToken: '<?= e(csrf_token()) ?>',
+    csrfToken: '{{ csrf_token() }}',
     routes: {
-      init: '<?= e(route('support.guest.init')) ?>',
-      start: '<?= e(route('support.guest.start')) ?>',
-      send: '<?= e(route('support.guest.messages.store')) ?>',
-      poll: '<?= e(route('support.guest.messages.poll')) ?>',
-      end: '<?= e(route('support.guest.end')) ?>'
+      init: '{{ route('support.guest.init') }}',
+      start: '{{ route('support.guest.start') }}',
+      send: '{{ route('support.guest.messages.store') }}',
+      poll: '{{ route('support.guest.messages.poll') }}',
+      end: '{{ route('support.guest.end') }}'
     },
   };
 </script>

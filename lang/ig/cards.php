@@ -91,8 +91,10 @@ return [
     'confirm_replace_card_button' => 'Dochie kaadị',
 
     'toast_request_already_pending' => 'Ị nweelarị arịrịọ kaadị na-eche nkwado.',
-    'prompt_request_card_type' => 'Rịọ kaadị "anụ ahụ" ma ọ bụ "anya-ụgha"?',
-    'toast_type_physical_or_virtual' => 'Pịnye "anụ ahụ" ma ọ bụ "anya-ụgha"',
+    'prompt_request_card_type' => 'Kaadị ụdị dị aṅaa ka ị chọrọ ịrịọ?',
+    'toast_type_physical_or_virtual' => 'Biko họrọ ụdị kaadị',
+    'option_physical_card' => 'Kaadị anụ ahụ',
+    'option_virtual_card' => 'Kaadị anya-ụgha',
     'confirm_request_card_prefix' => 'Rịọ kaadị',
     'confirm_request_card_suffix' => '? Onye nchịkwa ga-ekwesị ịkwado ya tupu ọ pụta n\'ebe a.',
     'confirm_request_card_button' => 'Rịọ kaadị',

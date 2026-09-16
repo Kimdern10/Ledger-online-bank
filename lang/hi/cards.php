@@ -91,8 +91,10 @@ return [
     'confirm_replace_card_button' => 'कार्ड बदलें',
 
     'toast_request_already_pending' => 'आपके पास पहले से ही एक कार्ड अनुरोध है जिसकी मंज़ूरी बाकी है।',
-    'prompt_request_card_type' => 'एक "physical" या "virtual" कार्ड का अनुरोध करें?',
-    'toast_type_physical_or_virtual' => '"physical" या "virtual" टाइप करें',
+    'prompt_request_card_type' => 'आप किस प्रकार का कार्ड अनुरोध करना चाहेंगे?',
+    'toast_type_physical_or_virtual' => 'कृपया कार्ड का प्रकार चुनें',
+    'option_physical_card' => 'फिजिकल कार्ड',
+    'option_virtual_card' => 'वर्चुअल कार्ड',
     'confirm_request_card_prefix' => 'एक',
     'confirm_request_card_suffix' => 'कार्ड का अनुरोध करें? यहाँ दिखने से पहले एक व्यवस्थापक को इसे स्वीकृत करना होगा।',
     'confirm_request_card_button' => 'कार्ड का अनुरोध करें',

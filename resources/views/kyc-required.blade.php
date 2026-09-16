@@ -4,10 +4,10 @@
 <div class="send-wrap">
 
   <div class="page-header fade-in d1">
-    <a href="<?= e(route('dashboard')) ?>" class="icon-btn">
+    <a href="{{ route('dashboard') }}" class="icon-btn">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
     </a>
-    <h1><?= e(__('send.title')) ?></h1>
+    <h1>{{ __('send.title') }}</h1>
     <span style="width:38px; display:inline-block;"></span>
   </div>
 
@@ -18,34 +18,34 @@
       </svg>
     </div>
 
-    <?php if ($status === 'pending'): ?>
-      <p style="margin:0 0 8px; font-size:16.5px; font-weight:700;"><?= e(__('verify.kyc_gate_pending_title')) ?></p>
+    @if($status === 'pending')
+      <p style="margin:0 0 8px; font-size:16.5px; font-weight:700;">{{ __('verify.kyc_gate_pending_title') }}</p>
       <p style="margin:0 auto 22px; max-width:380px; font-size:13.5px; opacity:0.75; line-height:1.55;">
-        <?= e(__('verify.kyc_gate_pending_body')) ?>
+        {{ __('verify.kyc_gate_pending_body') }}
       </p>
       <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-        <a href="<?= e(route('dashboard')) ?>" class="btn btn-outline"><?= e(__('verify.back_to_dashboard')) ?></a>
-        <a href="<?= e(route('support')) ?>" class="btn btn-primary"><?= e(__('verify.message_support')) ?></a>
+        <a href="{{ route('dashboard') }}" class="btn btn-outline">{{ __('verify.back_to_dashboard') }}</a>
+        <a href="{{ route('support') }}" class="btn btn-primary">{{ __('verify.message_support') }}</a>
       </div>
-    <?php elseif ($status === 'rejected'): ?>
-      <p style="margin:0 0 8px; font-size:16.5px; font-weight:700;"><?= e(__('verify.kyc_gate_rejected_title')) ?></p>
+    @elseif($status === 'rejected')
+      <p style="margin:0 0 8px; font-size:16.5px; font-weight:700;">{{ __('verify.kyc_gate_rejected_title') }}</p>
       <p style="margin:0 auto 22px; max-width:380px; font-size:13.5px; opacity:0.75; line-height:1.55;">
-        <?= e(__('verify.kyc_gate_rejected_body')) ?>
+        {{ __('verify.kyc_gate_rejected_body') }}
       </p>
       <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-        <a href="<?= e(route('kyc.create')) ?>" class="btn btn-primary"><?= e(__('verify.verify_identity')) ?></a>
-        <a href="<?= e(route('dashboard')) ?>" class="btn btn-outline"><?= e(__('verify.back_to_dashboard')) ?></a>
+        <a href="{{ route('kyc.create') }}" class="btn btn-primary">{{ __('verify.verify_identity') }}</a>
+        <a href="{{ route('dashboard') }}" class="btn btn-outline">{{ __('verify.back_to_dashboard') }}</a>
       </div>
-    <?php else: ?>
-      <p style="margin:0 0 8px; font-size:16.5px; font-weight:700;"><?= e(__('verify.kyc_gate_not_started_title')) ?></p>
+    @else
+      <p style="margin:0 0 8px; font-size:16.5px; font-weight:700;">{{ __('verify.kyc_gate_not_started_title') }}</p>
       <p style="margin:0 auto 22px; max-width:380px; font-size:13.5px; opacity:0.75; line-height:1.55;">
-        <?= e(__('verify.kyc_gate_not_started_body')) ?>
+        {{ __('verify.kyc_gate_not_started_body') }}
       </p>
       <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-        <a href="<?= e(route('kyc.create')) ?>" class="btn btn-primary"><?= e(__('verify.verify_identity')) ?></a>
-        <a href="<?= e(route('dashboard')) ?>" class="btn btn-outline"><?= e(__('verify.back_to_dashboard')) ?></a>
+        <a href="{{ route('kyc.create') }}" class="btn btn-primary">{{ __('verify.verify_identity') }}</a>
+        <a href="{{ route('dashboard') }}" class="btn btn-outline">{{ __('verify.back_to_dashboard') }}</a>
       </div>
-    <?php endif; ?>
+    @endif
   </div>
 
 </div>

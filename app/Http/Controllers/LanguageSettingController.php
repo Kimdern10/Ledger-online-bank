@@ -2,51 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\Locale;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class LanguageSettingController extends Controller
 {
-    /**
-     * The only languages this page will ever accept — kept here as the
-     * single source of truth so the marketing header's selector, the
-     * dashboard's floating switcher, the validation rule below, and
-     * User::languageLabel() can't quietly drift out of sync with each
-     * other.
-     *
-     * Igbo, Yorùbá, and Hausa were removed from this list (they used to
-     * sit right after Português) at the user's request — not a
-     * translation-quality decision, just narrowing the list. Their lang/
-     * files (lang/ig, lang/yo, lang/ha) were left in place rather than
-     * deleted in case they're wanted back later; a value here is the only
-     * thing that makes a locale selectable or valid input to update()/
-     * updateGuest() below. Anyone with 'ig'/'yo'/'ha' already saved as
-     * their account's `language` falls back to the app's default locale
-     * (English) automatically the next time SetLocale runs, since it only
-     * ever applies a value that's still a key in this array.
-     */
-    public const LANGUAGES = [
-        'en' => 'English',
-        'es' => 'Español',
-        'fr' => 'Français',
-        'pt' => 'Português',
-        'de' => 'Deutsch',
-        'it' => 'Italiano',
-        'ar' => 'العربية',
-        'zh' => '中文',
-        'hi' => 'हिन्दी',
-        'sw' => 'Kiswahili',
-        'ru' => 'Русский',
-        'tr' => 'Türkçe',
-        'ja' => '日本語',
-        'ko' => '한국어',
-        'vi' => 'Tiếng Việt',
-        'id' => 'Bahasa Indonesia',
-        'pl' => 'Polski',
-        'nl' => 'Nederlands',
-    ];
-
     /**
      * Saves a signed-in user's choice from the dashboard's floating
      * language switcher (see layouts/app.blade.php's .dash-lang-float) —
@@ -56,7 +18,7 @@ class LanguageSettingController extends Controller
      * very next request, the same immediate-effect behavior updateGuest()
      * below has.
      *
-     * Every language in LANGUAGES above has full translations for the
+     * Every language in App\Support\Locale::LANGUAGES has full translations for the
      * public Welcome page, Dashboard, Send, History, Receive, the Settings
      * hub and all of its sub-pages (Profile, Notifications, Password,
      * Budget, Transaction PIN, Delete account), identity/address
@@ -70,7 +32,7 @@ class LanguageSettingController extends Controller
     public function update(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'language' => ['required', Rule::in(array_keys(self::LANGUAGES))],
+            'language' => ['required', Rule::in(array_keys(Locale::LANGUAGES))],
         ]);
 
         $user = $request->user();
@@ -107,7 +69,7 @@ class LanguageSettingController extends Controller
     public function updateGuest(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'language' => ['required', Rule::in(array_keys(self::LANGUAGES))],
+            'language' => ['required', Rule::in(array_keys(Locale::LANGUAGES))],
         ]);
 
         $user = $request->user();

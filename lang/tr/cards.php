@@ -91,8 +91,10 @@ return [
     'confirm_replace_card_button' => 'Kartı değiştir',
 
     'toast_request_already_pending' => 'Zaten onay bekleyen bir kart talebiniz var.',
-    'prompt_request_card_type' => '"Fiziksel" mi yoksa "sanal" bir kart mı talep ediyorsunuz?',
-    'toast_type_physical_or_virtual' => '"fiziksel" veya "sanal" yazın',
+    'prompt_request_card_type' => 'Ne tür bir kart talep etmek istersiniz?',
+    'toast_type_physical_or_virtual' => 'Lütfen bir kart türü seçin',
+    'option_physical_card' => 'Fiziksel kart',
+    'option_virtual_card' => 'Sanal kart',
     'confirm_request_card_prefix' => 'Bir',
     'confirm_request_card_suffix' => 'kart talep edilsin mi? Burada görünmeden önce bir yöneticinin onaylaması gerekecek.',
     'confirm_request_card_button' => 'Kartı talep et',

@@ -91,8 +91,10 @@ return [
     'confirm_replace_card_button' => 'Replace card',
 
     'toast_request_already_pending' => 'You already have a card request awaiting approval.',
-    'prompt_request_card_type' => 'Request a "physical" or "virtual" card?',
-    'toast_type_physical_or_virtual' => 'Type either "physical" or "virtual"',
+    'prompt_request_card_type' => 'What type of card would you like to request?',
+    'toast_type_physical_or_virtual' => 'Choose a card type',
+    'option_physical_card' => 'Physical card',
+    'option_virtual_card' => 'Virtual card',
     'confirm_request_card_prefix' => 'Request a',
     'confirm_request_card_suffix' => 'card? An admin will need to approve it before it shows up here.',
     'confirm_request_card_button' => 'Request card',

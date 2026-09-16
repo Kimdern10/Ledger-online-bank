@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Http\Controllers\LanguageSettingController;
+use App\Support\Locale;
 use Carbon\Carbon;
 use Closure;
 use Illuminate\Http\Request;
@@ -25,10 +25,10 @@ use Symfony\Component\HttpFoundation\Response;
  *   3. The app's default locale (config('app.locale'), 'en') — a guest who
  *      has never touched either picker.
  *
- * Only ever applies a value from LanguageSettingController::LANGUAGES, not
- * just "is this non-empty" — a corrupted or stale value in the session or
- * the language column should fall back to the default locale rather than
- * crash app()->setLocale() or silently render nothing.
+ * Only ever applies a value from App\Support\Locale::LANGUAGES, not just
+ * "is this non-empty" — a corrupted or stale value in the session or the
+ * language column should fall back to the default locale rather than crash
+ * app()->setLocale() or silently render nothing.
  */
 class SetLocale
 {
@@ -36,9 +36,9 @@ class SetLocale
     {
         $locale = $request->session()->get('locale');
 
-        if (! is_string($locale) || ! array_key_exists($locale, LanguageSettingController::LANGUAGES)) {
+        if (! is_string($locale) || ! array_key_exists($locale, Locale::LANGUAGES)) {
             $user = $request->user();
-            $locale = ($user && array_key_exists($user->language, LanguageSettingController::LANGUAGES))
+            $locale = ($user && array_key_exists($user->language, Locale::LANGUAGES))
                 ? $user->language
                 : null;
         }

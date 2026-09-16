@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>@yield('title', 'Admin') · Ledger Admin</title>
-  <link rel="stylesheet" href="<?= asset('admin_asset/css/admin.css') ?>">
+  <link rel="stylesheet" href="{!! asset('admin_asset/css/admin.css') !!}">
 </head>
 <body>
   <div class="admin-mobile-bar">
@@ -21,15 +21,15 @@
       <p class="admin-brand"><span class="admin-brand-mark">L</span> Ledger Admin</p>
 
       <p class="admin-nav-section">Overview</p>
-      <a href="<?= route('admin.dashboard') ?>" class="admin-nav-link <?= request()->routeIs('admin.dashboard') ? 'active' : '' ?>">Dashboard</a>
+      <a href="{!! route('admin.dashboard') !!}" class="admin-nav-link {!! request()->routeIs('admin.dashboard') ? 'active' : '' !!}">Dashboard</a>
 
       <p class="admin-nav-section">User management</p>
-      <a href="<?= route('admin.users') ?>" class="admin-nav-link <?= (request()->routeIs('admin.users') || request()->routeIs('admin.users.show')) ? 'active' : '' ?>">Users</a>
-      <a href="<?= route('admin.trash') ?>" class="admin-nav-link <?= request()->routeIs('admin.trash') ? 'active' : '' ?>">Trash</a>
+      <a href="{!! route('admin.users') !!}" class="admin-nav-link {!! (request()->routeIs('admin.users') || request()->routeIs('admin.users.show')) ? 'active' : '' !!}">Users</a>
+      <a href="{!! route('admin.trash') !!}" class="admin-nav-link {!! request()->routeIs('admin.trash') ? 'active' : '' !!}">Trash</a>
 
       <p class="admin-nav-section">Financial</p>
-      <a href="<?= route('admin.bills') ?>" class="admin-nav-link <?= request()->routeIs('admin.bills') ? 'active' : '' ?>">Bills</a>
-      <a href="<?= route('admin.banks') ?>" class="admin-nav-link <?= request()->routeIs('admin.banks*') ? 'active' : '' ?>">Banks</a>
+      <a href="{!! route('admin.bills') !!}" class="admin-nav-link {!! request()->routeIs('admin.bills') ? 'active' : '' !!}">Bills</a>
+      <a href="{!! route('admin.banks') !!}" class="admin-nav-link {!! request()->routeIs('admin.banks*') ? 'active' : '' !!}">Banks</a>
 
       <p class="admin-nav-section">Cards</p>
       <?php
@@ -38,13 +38,13 @@
         // shows up no matter which admin page is open.
         $adminPendingCardRequestCount = \App\Models\CardRequest::where('status', 'pending')->count();
       ?>
-      <a href="<?= route('admin.card-requests') ?>" class="admin-nav-link <?= request()->routeIs('admin.card-requests') ? 'active' : '' ?>">
+      <a href="{!! route('admin.card-requests') !!}" class="admin-nav-link {!! request()->routeIs('admin.card-requests') ? 'active' : '' !!}">
         Card requests
-        <?php if ($adminPendingCardRequestCount > 0): ?>
-          <span class="admin-badge" style="margin-left:6px;"><?= e($adminPendingCardRequestCount) ?></span>
-        <?php endif; ?>
+        @if($adminPendingCardRequestCount > 0)
+          <span class="admin-badge" style="margin-left:6px;">{{ $adminPendingCardRequestCount }}</span>
+        @endif
       </a>
-      <a href="<?= route('admin.cards.reported') ?>" class="admin-nav-link <?= request()->routeIs('admin.cards.reported') ? 'active' : '' ?>">Reported cards</a>
+      <a href="{!! route('admin.cards.reported') !!}" class="admin-nav-link {!! request()->routeIs('admin.cards.reported') ? 'active' : '' !!}">Reported cards</a>
 
       <p class="admin-nav-section">Identity</p>
       <?php
@@ -52,22 +52,22 @@
         // the card-requests and support unread counts above.
         $adminPendingKycCount = \App\Models\KycVerification::where('status', 'pending')->count();
       ?>
-      <a href="<?= route('admin.kyc') ?>" class="admin-nav-link <?= request()->routeIs('admin.kyc') ? 'active' : '' ?>">
+      <a href="{!! route('admin.kyc') !!}" class="admin-nav-link {!! request()->routeIs('admin.kyc') ? 'active' : '' !!}">
         Identity verification
-        <?php if ($adminPendingKycCount > 0): ?>
-          <span class="admin-badge" style="margin-left:6px;"><?= e($adminPendingKycCount) ?></span>
-        <?php endif; ?>
+        @if($adminPendingKycCount > 0)
+          <span class="admin-badge" style="margin-left:6px;">{{ $adminPendingKycCount }}</span>
+        @endif
       </a>
       <?php
         // Same "compute right here in the shared sidebar" house style as
         // $adminPendingKycCount just above.
         $adminPendingAddressCount = \App\Models\AddressVerification::where('status', 'pending')->count();
       ?>
-      <a href="<?= route('admin.address') ?>" class="admin-nav-link <?= request()->routeIs('admin.address') ? 'active' : '' ?>">
+      <a href="{!! route('admin.address') !!}" class="admin-nav-link {!! request()->routeIs('admin.address') ? 'active' : '' !!}">
         Address verification
-        <?php if ($adminPendingAddressCount > 0): ?>
-          <span class="admin-badge" style="margin-left:6px;"><?= e($adminPendingAddressCount) ?></span>
-        <?php endif; ?>
+        @if($adminPendingAddressCount > 0)
+          <span class="admin-badge" style="margin-left:6px;">{{ $adminPendingAddressCount }}</span>
+        @endif
       </a>
 
       <p class="admin-nav-section">Customer support</p>
@@ -85,11 +85,11 @@
           ->whereColumn('sender_id', 'user_id')
           ->count();
       ?>
-      <a href="<?= route('admin.support') ?>" class="admin-nav-link <?= (request()->routeIs('admin.support') || request()->routeIs('admin.support.show')) ? 'active' : '' ?>">
+      <a href="{!! route('admin.support') !!}" class="admin-nav-link {!! (request()->routeIs('admin.support') || request()->routeIs('admin.support.show')) ? 'active' : '' !!}">
         Support
-        <?php if ($adminUnreadSupportCount > 0): ?>
-          <span class="admin-badge" style="margin-left:6px;"><?= e($adminUnreadSupportCount) ?></span>
-        <?php endif; ?>
+        @if($adminUnreadSupportCount > 0)
+          <span class="admin-badge" style="margin-left:6px;">{{ $adminUnreadSupportCount }}</span>
+        @endif
       </a>
       <?php
         // Same "compute right here in the shared sidebar" house style as
@@ -101,16 +101,16 @@
           ->whereNull('sender_id')
           ->count();
       ?>
-      <a href="<?= route('admin.support.guests') ?>" class="admin-nav-link <?= (request()->routeIs('admin.support.guests') || request()->routeIs('admin.support.guests.show')) ? 'active' : '' ?>">
+      <a href="{!! route('admin.support.guests') !!}" class="admin-nav-link {!! (request()->routeIs('admin.support.guests') || request()->routeIs('admin.support.guests.show')) ? 'active' : '' !!}">
         Guest messages
-        <?php if ($adminUnreadGuestSupportCount > 0): ?>
-          <span class="admin-badge" style="margin-left:6px;"><?= e($adminUnreadGuestSupportCount) ?></span>
-        <?php endif; ?>
+        @if($adminUnreadGuestSupportCount > 0)
+          <span class="admin-badge" style="margin-left:6px;">{{ $adminUnreadGuestSupportCount }}</span>
+        @endif
       </a>
 
       <div class="admin-sidebar-footer">
-        <form method="POST" action="<?= route('logout') ?>">
-          <?= csrf_field() ?>
+        <form method="POST" action="{!! route('logout') !!}">
+          @csrf
           <button type="submit" class="admin-logout-btn">Log out</button>
         </form>
       </div>
@@ -122,18 +122,18 @@
           <p class="admin-topbar-title">@yield('title', 'Admin')</p>
         </div>
         <div class="admin-whoami">
-          <div class="admin-avatar"><?= e(auth()->user()->initials()) ?></div>
+          <div class="admin-avatar">{{ auth()->user()->initials() }}</div>
           <div class="admin-whoami-text">
-            <p class="name"><?= e(auth()->user()->name) ?></p>
+            <p class="name">{{ auth()->user()->name }}</p>
             <p class="role">Administrator</p>
           </div>
         </div>
       </div>
 
       <main class="admin-main">
-        <?php if (session('status')): ?>
-          <div class="admin-status"><?= e(session('status')) ?></div>
-        <?php endif; ?>
+        @if(session('status'))
+          <div class="admin-status">{{ session('status') }}</div>
+        @endif
         @yield('content')
       </main>
     </div>
@@ -141,18 +141,18 @@
 
   @include('partials.sweetalert')
 
-  <?php /* Individual admin pages push their own small <script> blocks in here
+  {{-- Individual admin pages push their own small <script> blocks in here
        via @section('scripts') ... @endsection. Today that's only pages
        that need a tiny Blade-rendered bootstrap (CSRF token, route URLs,
        the other person's initials) — see admin/support-show.blade.php and
        admin/support-guest-show.blade.php — and it has to run BEFORE
        admin.js below, since admin.js reads window.LedgerGuestChat /
-       window.LedgerAdminChat the moment it loads. */ ?>
+       window.LedgerAdminChat the moment it loads. --}}
   @yield('scripts')
 
-  <?php /* Shared JS for every admin page (sidebar toggle, plus each individual
+  {{-- Shared JS for every admin page (sidebar toggle, plus each individual
        page's own logic guarded on its own elements existing) — see the
-       file's own header comment for why it's safe to load everywhere. */ ?>
-  <script src="<?= asset('admin_asset/js/admin.js') ?>"></script>
+       file's own header comment for why it's safe to load everywhere. --}}
+  <script src="{!! asset('admin_asset/js/admin.js') !!}"></script>
 </body>
 </html>

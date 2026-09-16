@@ -4,14 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
-<meta name="description" content="<?= e($description ?? 'Ledger is a modern bank built on an old idea: every dollar should be accounted for. Open an account, move money, and grow your balance in one calm, honest ledger.') ?>">
-<title><?= e($title ?? 'Ledger Banking, kept in order') ?></title>
-<link rel="icon" href="<?= asset('img/favicon.svg') ?>" type="image/svg+xml" sizes="18x18">
+<meta name="description" content="{{ $description ?? 'Ledger is a modern bank built on an old idea: every dollar should be accounted for. Open an account, move money, and grow your balance in one calm, honest ledger.' }}">
+<title>{{ $title ?? 'Ledger Banking, kept in order' }}</title>
+<link rel="icon" href="{!! asset('img/favicon.svg') !!}" type="image/svg+xml" sizes="18x18">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,72,400;0,72,500;0,72,600;0,72,700;1,72,400&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 @include('partials.sweetalert')
-<link rel="stylesheet" href="<?= asset('assets/css/welcome.css') ?>">
+<link rel="stylesheet" href="{!! asset('assets/css/welcome.css') !!}">
 @stack('styles')
 </head>
 <body>
@@ -57,17 +57,17 @@ window.smartsupp||(function(d) {
 	c.type='text/javascript';c.charset='utf-8';c.async=true;
 	c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
 })(document);
-<?php if (auth()->check()): ?>
-smartsupp('name', <?= json_encode(auth()->user()->name) ?>);
-smartsupp('email', <?= json_encode(auth()->user()->email) ?>);
-<?php endif; ?>
-<?php if (session('smartsupp_logout')): ?>
+@auth
+smartsupp('name', @json(auth()->user()->name));
+smartsupp('email', @json(auth()->user()->email));
+@endauth
+@if(session('smartsupp_logout'))
 smartsupp('logout');
-<?php endif; ?>
+@endif
 </script>
 <!-- End Smartsupp Live Chat script -->
 
-<script src="<?= asset('assets/js/welcome.js') ?>"></script>
+<script src="{!! asset('assets/js/welcome.js') !!}"></script>
 
 @stack('scripts')
 </body>

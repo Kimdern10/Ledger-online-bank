@@ -91,8 +91,10 @@ return [
     'confirm_replace_card_button' => 'Заменить карту',
 
     'toast_request_already_pending' => 'У вас уже есть запрос на карту, ожидающий одобрения.',
-    'prompt_request_card_type' => 'Запросить «физическую» или «виртуальную» карту?',
-    'toast_type_physical_or_virtual' => 'Введите «физическая» или «виртуальная»',
+    'prompt_request_card_type' => 'Какую карту вы хотите запросить?',
+    'toast_type_physical_or_virtual' => 'Пожалуйста, выберите тип карты',
+    'option_physical_card' => 'Физическая карта',
+    'option_virtual_card' => 'Виртуальная карта',
     'confirm_request_card_prefix' => 'Запросить карту',
     'confirm_request_card_suffix' => '? Администратору нужно будет одобрить её, прежде чем она появится здесь.',
     'confirm_request_card_button' => 'Запросить карту',

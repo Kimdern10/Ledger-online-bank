@@ -4,7 +4,7 @@
             class="relative w-full h-auto"
             x-cloak
             x-data="{
-                showRecoveryInput: <?= \Illuminate\Support\Js::from($errors->has('recovery_code')) ?>,
+                showRecoveryInput: @js($errors->has('recovery_code')),
                 code: '',
                 recovery_code: '',
                 focusOtp() {
@@ -43,8 +43,8 @@
                 />
             </div>
 
-            <form method="POST" action="<?= e(route('two-factor.login.store')) ?>">
-                <?= csrf_field() ?>
+            <form method="POST" action="{{ route('two-factor.login.store') }}">
+                @csrf
 
                 <div class="space-y-5 text-center">
                     <div x-show="!showRecoveryInput">
@@ -53,7 +53,7 @@
                                 x-model="code"
                                 length="6"
                                 name="code"
-                                label="<?= e(__('authpage.field_otp_code')) ?>"
+                                label="{{ __('authpage.field_otp_code') }}"
                                 label:sr-only
                                 class="mx-auto"
                              />
@@ -72,11 +72,11 @@
                             />
                         </div>
 
-                        <?php if ($errors->has('recovery_code')): $message = $errors->first('recovery_code'); ?>
+                        @error('recovery_code')
                             <flux:text color="red">
-                                <?= e($message) ?>
+                                {{ $message }}
                             </flux:text>
-                        <?php endif; ?>
+                        @enderror
                     </div>
 
                     <flux:button
@@ -84,15 +84,15 @@
                         type="submit"
                         class="w-full"
                     >
-                        <?= e(__('authpage.continue_button')) ?>
+                        {{ __('authpage.continue_button') }}
                     </flux:button>
                 </div>
 
                 <div class="mt-5 space-x-0.5 text-sm leading-5 text-center">
-                    <span class="opacity-50"><?= e(__('authpage.or_you_can')) ?></span>
+                    <span class="opacity-50">{{ __('authpage.or_you_can') }}</span>
                     <div class="inline font-medium underline cursor-pointer opacity-80">
-                        <span x-show="!showRecoveryInput" @click="toggleInput()"><?= e(__('authpage.login_using_recovery_code')) ?></span>
-                        <span x-show="showRecoveryInput" @click="toggleInput()"><?= e(__('authpage.login_using_auth_code')) ?></span>
+                        <span x-show="!showRecoveryInput" @click="toggleInput()">{{ __('authpage.login_using_recovery_code') }}</span>
+                        <span x-show="showRecoveryInput" @click="toggleInput()">{{ __('authpage.login_using_auth_code') }}</span>
                     </div>
                 </div>
             </form>

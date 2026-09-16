@@ -91,8 +91,10 @@ return [
     'confirm_replace_card_button' => 'カードを交換',
 
     'toast_request_already_pending' => '承認待ちのカード申し込みが既にあります。',
-    'prompt_request_card_type' => '「物理」または「バーチャル」のどちらのカードを申し込みますか？',
-    'toast_type_physical_or_virtual' => '「物理」または「バーチャル」のいずれかを入力してください',
+    'prompt_request_card_type' => 'どちらの種類のカードをお申し込みになりますか？',
+    'toast_type_physical_or_virtual' => 'カードの種類を選択してください',
+    'option_physical_card' => '物理カード',
+    'option_virtual_card' => 'バーチャルカード',
     'confirm_request_card_prefix' => '申し込むカードの種類は',
     'confirm_request_card_suffix' => 'ですか？表示されるまでに管理者の承認が必要です。',
     'confirm_request_card_button' => 'カードを申し込む',

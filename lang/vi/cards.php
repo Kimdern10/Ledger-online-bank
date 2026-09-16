@@ -91,8 +91,10 @@ return [
     'confirm_replace_card_button' => 'Thay thế thẻ',
 
     'toast_request_already_pending' => 'Bạn đã có một yêu cầu thẻ đang chờ phê duyệt.',
-    'prompt_request_card_type' => 'Yêu cầu thẻ "vật lý" hay "ảo"?',
-    'toast_type_physical_or_virtual' => 'Nhập "vật lý" hoặc "ảo"',
+    'prompt_request_card_type' => 'Bạn muốn yêu cầu loại thẻ nào?',
+    'toast_type_physical_or_virtual' => 'Vui lòng chọn loại thẻ',
+    'option_physical_card' => 'Thẻ vật lý',
+    'option_virtual_card' => 'Thẻ ảo',
     'confirm_request_card_prefix' => 'Yêu cầu thẻ',
     'confirm_request_card_suffix' => 'này? Quản trị viên sẽ cần phê duyệt trước khi thẻ xuất hiện tại đây.',
     'confirm_request_card_button' => 'Yêu cầu thẻ',

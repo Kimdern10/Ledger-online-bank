@@ -91,8 +91,10 @@ return [
     'confirm_replace_card_button' => 'Musanya kati',
 
     'toast_request_already_pending' => 'Kana da buƙatar kati da take jiran amincewa tuni.',
-    'prompt_request_card_type' => 'Nemi kati "physical" ko "virtual"?',
-    'toast_type_physical_or_virtual' => 'Rubuta "physical" ko "virtual"',
+    'prompt_request_card_type' => 'Wace irin kati kake son nema?',
+    'toast_type_physical_or_virtual' => 'Da fatan za a zaɓi irin kati',
+    'option_physical_card' => 'Kati na zahiri',
+    'option_virtual_card' => 'Kati na kama-da-wane',
     'confirm_request_card_prefix' => 'Nemi kati',
     'confirm_request_card_suffix' => '? Dole ne wani mai gudanarwa ya amince kafin ya bayyana a nan.',
     'confirm_request_card_button' => 'Nemi kati',

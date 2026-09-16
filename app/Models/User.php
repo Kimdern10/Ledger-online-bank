@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use App\Http\Controllers\LanguageSettingController;
 use App\Mail\VerificationCodeMail;
 use App\Support\AccountTier;
+use App\Support\Locale;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -179,13 +179,13 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     }
 
     /**
-     * Matches the option list LanguageSettingController validates against —
-     * see that class for why picking one doesn't actually translate
-     * anything yet.
+     * Matches the option list LanguageSettingController validates against
+     * (both now read from App\Support\Locale::LANGUAGES) — see that class
+     * for why picking one doesn't actually translate anything yet.
      */
     public function languageLabel(): string
     {
-        return LanguageSettingController::LANGUAGES[$this->language] ?? 'English';
+        return Locale::LANGUAGES[$this->language] ?? 'English';
     }
 
     /**

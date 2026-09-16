@@ -2182,19 +2182,36 @@ function confirmPin(){
       return;
     }
 
-    const choice = prompt(cfg.i18n.promptRequestCardType, 'physical');
-    if (choice === null) return;
+    // Was a native prompt() asking the user to type the literal word
+    // "physical" or "virtual" — replaced with a proper SweetAlert2 radio
+    // picker so this step matches every other confirmation in the app
+    // instead of dropping into an unstyled browser dialog.
+    Swal.fire({
+      title: cfg.i18n.promptRequestCardType,
+      input: 'radio',
+      inputOptions: {
+        physical: cfg.i18n.optionPhysicalCard,
+        virtual: cfg.i18n.optionVirtualCard,
+      },
+      inputValue: 'physical',
+      showCancelButton: true,
+      confirmButtonText: cfg.i18n.confirmRequestCardButton,
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#2F6F62',
+      cancelButtonColor: '#8C9298',
+      reverseButtons: true,
+      inputValidator: function(value){
+        if (!value) return cfg.i18n.toastTypePhysicalOrVirtual;
+      },
+    }).then(function(result){
+      if (!result.isConfirmed) return;
+      const type = result.value;
 
-    const type = choice.trim().toLowerCase();
-    if (type !== 'physical' && type !== 'virtual') {
-      showToast(cfg.i18n.toastTypePhysicalOrVirtual);
-      return;
-    }
-
-    ledgerConfirm(cfg.i18n.confirmRequestCardPrefix + ' ' + type + ' ' + cfg.i18n.confirmRequestCardSuffix, function(){
-      document.getElementById('cardRequestTypeField').value = type;
-      document.getElementById('cardRequestForm').submit();
-    }, { confirmButtonText: cfg.i18n.confirmRequestCardButton });
+      ledgerConfirm(cfg.i18n.confirmRequestCardPrefix + ' ' + type + ' ' + cfg.i18n.confirmRequestCardSuffix, function(){
+        document.getElementById('cardRequestTypeField').value = type;
+        document.getElementById('cardRequestForm').submit();
+      }, { confirmButtonText: cfg.i18n.confirmRequestCardButton });
+    });
   }
 
   document.addEventListener('DOMContentLoaded', function(){

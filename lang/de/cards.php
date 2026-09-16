@@ -91,8 +91,10 @@ return [
     'confirm_replace_card_button' => 'Karte ersetzen',
 
     'toast_request_already_pending' => 'Sie haben bereits eine Kartenanfrage, die auf Genehmigung wartet.',
-    'prompt_request_card_type' => 'Eine "physische" oder "virtuelle" Karte beantragen?',
-    'toast_type_physical_or_virtual' => 'Geben Sie entweder "physisch" oder "virtuell" ein',
+    'prompt_request_card_type' => 'Welche Art von Karte möchten Sie beantragen?',
+    'toast_type_physical_or_virtual' => 'Bitte wählen Sie einen Kartentyp',
+    'option_physical_card' => 'Physische Karte',
+    'option_virtual_card' => 'Virtuelle Karte',
     'confirm_request_card_prefix' => 'Eine',
     'confirm_request_card_suffix' => 'Karte beantragen? Ein Administrator muss sie genehmigen, bevor sie hier erscheint.',
     'confirm_request_card_button' => 'Karte beantragen',

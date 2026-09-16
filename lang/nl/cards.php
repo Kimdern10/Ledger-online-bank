@@ -91,8 +91,10 @@ return [
     'confirm_replace_card_button' => 'Kaart vervangen',
 
     'toast_request_already_pending' => 'Je hebt al een kaartaanvraag die op goedkeuring wacht.',
-    'prompt_request_card_type' => 'Een "physical" of "virtual" kaart aanvragen?',
-    'toast_type_physical_or_virtual' => 'Typ "physical" of "virtual"',
+    'prompt_request_card_type' => 'Welk type kaart wil je aanvragen?',
+    'toast_type_physical_or_virtual' => 'Kies een kaarttype',
+    'option_physical_card' => 'Fysieke kaart',
+    'option_virtual_card' => 'Virtuele kaart',
     'confirm_request_card_prefix' => 'Een',
     'confirm_request_card_suffix' => 'kaart aanvragen? Een beheerder moet dit eerst goedkeuren voordat deze hier verschijnt.',
     'confirm_request_card_button' => 'Kaart aanvragen',

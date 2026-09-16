@@ -91,8 +91,10 @@ return [
     'confirm_replace_card_button' => 'Badilisha kadi',
 
     'toast_request_already_pending' => 'Tayari una ombi la kadi linalosubiri idhini.',
-    'prompt_request_card_type' => 'Omba kadi ya "kimwili" au ya "kidijitali"?',
-    'toast_type_physical_or_virtual' => 'Andika ama "kimwili" au "kidijitali"',
+    'prompt_request_card_type' => 'Ungependa kuomba aina gani ya kadi?',
+    'toast_type_physical_or_virtual' => 'Tafadhali chagua aina ya kadi',
+    'option_physical_card' => 'Kadi halisi',
+    'option_virtual_card' => 'Kadi ya kidijitali',
     'confirm_request_card_prefix' => 'Omba',
     'confirm_request_card_suffix' => 'kadi? Msimamizi atahitaji kuidhinisha kabla haijaonekana hapa.',
     'confirm_request_card_button' => 'Omba kadi',
