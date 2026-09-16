@@ -6,6 +6,7 @@ use App\Mail\TransactionMail;
 use App\Models\AppNotification;
 use App\Models\Bill;
 use App\Models\User;
+use App\Support\AccountAnonymizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -415,10 +416,15 @@ class AdminController extends Controller
     }
 
     /**
-     * Undoes a self-delete — see User::restoreFromTrash(). Checks
-     * permanently_deleted_at itself rather than trusting that the button
-     * was only ever reachable from the Trash list, since an admin could
-     * still hit this route directly for an account already purged.
+     * Undoes a self-delete. This is the only place that ever triggers a
+     * restore, so the two-field flip that used to live in
+     * User::restoreFromTrash() now lives here directly (moved out of the
+     * model — see App\Support\AccountAnonymizer's docblock for why
+     * purgeAccountNow() below couldn't do the same and had to move to a
+     * shared class instead). Checks permanently_deleted_at itself rather
+     * than trusting that the button was only ever reachable from the Trash
+     * list, since an admin could still hit this route directly for an
+     * account already purged.
      */
     public function restoreAccount(User $user): RedirectResponse
     {
@@ -426,7 +432,9 @@ class AdminController extends Controller
             return back()->with('adminError', 'This account was already permanently deleted and can\'t be restored.');
         }
 
-        $user->restoreFromTrash();
+        $user->account_status = 'active';
+        $user->account_deleted_at = null;
+        $user->save();
 
         return redirect()->route('admin.trash')->with('status', $user->name.'\'s account was restored.');
     }
@@ -435,8 +443,8 @@ class AdminController extends Controller
      * Skips the rest of the 30-day wait and scrubs this account right now —
      * the same anonymization PurgeDeletedAccounts runs automatically, just
      * triggered by an admin instead of the schedule. See
-     * User::anonymizeForPermanentDeletion() for exactly what this does (and
-     * deliberately doesn't do — the row itself is never dropped).
+     * App\Support\AccountAnonymizer::scrub() for exactly what this does
+     * (and deliberately doesn't do — the row itself is never dropped).
      */
     public function purgeAccountNow(User $user): RedirectResponse
     {
@@ -448,7 +456,7 @@ class AdminController extends Controller
             return back()->with('adminError', 'This account was already permanently deleted.');
         }
 
-        $user->anonymizeForPermanentDeletion();
+        AccountAnonymizer::scrub($user);
 
         return redirect()->route('admin.trash')->with('status', 'Account #'.$user->id.' was permanently deleted.');
     }

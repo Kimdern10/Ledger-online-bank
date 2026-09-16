@@ -32,9 +32,9 @@ class CreateNewUser implements CreatesNewUsers
         ])->validate();
 
         // checking_account_number / savings_account_number aren't set
-        // here — see User::assignAccountNumbersForType() — since which
-        // one(s) to generate isn't known until the onboarding wizard's
-        // account-type step.
+        // here — see App\Support\AccountNumbers::assignForType() — since
+        // which one(s) to generate isn't known until the onboarding
+        // wizard's account-type step.
         $user = User::create([
             'first_name' => $input['first_name'],
             'last_name' => $input['last_name'],

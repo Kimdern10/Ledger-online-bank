@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Mail\VerificationCodeMail;
+use App\Support\AccountNumbers;
 use App\Support\AccountTier;
 use App\Support\Locale;
 use Database\Factories\UserFactory;
@@ -327,81 +328,6 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     }
 
     /**
-     * Reverses AccountDeletionController::destroy() — the admin Trash
-     * page's "Restore" button. Only makes sense before
-     * anonymizeForPermanentDeletion() below has run; once that's happened
-     * there's no personal data left to restore.
-     */
-    public function restoreFromTrash(): void
-    {
-        $this->account_status = 'active';
-        $this->account_deleted_at = null;
-        $this->save();
-    }
-
-    /**
-     * The actual "permanently delete" — run automatically by
-     * PurgeDeletedAccounts 30 days after account_deleted_at, or immediately
-     * by an admin via the Trash page's "Delete now" button. Deliberately
-     * does NOT delete the row itself: every transfer, card, bill, and
-     * support message this account ever touched uses ON DELETE CASCADE back
-     * to users (see the migrations), so actually deleting the row would
-     * silently wipe those records too — including the OTHER side of any
-     * transfer, e.g. erasing a transfer from a recipient's history just
-     * because the sender's account got purged. Scrubbing every personal and
-     * financial field in place keeps all of that history intact while
-     * making sure nothing identifying is left on the account itself.
-     */
-    public function anonymizeForPermanentDeletion(): void
-    {
-        $this->first_name = 'Deleted';
-        $this->last_name = 'User';
-        $this->middle_name = null;
-        $this->email = 'deleted-user-'.$this->id.'@ledger.invalid';
-        $this->phone = null;
-        $this->password = Str::random(40);
-        $this->transaction_pin = null;
-        $this->verification_code = null;
-        $this->verification_code_expires_at = null;
-        $this->password_reset_code = null;
-        $this->password_reset_code_expires_at = null;
-        $this->two_factor_secret = null;
-        $this->two_factor_recovery_codes = null;
-        $this->two_factor_confirmed_at = null;
-        $this->remember_token = null;
-        $this->account_number = null;
-        $this->routing_number = null;
-        $this->swift_code = null;
-        $this->checking_account_number = null;
-        $this->savings_account_number = null;
-        $this->permanently_deleted_at = now();
-        $this->save();
-
-        if ($this->profile) {
-            $this->profile->update([
-                'next_of_kin_name' => null,
-                'next_of_kin_phone' => null,
-                'next_of_kin_email' => null,
-                'next_of_kin_address' => null,
-                'gender' => null,
-                'date_of_birth' => null,
-                'country' => null,
-                'state' => null,
-                'city' => null,
-                'zip_code' => null,
-                'home_address' => null,
-                'employment_status' => null,
-                'occupation' => null,
-                'industry' => null,
-                'annual_income' => null,
-                'expected_annual_income' => null,
-                'main_source_of_income' => null,
-                'net_worth' => null,
-            ]);
-        }
-    }
-
-    /**
      * Get the user's initials
      */
     public function initials(): string
@@ -557,131 +483,26 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
      * the app doesn't know yet whether this person wants a checking
      * account, a savings account, or both. That choice isn't made until
      * step 5 of the onboarding wizard (onboarding.blade.php's "Account
-     * Type" field). See assignAccountNumbersForType() below, which
+     * Type" field). See App\Support\AccountNumbers::assignForType(), which
      * Profile's own booted() hook calls the moment that choice is saved.
+     *
+     * The actual number-generation logic used to live directly on this
+     * model (as protected static helpers) — moved to App\Support\
+     * AccountNumbers so nothing that isn't itself an Eloquent lifecycle
+     * hook has to reach into a model's internals to generate one of these
+     * numbers outside of this exact moment.
      */
     protected static function booted(): void
     {
         static::creating(function (User $user) {
             if (empty($user->routing_number)) {
-                do {
-                    $number = static::generateFakeRoutingNumber();
-                } while (static::where('routing_number', $number)->exists());
-
-                $user->routing_number = $number;
+                $user->routing_number = AccountNumbers::uniqueRoutingNumber();
             }
 
             if (empty($user->swift_code)) {
-                do {
-                    $code = static::generateFakeSwiftCode();
-                } while (static::where('swift_code', $code)->exists());
-
-                $user->swift_code = $code;
+                $user->swift_code = AccountNumbers::uniqueSwiftCode();
             }
         });
-    }
-
-    /**
-     * Fills in whichever account number(s) match the account type chosen
-     * on step 5 of onboarding — "checking", "savings", or "both" — and
-     * only the one(s) that don't already exist yet, so calling this twice
-     * (e.g. someone clicks back to step 5 and re-submits) never overwrites
-     * a number that's already been generated and shown to them.
-     */
-    public function assignAccountNumbersForType(string $accountType): void
-    {
-        $accountType = strtolower($accountType);
-        $dirty = false;
-
-        if (in_array($accountType, ['checking', 'both'], true) && empty($this->checking_account_number)) {
-            do {
-                $number = static::generatePrefixedAccountNumber('74');
-            } while (static::where('checking_account_number', $number)->exists());
-
-            $this->checking_account_number = $number;
-            $dirty = true;
-        }
-
-        if (in_array($accountType, ['savings', 'both'], true) && empty($this->savings_account_number)) {
-            do {
-                $number = static::generatePrefixedAccountNumber('50');
-            } while (static::where('savings_account_number', $number)->exists());
-
-            $this->savings_account_number = $number;
-            $dirty = true;
-        }
-
-        if ($dirty) {
-            $this->save();
-        }
-    }
-
-    /**
-     * Builds a 9-digit number that LOOKS like a real ABA routing number
-     * (it passes the standard bank checksum) but can never actually BE one.
-     *
-     * Real routing numbers start with a 2-digit Federal Reserve prefix:
-     * 00-32 (banks/thrifts), 61-72 (electronic institutions), or 80
-     * (traveler's checks). Prefixes 33-60 have never been assigned to any
-     * real institution, so picking one there guarantees this number can't
-     * collide with — or be mistaken for — someone's actual bank.
-     *
-     * Note for later: in real banking a routing number identifies the BANK
-     * (or branch), not the individual customer — every customer of the same
-     * bank shares one routing number, and only the account number differs
-     * per person. Ledger gives each user their own purely because that's
-     * what was asked for; it isn't how real routing numbers behave.
-     */
-    protected static function generateFakeRoutingNumber(): string
-    {
-        $prefix = (string) random_int(33, 60);
-        $middle = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-        $digits = array_map('intval', str_split($prefix.$middle));
-
-        // Standard ABA checksum: 3*(d1+d4+d7) + 7*(d2+d5+d8) + 1*(d3+d6+d9) ≡ 0 (mod 10)
-        $weights = [3, 7, 1, 3, 7, 1, 3, 7];
-        $sum = 0;
-        foreach ($digits as $i => $d) {
-            $sum += $d * $weights[$i];
-        }
-        $checkDigit = (10 - ($sum % 10)) % 10;
-
-        return $prefix.$middle.$checkDigit;
-    }
-
-    /**
-     * Builds an 11-character fake SWIFT/BIC code: a fictional 4-letter
-     * "bank code" (LDGR, for Ledger — not a real registered SWIFT bank
-     * code), the US country code, then a random 2-character location code
-     * and 3-character branch code so every user's is unique. Same caveat
-     * as the routing number above: real SWIFT/BIC codes identify an
-     * institution/branch, not a person.
-     */
-    protected static function generateFakeSwiftCode(): string
-    {
-        $alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        $random = fn (int $length) => collect(range(1, $length))
-            ->map(fn () => $alphabet[random_int(0, strlen($alphabet) - 1)])
-            ->implode('');
-
-        return 'LDGRUS'.$random(2).$random(3);
-    }
-
-    /**
-     * Builds a 10-digit account number that always starts with the given
-     * prefix (e.g. "74" for checking, "50" for savings), with the
-     * remaining digits random. Same idea as generateFakeRoutingNumber()'s
-     * safe prefix trick, but here the "prefix" is just a made-up house
-     * style — account numbers aren't nationally standardized in the US the
-     * way routing numbers are, so there's no real-world number this could
-     * ever collide with or be mistaken for.
-     */
-    protected static function generatePrefixedAccountNumber(string $prefix): string
-    {
-        $remainingLength = 10 - strlen($prefix);
-        $rest = str_pad((string) random_int(0, (10 ** $remainingLength) - 1), $remainingLength, '0', STR_PAD_LEFT);
-
-        return $prefix.$rest;
     }
 
     /**

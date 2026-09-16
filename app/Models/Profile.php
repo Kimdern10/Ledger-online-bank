@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\AccountNumbers;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -50,15 +51,15 @@ class Profile extends Model
      * The moment account_type gets saved (step 5 of onboarding — see
      * onboarding.blade.php's submit()), tell the related User to generate
      * whichever account number(s) match it. Runs on every save, not just
-     * the first, but User::assignAccountNumbersForType() only fills in
-     * numbers that don't already exist, so this is safe to fire more than
-     * once (e.g. someone goes back to step 5 and re-submits).
+     * the first, but AccountNumbers::assignForType() only fills in numbers
+     * that don't already exist, so this is safe to fire more than once
+     * (e.g. someone goes back to step 5 and re-submits).
      */
     protected static function booted(): void
     {
         static::saved(function (Profile $profile) {
             if (! empty($profile->account_type) && $profile->user) {
-                $profile->user->assignAccountNumbersForType($profile->account_type);
+                AccountNumbers::assignForType($profile->user, $profile->account_type);
             }
         });
     }
