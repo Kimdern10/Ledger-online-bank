@@ -85,9 +85,14 @@ return [
 
     // Open Payments (openbankingplatform.com) ASPSP directory — one of
     // four international sources. Sign up: https://developer.openpayments.io/.
+    // Sandbox and production use DIFFERENT hosts AND a different OAuth
+    // scope (see OpenPaymentsBankProvider) — this must match whichever
+    // kind of client_id/secret you actually signed up for.
     'open_payments' => [
         'client_id' => env('OPENPAYMENTS_CLIENT_ID'),
         'client_secret' => env('OPENPAYMENTS_CLIENT_SECRET'),
+        // sandbox | production
+        'env' => env('OPENPAYMENTS_ENV', 'sandbox'),
     ],
 
     // Salt Edge Providers API — one of four international sources, and the

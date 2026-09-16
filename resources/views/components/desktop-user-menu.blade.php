@@ -13,17 +13,17 @@
                 :initials="auth()->user()->initials()"
             />
             <div class="grid flex-1 text-start text-sm leading-tight">
-                <flux:heading class="truncate">{{ auth()->user()->name }}</flux:heading>
-                <flux:text class="truncate">{{ auth()->user()->email }}</flux:text>
+                <flux:heading class="truncate"><?= e(auth()->user()->name) ?></flux:heading>
+                <flux:text class="truncate"><?= e(auth()->user()->email) ?></flux:text>
             </div>
         </div>
         <flux:menu.separator />
         <flux:menu.radio.group>
             <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>
-                {{ __('Settings') }}
+                <?= e(__('Settings')) ?>
             </flux:menu.item>
-            <form method="POST" action="{{ route('logout') }}" class="w-full">
-                @csrf
+            <form method="POST" action="<?= e(route('logout')) ?>" class="w-full">
+                <?= csrf_field() ?>
                 <flux:menu.item
                     as="button"
                     type="submit"
@@ -31,7 +31,7 @@
                     class="w-full cursor-pointer"
                     data-test="logout-button"
                 >
-                    {{ __('Log out') }}
+                    <?= e(__('Log out')) ?>
                 </flux:menu.item>
             </form>
         </flux:menu.radio.group>

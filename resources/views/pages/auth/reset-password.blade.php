@@ -1,22 +1,22 @@
 <x-layouts::auth.simple :title="__('authpage.reset_password_title')">
     <div>
-        <h1 class="text-2xl font-semibold" style="font-family:'Newsreader',serif;">{{ __('authpage.reset_password_title') }}</h1>
-        <p class="mt-1 text-sm" style="color:var(--ledger-text-2);">{{ __('authpage.reset_password_description') }}</p>
+        <h1 class="text-2xl font-semibold" style="font-family:'Newsreader',serif;"><?= e(__('authpage.reset_password_title')) ?></h1>
+        <p class="mt-1 text-sm" style="color:var(--ledger-text-2);"><?= e(__('authpage.reset_password_description')) ?></p>
     </div>
 
-    @if (session('status'))
+    <?php if (session('status')): ?>
         <div class="text-sm text-center" style="color:var(--ledger-sage);">
-            {{ session('status') }}
+            <?= e(session('status')) ?>
         </div>
-    @endif
+    <?php endif; ?>
 
-    <form method="POST" action="{{ route('password.update') }}" class="flex flex-col gap-5">
-        @csrf
-        <input type="hidden" name="token" value="{{ request()->route('token') }}">
+    <form method="POST" action="<?= e(route('password.update')) ?>" class="flex flex-col gap-5">
+        <?= csrf_field() ?>
+        <input type="hidden" name="token" value="<?= e(request()->route('token')) ?>">
 
         <flux:input
             name="email"
-            value="{{ request('email') }}"
+            value="<?= e(request('email')) ?>"
             :label="__('authpage.field_email_short')"
             type="email"
             required
@@ -30,7 +30,7 @@
             required
             autocomplete="new-password"
             :placeholder="__('authpage.field_password')"
-            passwordrules="{{ \Illuminate\Validation\Rules\Password::defaults()->toPasswordRulesString() }}"
+            passwordrules="<?= e(\Illuminate\Validation\Rules\Password::defaults()->toPasswordRulesString()) ?>"
             viewable
         />
 
@@ -41,12 +41,12 @@
             required
             autocomplete="new-password"
             :placeholder="__('authpage.field_confirm_password')"
-            passwordrules="{{ \Illuminate\Validation\Rules\Password::defaults()->toPasswordRulesString() }}"
+            passwordrules="<?= e(\Illuminate\Validation\Rules\Password::defaults()->toPasswordRulesString()) ?>"
             viewable
         />
 
         <flux:button type="submit" variant="primary" class="w-full" style="margin-top:12px;" data-test="reset-password-button">
-            {{ __('authpage.reset_password_title') }}
+            <?= e(__('authpage.reset_password_title')) ?>
         </flux:button>
     </form>
 </x-layouts::auth.simple>

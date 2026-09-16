@@ -35,6 +35,14 @@ use Illuminate\Support\Facades\Cache;
  * already added by hand doesn't also show up a second time from a live
  * API) and briefly cached per (type, query) to avoid re-hitting live APIs
  * on every debounced keystroke from the picker's search box.
+ *
+ * Local admin entries always go first, uncapped relative to the live
+ * providers. The live providers themselves are merged ROUND-ROBIN, not
+ * sequentially — confirmed live that a broad query against a provider
+ * with a large catalog (Open Payments' full Nordic bank list, dozens of
+ * matches) would otherwise fill the entire MAX_RESULTS cap before a
+ * provider listed later in the array (e.g. Salt Edge) ever contributed a
+ * single result, even with equally good matches of its own.
  */
 class BankDirectoryController extends Controller
 {
@@ -123,34 +131,57 @@ class BankDirectoryController extends Controller
      */
     private function merge(array $local, string $query, array $providers): array
     {
-        $combined = $local;
-
-        foreach ($providers as $provider) {
-            if (! $provider->isConfigured()) {
-                continue;
-            }
-
-            foreach ($provider->search($query) as $result) {
-                $combined[] = $result;
-            }
-        }
-
         $seen = [];
         $deduped = [];
 
-        foreach ($combined as $bank) {
+        $add = function (array $bank) use (&$deduped, &$seen): bool {
             $key = mb_strtolower(trim($bank['name'] ?? ''));
 
             if ($key === '' || isset($seen[$key])) {
-                continue;
+                return true; // skip this one, keep going
+            }
+
+            if (count($deduped) >= self::MAX_RESULTS) {
+                return false; // cap reached — caller stops
             }
 
             $seen[$key] = true;
             unset($bank['source']); // internal only — never sent to the browser
             $deduped[] = $bank;
 
-            if (count($deduped) >= self::MAX_RESULTS) {
-                break;
+            return true;
+        };
+
+        // Local admin entries always win the cap first (see class doc comment).
+        foreach ($local as $bank) {
+            if (! $add($bank)) {
+                return $deduped;
+            }
+        }
+
+        // Fetch every configured provider's results up front, THEN
+        // interleave them round-robin (one result from each provider per
+        // round) rather than draining one provider's whole result list
+        // before moving to the next — see class doc comment for why.
+        $providerResults = [];
+
+        foreach ($providers as $provider) {
+            if ($provider->isConfigured()) {
+                $providerResults[] = array_values($provider->search($query));
+            }
+        }
+
+        $maxCount = $providerResults === [] ? 0 : max(array_map('count', $providerResults));
+
+        for ($i = 0; $i < $maxCount; $i++) {
+            foreach ($providerResults as $results) {
+                if (! array_key_exists($i, $results)) {
+                    continue;
+                }
+
+                if (! $add($results[$i])) {
+                    return $deduped;
+                }
             }
         }
 

@@ -1,4 +1,4 @@
-{{--
+<?php /*
   Loaded once from layouts/app.blade.php and layouts/admin.blade.php, so
   every page that extends either one gets SweetAlert2 automatically.
 
@@ -16,7 +16,7 @@
      reportLostOrStolen()) — call the global ledgerConfirm(text, onConfirm,
      options) helper instead, and put whatever used to run after the old
      `if (confirm(...))` check inside the onConfirm callback.
---}}
+*/ ?>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
   window.ledgerConfirm = function(text, onConfirm, options){

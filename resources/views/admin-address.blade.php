@@ -3,60 +3,50 @@
 @section('title', 'Address verification')
 
 @section('content')
-  {{-- Same "each admin page defines its own copy" reasoning admin-kyc.blade.php
-       uses for these two classes — see that file's own comment. --}}
-  <style>
-    .section-label{ font-size:11px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--admin-text-2); margin:0 0 10px; }
-    .admin-select{
-      border:1px solid var(--admin-border); border-radius:8px; padding:6px 10px; font-size:12.5px;
-      font-family:inherit; background:#fff; color:var(--admin-text);
-    }
-  </style>
-
   <div class="admin-header">
     <h1>Address verification</h1>
-    <p>{{ $pending->total() }} awaiting review.</p>
+    <p><?= e($pending->total()) ?> awaiting review.</p>
   </div>
 
   <p class="section-label" style="margin:0 0 8px;">Pending</p>
   <div style="display:flex; flex-direction:column; gap:14px; margin-bottom:24px;">
-    @if($pending->isEmpty())
+    <?php if ($pending->isEmpty()): ?>
       <div class="admin-card"><p class="admin-empty">No address verifications are waiting on you right now.</p></div>
-    @else
-      @foreach($pending as $address)
+    <?php else: ?>
+      <?php foreach ($pending as $address): ?>
         <div class="admin-card" style="display:flex; gap:18px; flex-wrap:wrap; align-items:center;">
-          <a href="{{ route('admin.address.image', $address) }}" target="_blank" title="Open document full size">
-            <img src="{{ route('admin.address.image', $address) }}" alt="Proof of address" style="width:120px; height:80px; object-fit:cover; border-radius:8px; border:1px solid var(--admin-border); background:#f3f3f0;">
+          <a href="<?= e(route('admin.address.image', $address)) ?>" target="_blank" title="Open document full size">
+            <img src="<?= e(route('admin.address.image', $address)) ?>" alt="Proof of address" style="width:120px; height:80px; object-fit:cover; border-radius:8px; border:1px solid var(--admin-border); background:#f3f3f0;">
           </a>
 
           <div style="flex:1; min-width:180px;">
-            <p style="margin:0; font-weight:700; font-size:13.5px;">{{ $address->user?->name ?? 'Deleted user' }}</p>
-            <p style="margin:2px 0 0; font-size:11.5px; color:var(--admin-text-2);">{{ $address->user?->email }}</p>
-            <p style="margin:6px 0 0; font-size:12px; color:var(--admin-text-2);">{{ $address->documentTypeLabel() }} &middot; submitted {{ $address->created_at->diffForHumans() }}</p>
+            <p style="margin:0; font-weight:700; font-size:13.5px;"><?= e($address->user?->name ?? 'Deleted user') ?></p>
+            <p style="margin:2px 0 0; font-size:11.5px; color:var(--admin-text-2);"><?= e($address->user?->email) ?></p>
+            <p style="margin:6px 0 0; font-size:12px; color:var(--admin-text-2);"><?= e($address->documentTypeLabel()) ?> &middot; submitted <?= e($address->created_at->diffForHumans()) ?></p>
           </div>
 
           <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-            <form method="POST" action="{{ route('admin.address.approve', $address) }}" data-confirm="Approve this address verification? Their daily limit will go up immediately." data-confirm-button="Approve">
-              @csrf
+            <form method="POST" action="<?= e(route('admin.address.approve', $address)) ?>" data-confirm="Approve this address verification? Their daily limit will go up immediately." data-confirm-button="Approve">
+              <?= csrf_field() ?>
               <button type="submit" class="admin-btn admin-btn-outline">Approve</button>
             </form>
-            <form method="POST" action="{{ route('admin.address.decline', $address) }}" data-confirm="Decline this submission?" data-confirm-danger="1" data-confirm-button="Decline" style="display:flex; gap:6px; align-items:center;">
-              @csrf
+            <form method="POST" action="<?= e(route('admin.address.decline', $address)) ?>" data-confirm="Decline this submission?" data-confirm-danger="1" data-confirm-button="Decline" style="display:flex; gap:6px; align-items:center;">
+              <?= csrf_field() ?>
               <input type="text" name="reason" placeholder="Reason (optional)" class="admin-select" style="width:160px;">
               <button type="submit" class="admin-btn admin-btn-danger">Decline</button>
             </form>
           </div>
         </div>
-      @endforeach
+      <?php endforeach; ?>
       @include('partials.admin-pagination', ['paginator' => $pending])
-    @endif
+    <?php endif; ?>
   </div>
 
   <p class="section-label" style="margin:0 0 8px;">Decided recently</p>
   <div class="admin-card" style="padding:0; overflow-x:auto;">
-    @if($decided->isEmpty())
+    <?php if ($decided->isEmpty()): ?>
       <p class="admin-empty">No submissions have been decided yet.</p>
-    @else
+    <?php else: ?>
       <table class="admin-table">
         <thead>
           <tr>
@@ -68,25 +58,25 @@
           </tr>
         </thead>
         <tbody>
-          @foreach($decided as $address)
+          <?php foreach ($decided as $address): ?>
             <tr>
-              <td>{{ $address->user?->name ?? 'Deleted user' }}</td>
-              <td>{{ $address->documentTypeLabel() }}</td>
+              <td><?= e($address->user?->name ?? 'Deleted user') ?></td>
+              <td><?= e($address->documentTypeLabel()) ?></td>
               <td>
-                <span class="admin-pill {{ $address->isApproved() ? 'status-active' : 'status-frozen' }}">{{ $address->statusLabel() }}</span>
-                @if($address->isRejected() && $address->rejection_reason)
-                  <p style="margin:4px 0 0; font-size:11.5px; color:var(--admin-text-2);">{{ $address->rejection_reason }}</p>
-                @endif
+                <span class="admin-pill <?= e($address->isApproved() ? 'status-active' : 'status-frozen') ?>"><?= e($address->statusLabel()) ?></span>
+                <?php if ($address->isRejected() && $address->rejection_reason): ?>
+                  <p style="margin:4px 0 0; font-size:11.5px; color:var(--admin-text-2);"><?= e($address->rejection_reason) ?></p>
+                <?php endif; ?>
               </td>
-              <td>{{ $address->reviewer?->name ?? '-' }}</td>
-              <td>{{ optional($address->reviewed_at)->diffForHumans() ?? '-' }}</td>
+              <td><?= e($address->reviewer?->name ?? '-') ?></td>
+              <td><?= e(optional($address->reviewed_at)->diffForHumans() ?? '-') ?></td>
             </tr>
-          @endforeach
+          <?php endforeach; ?>
         </tbody>
       </table>
       <div style="padding:0 20px 16px;">
         @include('partials.admin-pagination', ['paginator' => $decided])
       </div>
-    @endif
+    <?php endif; ?>
   </div>
 @endsection

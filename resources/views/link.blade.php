@@ -1,108 +1,108 @@
 @extends('layouts.app')
 
 @section('content')
-@php
+<?php
     // Real linked accounts for this user — see LinkedAccountController and
     // LinkedAccount.php. Newest first, bank and card rows mixed together,
     // same as the "Already linked" list this replaces.
     $accounts = auth()->user()->linkedAccounts()->latest()->get();
-@endphp
+?>
 <div class="send-wrap">
 
   <div class="page-header fade-in d1">
-    <a href="{{ url()->previous() }}" class="icon-btn">
+    <a href="<?= e(url()->previous()) ?>" class="icon-btn">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
     </a>
-    <h1>{{ __('link.title') }}</h1>
-    <a href="{{ route('dashboard') }}" class="icon-btn">
+    <h1><?= e(__('link.title')) ?></h1>
+    <a href="<?= e(route('dashboard')) ?>" class="icon-btn">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
     </a>
   </div>
 
-  @if(session('linkError'))
-    <div class="send-alert fade-in d1">{{ session('linkError') }}</div>
-  @endif
+  <?php if (session('linkError')): ?>
+    <div class="send-alert fade-in d1"><?= e(session('linkError')) ?></div>
+  <?php endif; ?>
 
-  @if($errors->any())
+  <?php if ($errors->any()): ?>
     <div class="send-alert fade-in d1">
       <ul style="margin:0; padding-left:18px;">
-        @foreach($errors->all() as $error)
-          <li>{{ $error }}</li>
-        @endforeach
+        <?php foreach ($errors->all() as $error): ?>
+          <li><?= e($error) ?></li>
+        <?php endforeach; ?>
       </ul>
     </div>
-  @endif
+  <?php endif; ?>
 
   <!-- ============ already linked ============ -->
-  <p class="section-label fade-in d2">{{ __('link.already_linked') }}</p>
+  <p class="section-label fade-in d2"><?= e(__('link.already_linked')) ?></p>
   <div class="setting-list fade-in d2" style="margin-bottom:24px;">
-    @forelse($accounts as $account)
+    <?php $__ledger_forelse_1 = true; foreach ($accounts as $account): $__ledger_forelse_1 = false; ?>
       <div class="setting-item" style="cursor:default;">
         <div class="s-icon" style="background:var(--ink); opacity:1;">
-          @if($account->isBank())
+          <?php if ($account->isBank()): ?>
             <svg viewBox="0 0 24 24" fill="none" stroke="var(--wheat)" stroke-width="1.7"><path d="M3 21h18M4 21V10l8-6 8 6v11M9 21v-6h6v6"/></svg>
-          @else
+          <?php else: ?>
             <svg viewBox="0 0 24 24" fill="none" stroke="var(--wheat)" stroke-width="1.7"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
-          @endif
+          <?php endif; ?>
         </div>
-        <span class="label">{{ $account->displayLabel() }}<span class="linked-tag">{{ $account->detailLabel() }}</span></span>
-        <form method="POST" action="{{ route('link-account.destroy', $account) }}" style="display:contents;" data-confirm="{{ __('link.remove_confirm', ['label' => $account->displayLabel(), 'detail' => $account->detailLabel()]) }}" data-confirm-danger="1" data-confirm-button="{{ __('link.remove_button') }}">
-          @csrf
-          @method('DELETE')
-          <button type="submit" class="remove-btn" aria-label="{{ __('link.remove_aria', ['label' => $account->displayLabel()]) }}">
+        <span class="label"><?= e($account->displayLabel()) ?><span class="linked-tag"><?= e($account->detailLabel()) ?></span></span>
+        <form method="POST" action="<?= e(route('link-account.destroy', $account)) ?>" style="display:contents;" data-confirm="<?= e(__('link.remove_confirm', ['label' => $account->displayLabel(), 'detail' => $account->detailLabel()])) ?>" data-confirm-danger="1" data-confirm-button="<?= e(__('link.remove_button')) ?>">
+          <?= csrf_field() ?>
+          <?= method_field('DELETE') ?>
+          <button type="submit" class="remove-btn" aria-label="<?= e(__('link.remove_aria', ['label' => $account->displayLabel()])) ?>">
             <svg viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12"/></svg>
           </button>
         </form>
       </div>
-    @empty
-      <p style="padding:14px 4px; opacity:0.65;">{{ __('link.empty_state') }}</p>
-    @endforelse
+    <?php endforeach; if ($__ledger_forelse_1): ?>
+      <p style="padding:14px 4px; opacity:0.65;"><?= e(__('link.empty_state')) ?></p>
+    <?php endif; ?>
   </div>
 
   <!-- ============ add new: bank account or card ============ -->
-  <p class="section-label fade-in d3">{{ __('link.add_new') }}</p>
+  <p class="section-label fade-in d3"><?= e(__('link.add_new')) ?></p>
 
-  <form method="POST" action="{{ route('link-account.store') }}" id="linkForm" class="fade-in d3">
-    @csrf
+  <form method="POST" action="<?= e(route('link-account.store')) ?>" id="linkForm" class="fade-in d3">
+    <?= csrf_field() ?>
     <input type="hidden" name="type" id="linkTypeInput" value="bank">
 
     <div class="segmented" style="margin-bottom:18px;">
       <button class="seg-btn active" id="segLinkBank" onclick="setLinkMode('bank')" type="button">
         <svg viewBox="0 0 24 24" fill="none"><path d="M3 21h18M4 21V10l8-6 8 6v11M9 21v-6h6v6"/></svg>
-        {{ __('link.bank_account_tab') }}
+        <?= e(__('link.bank_account_tab')) ?>
       </button>
       <button class="seg-btn" id="segLinkCard" onclick="setLinkMode('card')" type="button">
         <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
-        {{ __('link.card_tab') }}
+        <?= e(__('link.card_tab')) ?>
       </button>
     </div>
 
     <!-- ---- link a bank account ---- -->
     <div id="linkBankPanel">
       <div class="field-group">
-        <p class="label">{{ __('link.bank_label') }}</p>
+        <p class="label"><?= e(__('link.bank_label')) ?></p>
         <div class="bank-input-row">
-          <input type="text" class="text-input" id="linkBankNameInput" name="bank_name" value="{{ old('bank_name') }}" placeholder="{{ __('link.bank_name_placeholder') }}" autocomplete="off" required>
-          <button type="button" class="bank-search-btn" onclick="openSheet()" aria-label="{{ __('link.search_banks_aria') }}">
-            {{-- Missing stroke="currentColor" here (present on this same
+          <input type="text" class="text-input" id="linkBankNameInput" name="bank_name" value="<?= e(old('bank_name')) ?>" placeholder="<?= e(__('link.bank_name_placeholder')) ?>" autocomplete="off" required>
+          <button type="button" class="bank-search-btn" onclick="openSheet()" aria-label="<?= e(__('link.search_banks_aria')) ?>">
+            <?php /* Missing stroke="currentColor" here (present on this same
                  icon in send.blade.php) meant the icon had neither a fill
                  nor a stroke — completely invisible even with the button
-                 box itself now properly sized/bordered. --}}
+                 box itself now properly sized/bordered. */ ?>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
           </button>
         </div>
       </div>
       <div class="field-group">
-        <p class="label">{{ __('link.account_holder_name') }}</p>
-        <input type="text" class="text-input" name="account_holder_name" value="{{ old('account_holder_name') }}" placeholder="{{ __('link.account_holder_name_placeholder') }}" autocomplete="off" required>
+        <p class="label"><?= e(__('link.account_holder_name')) ?></p>
+        <input type="text" class="text-input" name="account_holder_name" value="<?= e(old('account_holder_name')) ?>" placeholder="<?= e(__('link.account_holder_name_placeholder')) ?>" autocomplete="off" required>
       </div>
       <div class="field-group">
-        <p class="label">{{ __('link.account_number') }}</p>
-        <input type="text" class="text-input" name="account_number" value="{{ old('account_number') }}" placeholder="{{ __('link.account_number_placeholder') }}" inputmode="numeric" autocomplete="off" required>
+        <p class="label"><?= e(__('link.account_number')) ?></p>
+        <input type="text" class="text-input" name="account_number" value="<?= e(old('account_number')) ?>" placeholder="<?= e(__('link.account_number_placeholder')) ?>" inputmode="numeric" autocomplete="off" required>
       </div>
       <div class="field-group">
-        <p class="label">{{ __('link.routing_number') }}</p>
-        <input type="text" class="text-input" id="linkRoutingNumberInput" name="routing_number" value="{{ old('routing_number') }}" placeholder="{{ __('link.routing_number_placeholder') }}" inputmode="numeric" maxlength="9" required>
+        <p class="label"><?= e(__('link.routing_number')) ?></p>
+        <input type="text" class="text-input" id="linkRoutingNumberInput" name="routing_number" value="<?= e(old('routing_number')) ?>" placeholder="<?= e(__('link.routing_number_placeholder')) ?>" inputmode="numeric" maxlength="9" required>
       </div>
     </div>
 
@@ -129,36 +129,36 @@
         <div>
           <div class="cv-number" id="cvNumber">•••• •••• •••• ••••</div>
           <div class="cv-bottom">
-            <span class="cv-name" id="cvName">{{ __('link.cardholder_name_default') }}</span>
-            <span id="cvExpiry">{{ __('link.expiry_placeholder') }}</span>
+            <span class="cv-name" id="cvName"><?= e(__('link.cardholder_name_default')) ?></span>
+            <span id="cvExpiry"><?= e(__('link.expiry_placeholder')) ?></span>
           </div>
         </div>
       </div>
 
       <div class="field-group">
-        <p class="label">{{ __('link.card_number') }}</p>
-        <input type="text" class="text-input" id="cardNumberInput" name="card_number" value="{{ old('card_number') }}" placeholder="{{ __('link.card_number_placeholder') }}"
+        <p class="label"><?= e(__('link.card_number')) ?></p>
+        <input type="text" class="text-input" id="cardNumberInput" name="card_number" value="<?= e(old('card_number')) ?>" placeholder="<?= e(__('link.card_number_placeholder')) ?>"
                inputmode="numeric" maxlength="19" oninput="formatCardPreview()" required>
       </div>
       <div class="field-group">
-        <p class="label">{{ __('link.cardholder_name') }}</p>
-        <input type="text" class="text-input" id="cardNameInput" name="card_name" value="{{ old('card_name') }}" placeholder="{{ __('link.cardholder_name_placeholder') }}"
+        <p class="label"><?= e(__('link.cardholder_name')) ?></p>
+        <input type="text" class="text-input" id="cardNameInput" name="card_name" value="<?= e(old('card_name')) ?>" placeholder="<?= e(__('link.cardholder_name_placeholder')) ?>"
                autocomplete="off" oninput="formatCardPreview()" required>
       </div>
       <div style="display:flex; gap:12px;">
         <div class="field-group" style="flex:1;">
-          <p class="label">{{ __('link.expiry') }}</p>
-          <input type="text" class="text-input" id="cardExpiryInput" name="card_expiry" value="{{ old('card_expiry') }}" placeholder="{{ __('link.expiry_placeholder') }}" maxlength="5" oninput="formatCardPreview()" required>
+          <p class="label"><?= e(__('link.expiry')) ?></p>
+          <input type="text" class="text-input" id="cardExpiryInput" name="card_expiry" value="<?= e(old('card_expiry')) ?>" placeholder="<?= e(__('link.expiry_placeholder')) ?>" maxlength="5" oninput="formatCardPreview()" required>
         </div>
         <div class="field-group" style="flex:1;">
-          <p class="label">{{ __('link.cvv') }}</p>
-          <input type="text" class="text-input" name="cvv" placeholder="{{ __('link.cvv_placeholder') }}" inputmode="numeric" maxlength="4" required>
+          <p class="label"><?= e(__('link.cvv')) ?></p>
+          <input type="text" class="text-input" name="cvv" placeholder="<?= e(__('link.cvv_placeholder')) ?>" inputmode="numeric" maxlength="4" required>
         </div>
       </div>
     </div>
 
     <div class="pay-btn-wrap">
-      <button type="submit" class="pay-btn">{{ __('link.link_account_button') }}</button>
+      <button type="submit" class="pay-btn"><?= e(__('link.link_account_button')) ?></button>
     </div>
   </form>
 
@@ -169,39 +169,39 @@
   <div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
     <div class="sheet-head">
-      <h4>{{ __('link.select_a_bank') }}</h4>
+      <h4><?= e(__('link.select_a_bank')) ?></h4>
       <div class="icon-btn" onclick="closeSheet()">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </div>
     </div>
     <div class="sheet-search">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
-      <input type="text" id="bankSearch" placeholder="{{ __('link.bank_search_placeholder') }}" oninput="onBankSearchInput(this.value)">
+      <input type="text" id="bankSearch" placeholder="<?= e(__('link.bank_search_placeholder')) ?>" oninput="onBankSearchInput(this.value)">
     </div>
     <div id="bankOptionList">
-      {{-- Populated live from the admin-managed bank directory (the same
+      <?php /* Populated live from the admin-managed bank directory (the same
            one Send Money's "Another bank" tab searches, and the one admins
            manage from Admin > Banks) — see openSheet()/onBankSearchInput()/
            renderBankResults() below. This used to be nine hardcoded banks
            with no connection to that directory at all, so a bank an admin
            added never showed up here, and searching for anything outside
-           that fixed list of nine just came up empty with no way forward. --}}
+           that fixed list of nine just came up empty with no way forward. */ ?>
     </div>
     <p id="bankSearchLoading" style="display:none; text-align:center; font-size:13px; color:var(--text-3); padding:18px 0;">
-      {{ __('link.bank_search_loading') }}
+      <?= e(__('link.bank_search_loading')) ?>
     </p>
     <p id="noBankResults" style="display:none; text-align:center; font-size:13px; color:var(--text-3); padding:18px 0;">
-      {{ __('link.no_bank_results') }}
+      <?= e(__('link.no_bank_results')) ?>
     </p>
   </div>
 </div>
 
 <div class="ledger-toast" id="ledgerToast">
   <svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5"/></svg>
-  <span id="toastText">{{ __('link.toast_linked') }}</span>
+  <span id="toastText"><?= e(__('link.toast_linked')) ?></span>
 </div>
 
-{{-- .bank-input-row / .bank-search-btn style the "Bank" field's search
+<?php /* .bank-input-row / .bank-search-btn style the "Bank" field's search
      button (the magnifying glass that opens the picker sheet below). This
      page reuses those same class names from Send Money's "Another bank"
      picker, but the rules themselves only ever lived in send.blade.php's
@@ -217,198 +217,16 @@
      required field, a duplicate account number/card) WAS actually
      failing and coming back with a real message, it just rendered as
      plain unstyled text that was easy to miss, which is exactly what
-     "click Link account and nothing happens" looks like from outside. --}}
-<style>
-  .bank-input-row{ display:flex; align-items:center; gap:8px; }
-  .bank-input-row .text-input{ flex:1; }
-  .bank-search-btn{
-    flex:0 0 auto; width:44px; height:44px; border-radius:10px; border:1px solid rgba(0,0,0,0.12);
-    background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink);
-  }
-  .bank-search-btn svg{ width:18px; height:18px; }
-  .send-alert{
-    background:#fdecea; color:#b3261e; border:1px solid #f5c6c2; border-radius:12px;
-    padding:12px 14px; font-size:13.5px; font-weight:600; margin:0 0 14px;
-  }
-  .send-alert ul{ font-weight:500; }
-  .send-alert-success{
-    background:#eaf7ee; color:#1f7a3d; border-color:#c7ebd2;
-  }
-  .bank-search-btn:hover{ background:rgba(30,110,80,0.06); }
-</style>
-
+     "click Link account and nothing happens" looks like from outside. */ ?>
 <script>
-  function setLinkMode(mode){
-    document.getElementById('segLinkBank').classList.toggle('active', mode === 'bank');
-    document.getElementById('segLinkCard').classList.toggle('active', mode === 'card');
-    document.getElementById('linkBankPanel').style.display = mode === 'bank' ? 'block' : 'none';
-    document.getElementById('linkCardPanel').style.display = mode === 'card' ? 'block' : 'none';
-    document.getElementById('linkTypeInput').value = mode;
-
-    // Hiding a panel with display:none does NOT stop its `required` fields
-    // from being enforced on submit — the browser still tries to validate
-    // them, can't focus a hidden field to show the "fill this in" bubble,
-    // and just silently blocks the whole form instead (only a console
-    // warning — "An invalid form control ... is not focusable" — to show
-    // for it, no visible error). That's exactly what made "Link account"
-    // look like it did nothing when the Card panel's required fields sat
-    // there empty and hidden while filling out the Bank panel. Toggling
-    // `required` in step with visibility keeps only the active panel's
-    // fields required, matching what the segmented control is supposed to
-    // mean, and is also called on page load below so the very first
-    // submit (before anyone touches the toggle) starts out correct too.
-    document.querySelectorAll('#linkBankPanel input').forEach(el => { el.required = mode === 'bank'; });
-    document.querySelectorAll('#linkCardPanel input').forEach(el => { el.required = mode === 'card'; });
-  }
-
-  function openSheet(){
-    document.getElementById('bankSearch').value = '';
-    runBankSearch('');
-    document.getElementById('sheetOverlay').classList.add('open');
-    setTimeout(() => document.getElementById('bankSearch').focus(), 150);
-  }
-  function closeSheet(e){
-    if(e) e.stopPropagation();
-    document.getElementById('sheetOverlay').classList.remove('open');
-  }
-
-  // ---------- live bank search (admin-managed directory; debounced, cancels stale requests) ----------
-  let bankSearchTimer = null;
-  let bankSearchAbort = null;
-
-  function onBankSearchInput(value){
-    clearTimeout(bankSearchTimer);
-    bankSearchTimer = setTimeout(() => runBankSearch(value.trim()), 300);
-  }
-
-  function runBankSearch(query){
-    if(bankSearchAbort) bankSearchAbort.abort();
-    bankSearchAbort = new AbortController();
-
-    document.getElementById('noBankResults').style.display = 'none';
-    document.getElementById('bankSearchLoading').style.display = 'block';
-
-    fetch('{{ route('banks.search') }}?q=' + encodeURIComponent(query), { signal: bankSearchAbort.signal })
-      .then(res => {
-        if(!res.ok) throw new Error('Bank search request failed');
-        return res.json();
-      })
-      .then(json => {
-        document.getElementById('bankSearchLoading').style.display = 'none';
-        const banks = json.banks || [];
-        renderBankResults(banks);
-        document.getElementById('noBankResults').style.display = banks.length === 0 ? 'block' : 'none';
-      })
-      .catch(err => {
-        if(err.name === 'AbortError') return;
-        document.getElementById('bankSearchLoading').style.display = 'none';
-        document.getElementById('bankOptionList').innerHTML = '';
-        document.getElementById('noBankResults').textContent = @json(__('link.bank_search_error'));
-        document.getElementById('noBankResults').style.display = 'block';
-      });
-  }
-
-  // A handful of stable, readable colors for the bank "mark" avatar — which
-  // one a bank gets is just a deterministic hash of its name, so the same
-  // bank always gets the same color across searches.
-  const BANK_MARK_COLORS = [
-    '#0A3161', '#0F4C97', '#B4121B', '#C8102E', '#0C2074', '#652D92',
-    '#004977', '#00587C', '#5A2A82', '#7C11E0', '#FF6000', '#00274D',
-    '#00A0DF', '#003057', '#DA291C', '#00693C', '#00854A',
-  ];
-
-  function bankMarkColorFor(name){
-    let hash = 0;
-    for(let i = 0; i < name.length; i++){
-      hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
-    }
-    return BANK_MARK_COLORS[hash % BANK_MARK_COLORS.length];
-  }
-
-  function renderBankResults(banks){
-    const list = document.getElementById('bankOptionList');
-    list.innerHTML = '';
-
-    banks.forEach(bank => {
-      const name = bank.name || '';
-      if(!name) return;
-
-      const color = bankMarkColorFor(name);
-      const initial = name.trim().charAt(0).toUpperCase() || '?';
-
-      const el = document.createElement('div');
-      el.className = 'bank-option';
-      el.dataset.bank = name;
-
-      const mark = document.createElement('div');
-      mark.className = 'mark';
-      mark.style.background = color;
-      mark.textContent = initial;
-
-      const info = document.createElement('div');
-      info.className = 'info';
-      const nameEl = document.createElement('p');
-      nameEl.className = 'name';
-      nameEl.textContent = name;
-      info.append(nameEl);
-      if(bank.meta){
-        const metaEl = document.createElement('p');
-        metaEl.className = 'meta';
-        metaEl.textContent = bank.meta;
-        info.append(metaEl);
-      }
-
-      const check = document.createElement('div');
-      check.className = 'check';
-
-      el.append(mark, info, check);
-      // Selecting a directory bank that has a routing number on file fills
-      // it in too, not just the name — one less field to hunt down for a
-      // bank the admin already entered fully.
-      el.addEventListener('click', () => selectBank(name, bank.routing_number));
-
-      list.appendChild(el);
-    });
-  }
-
-  function selectBank(name, routingNumber){
-    document.getElementById('linkBankNameInput').value = name;
-    if(routingNumber){
-      document.getElementById('linkRoutingNumberInput').value = routingNumber;
-    }
-    closeSheet();
-  }
-
-  function formatCardPreview(){
-    const num = document.getElementById('cardNumberInput').value.replace(/\D/g,'').padEnd(16,'•');
-    const grouped = num.match(/.{1,4}/g).join(' ');
-    document.getElementById('cvNumber').textContent = grouped;
-
-    const name = document.getElementById('cardNameInput').value.trim();
-    document.getElementById('cvName').textContent = name ? name.toUpperCase() : @json(__('link.cardholder_name_default'));
-
-    const exp = document.getElementById('cardExpiryInput').value.trim();
-    document.getElementById('cvExpiry').textContent = exp || @json(__('link.expiry_placeholder'));
-  }
-
-  function showToast(msg){
-    const toast = document.getElementById("ledgerToast");
-    document.getElementById('toastText').textContent = msg;
-    toast.classList.add('show');
-    clearTimeout(window._toastTimer);
-    window._toastTimer = setTimeout(()=> toast.classList.remove('show'), 2200);
-  }
-
-  document.addEventListener('DOMContentLoaded', function(){
-    // Matches the page's default appearance (Bank account tab active, Card
-    // panel already display:none via its inline style) — this just makes
-    // sure the Card panel's fields aren't left `required` from the raw
-    // HTML on the very first load, before anyone touches the toggle.
-    setLinkMode('bank');
-    formatCardPreview();
-    @if(session('status'))
-      showToast(@json(session('status')));
-    @endif
-  });
+  window.LedgerLinkConfig = {
+    banksSearchUrl: "<?= e(route('banks.search')) ?>",
+    statusMessage: <?php if (session('status')): ?> <?= json_encode(session('status')) ?> <?php else: ?> null <?php endif; ?>,
+    i18n: {
+      bankSearchError: <?= json_encode(__('link.bank_search_error')) ?>,
+      cardholderNameDefault: <?= json_encode(__('link.cardholder_name_default')) ?>,
+      expiryPlaceholder: <?= json_encode(__('link.expiry_placeholder')) ?>,
+    },
+  };
 </script>
 @endsection

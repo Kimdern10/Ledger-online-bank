@@ -1,41 +1,41 @@
-{{--
+<?php /*
   Shared pagination footer for any customer-facing page listing records —
   pass in the paginator as $paginator (a LengthAwarePaginator from
   ->paginate()). Mirrors partials/admin-pagination.blade.php but themed
   with the customer-app's own CSS variables/classes instead of the admin
   ones. Renders nothing when there's only one page.
---}}
-@if($paginator->hasPages())
-  @php
+*/ ?>
+<?php if ($paginator->hasPages()): ?>
+  <?php
     $appPagFirst = max(1, $paginator->currentPage() - 2);
     $appPagLast = min($paginator->lastPage(), $paginator->currentPage() + 2);
-  @endphp
+  ?>
   <div class="app-pagination">
     <p class="app-pagination-summary">
-      Showing {{ $paginator->firstItem() }}&ndash;{{ $paginator->lastItem() }} of {{ $paginator->total() }}
+      Showing <?= e($paginator->firstItem()) ?>&ndash;<?= e($paginator->lastItem()) ?> of <?= e($paginator->total()) ?>
     </p>
     <div class="app-pagination-links">
-      <a href="{{ $paginator->previousPageUrl() ?? '#' }}" class="app-page-link {{ $paginator->onFirstPage() ? 'disabled' : '' }}" aria-label="Previous page">&larr;</a>
+      <a href="<?= e($paginator->previousPageUrl() ?? '#') ?>" class="app-page-link <?= $paginator->onFirstPage() ? 'disabled' : '' ?>" aria-label="Previous page">&larr;</a>
 
-      @if($appPagFirst > 1)
-        <a href="{{ $paginator->url(1) }}" class="app-page-link">1</a>
-        @if($appPagFirst > 2)
+      <?php if ($appPagFirst > 1): ?>
+        <a href="<?= e($paginator->url(1)) ?>" class="app-page-link">1</a>
+        <?php if ($appPagFirst > 2): ?>
           <span class="app-page-ellipsis">&hellip;</span>
-        @endif
-      @endif
+        <?php endif; ?>
+      <?php endif; ?>
 
-      @for($page = $appPagFirst; $page <= $appPagLast; $page++)
-        <a href="{{ $paginator->url($page) }}" class="app-page-link {{ $page == $paginator->currentPage() ? 'active' : '' }}">{{ $page }}</a>
-      @endfor
+      <?php for ($page = $appPagFirst; $page <= $appPagLast; $page++): ?>
+        <a href="<?= e($paginator->url($page)) ?>" class="app-page-link <?= $page == $paginator->currentPage() ? 'active' : '' ?>"><?= e($page) ?></a>
+      <?php endfor; ?>
 
-      @if($appPagLast < $paginator->lastPage())
-        @if($appPagLast < $paginator->lastPage() - 1)
+      <?php if ($appPagLast < $paginator->lastPage()): ?>
+        <?php if ($appPagLast < $paginator->lastPage() - 1): ?>
           <span class="app-page-ellipsis">&hellip;</span>
-        @endif
-        <a href="{{ $paginator->url($paginator->lastPage()) }}" class="app-page-link">{{ $paginator->lastPage() }}</a>
-      @endif
+        <?php endif; ?>
+        <a href="<?= e($paginator->url($paginator->lastPage())) ?>" class="app-page-link"><?= e($paginator->lastPage()) ?></a>
+      <?php endif; ?>
 
-      <a href="{{ $paginator->nextPageUrl() ?? '#' }}" class="app-page-link {{ ! $paginator->hasMorePages() ? 'disabled' : '' }}" aria-label="Next page">&rarr;</a>
+      <a href="<?= e($paginator->nextPageUrl() ?? '#') ?>" class="app-page-link <?= ! $paginator->hasMorePages() ? 'disabled' : '' ?>" aria-label="Next page">&rarr;</a>
     </div>
   </div>
-@endif
+<?php endif; ?>

@@ -7,7 +7,7 @@
 </head>
 <body style="margin:0;padding:0;background:#F1EFE7;font-family:'Segoe UI',Helvetica,Arial,sans-serif;">
     <div style="display:none;max-height:0;overflow:hidden;opacity:0;">
-        Your Ledger password reset code: {{ $code }}. It expires in 10 minutes.
+        Your Ledger password reset code: <?= e($code) ?>. It expires in 10 minutes.
     </div>
 
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F1EFE7;padding:40px 16px;">
@@ -43,7 +43,7 @@
                             <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
                                 <tr>
                                     <td style="background:#E4EEE9;border:1.5px dashed #2F6F62;border-radius:12px;padding:22px 0;">
-                                        <span style="font-family:'Courier New',Courier,monospace;font-size:36px;font-weight:700;letter-spacing:10px;color:#1f4d43;">{{ $code }}</span>
+                                        <span style="font-family:'Courier New',Courier,monospace;font-size:36px;font-weight:700;letter-spacing:10px;color:#1f4d43;"><?= e($code) ?></span>
                                     </td>
                                 </tr>
                             </table>

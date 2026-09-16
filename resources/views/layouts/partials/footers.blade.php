@@ -3,11 +3,11 @@
 
     <div class="footer-top">
       <div class="footer-brand">
-        <a href="{{ route('home') }}" class="brand">
+        <a href="<?= route('home') ?>" class="brand">
           <span class="mark">L</span>
           <span class="word" style="color:var(--paper);">Ledger</span>
         </a>
-        <p>{{ __('welcome.footer_tagline') }}</p>
+        <p><?= e(__('welcome.footer_tagline')) ?></p>
         <div class="footer-social" style="margin-top:22px;">
           <a href="#" aria-label="X (Twitter)">
             <svg viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19" stroke-linecap="round"/></svg>
@@ -26,45 +26,45 @@
 
       <div class="footer-cols">
         <div class="footer-col">
-          <h4>{{ __('welcome.footer_col_product') }}</h4>
-          {{-- "Send money" used to point at the same #services anchor as
+          <h4><?= e(__('welcome.footer_col_product')) ?></h4>
+          <?php /* "Send money" used to point at the same #services anchor as
                every other item in this column — not a real route anywhere.
                Signed-in visitors now go straight to the real Send Money
                page; guests go to registration (same pattern as the hero
                "Open an account" CTA and welcome.blade.php's own header
-               link) instead of a dashboard route they can't reach yet. --}}
-          <a href="{{ auth()->check() ? route('send') : route('register') }}">{{ __('welcome.footer_product_send_money') }}</a>
-          <a href="{{ route('home') }}#services">{{ __('welcome.footer_product_receive_money') }}</a>
-          <a href="{{ route('home') }}#services">{{ __('welcome.footer_product_pay_bills') }}</a>
-          <a href="{{ route('home') }}#services">{{ __('welcome.footer_product_budgeting') }}</a>
-          <a href="{{ route('home') }}#services">{{ __('welcome.footer_product_cards') }}</a>
+               link) instead of a dashboard route they can't reach yet. */ ?>
+          <a href="<?= auth()->check() ? route('send') : route('register') ?>"><?= e(__('welcome.footer_product_send_money')) ?></a>
+          <a href="<?= route('home') ?>#services"><?= e(__('welcome.footer_product_receive_money')) ?></a>
+          <a href="<?= route('home') ?>#services"><?= e(__('welcome.footer_product_pay_bills')) ?></a>
+          <a href="<?= route('home') ?>#services"><?= e(__('welcome.footer_product_budgeting')) ?></a>
+          <a href="<?= route('home') ?>#services"><?= e(__('welcome.footer_product_cards')) ?></a>
         </div>
         <div class="footer-col">
-          <h4>{{ __('welcome.footer_col_company') }}</h4>
-          <a href="{{ route('home') }}#about">{{ __('welcome.footer_company_about') }}</a>
-          <a href="#">{{ __('welcome.footer_company_careers') }}</a>
-          <a href="{{ route('home') }}#blog">{{ __('welcome.footer_company_blog') }}</a>
-          <a href="#">{{ __('welcome.footer_company_press') }}</a>
+          <h4><?= e(__('welcome.footer_col_company')) ?></h4>
+          <a href="<?= route('home') ?>#about"><?= e(__('welcome.footer_company_about')) ?></a>
+          <a href="#"><?= e(__('welcome.footer_company_careers')) ?></a>
+          <a href="<?= route('home') ?>#blog"><?= e(__('welcome.footer_company_blog')) ?></a>
+          <a href="#"><?= e(__('welcome.footer_company_press')) ?></a>
         </div>
         <div class="footer-col">
-          <h4>{{ __('welcome.footer_col_support') }}</h4>
-          <a href="#">{{ __('welcome.footer_support_help_center') }}</a>
-          <a href="#">{{ __('welcome.footer_support_security') }}</a>
-          <a href="#">{{ __('welcome.footer_support_status') }}</a>
-          <a href="{{ route('home') }}#contact">{{ __('welcome.footer_support_contact_us') }}</a>
+          <h4><?= e(__('welcome.footer_col_support')) ?></h4>
+          <a href="#"><?= e(__('welcome.footer_support_help_center')) ?></a>
+          <a href="#"><?= e(__('welcome.footer_support_security')) ?></a>
+          <a href="#"><?= e(__('welcome.footer_support_status')) ?></a>
+          <a href="<?= route('home') ?>#contact"><?= e(__('welcome.footer_support_contact_us')) ?></a>
         </div>
         <div class="footer-col">
-          <h4>{{ __('welcome.footer_col_legal') }}</h4>
-          <a href="#">{{ __('welcome.footer_legal_privacy_policy') }}</a>
-          <a href="#">{{ __('welcome.footer_legal_terms_of_service') }}</a>
-          <a href="#">{{ __('welcome.footer_legal_accessibility') }}</a>
+          <h4><?= e(__('welcome.footer_col_legal')) ?></h4>
+          <a href="#"><?= e(__('welcome.footer_legal_privacy_policy')) ?></a>
+          <a href="#"><?= e(__('welcome.footer_legal_terms_of_service')) ?></a>
+          <a href="#"><?= e(__('welcome.footer_legal_accessibility')) ?></a>
         </div>
       </div>
     </div>
 
     <div class="footer-bottom">
-      <span>{!! __('welcome.footer_rights', ['year' => date('Y')]) !!}</span>
-      <span class="mono" style="font-size:12px;">{{ __('welcome.footer_kept_in_order') }}</span>
+      <span><?= __('welcome.footer_rights', ['year' => date('Y')]) ?></span>
+      <span class="mono" style="font-size:12px;"><?= e(__('welcome.footer_kept_in_order')) ?></span>
     </div>
 
   </div>

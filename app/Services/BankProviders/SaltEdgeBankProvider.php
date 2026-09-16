@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\Log;
  *
  * Sign up for a free App-id/Secret at https://www.saltedge.com/clients/sign_up
  * — set SALTEDGE_APP_ID / SALTEDGE_SECRET in .env (see config/services.php).
- * Docs: https://docs.saltedge.com/account_information/v5/#providers
+ * Docs: https://docs.saltedge.com/v6/#providers (v5 is deprecated and now
+ * returns 410 Gone — confirmed live; this uses the current v6 base URL).
  *
  * Salt Edge authenticates with plain App-id/Secret headers (no OAuth token
  * exchange). New Salt Edge clients only see Salt Edge's own "fake" sandbox
@@ -73,57 +74,80 @@ class SaltEdgeBankProvider implements BankProviderInterface
      */
     private function catalog(): array
     {
-        return Cache::remember(self::CATALOG_CACHE_KEY, now()->addMinutes(self::CATALOG_CACHE_MINUTES), function (): array {
-            try {
-                $all = [];
-                $fromId = null;
+        // Deliberately not Cache::remember() — that would also cache an
+        // empty result from a failed/misconfigured request for the full
+        // hour, hiding a real fix behind a stale cached failure. Only a
+        // genuinely non-empty catalog gets cached.
+        $cached = Cache::get(self::CATALOG_CACHE_KEY);
 
-                for ($page = 0; $page < self::MAX_PAGES; $page++) {
-                    $response = Http::timeout(5)
-                        ->retry(1, 200)
-                        ->withHeaders([
-                            'App-id' => config('services.salt_edge.app_id'),
-                            'Secret' => config('services.salt_edge.secret'),
-                            'Accept' => 'application/json',
-                        ])
-                        ->get('https://www.saltedge.com/api/v5/providers', array_filter([
-                            'from_id' => $fromId,
-                        ]));
+        if ($cached !== null) {
+            return $cached;
+        }
 
-                    if (! $response->successful()) {
-                        Log::warning('Salt Edge providers request failed', [
-                            'status' => $response->status(),
-                            'body' => $response->body(),
-                        ]);
+        $catalog = $this->fetchCatalog();
 
-                        break;
-                    }
+        if ($catalog !== []) {
+            Cache::put(self::CATALOG_CACHE_KEY, $catalog, now()->addMinutes(self::CATALOG_CACHE_MINUTES));
+        }
 
-                    foreach ($response->json('data', []) as $p) {
-                        $all[] = [
-                            'name' => (string) ($p['name'] ?? ''),
-                            'country' => $p['country_code'] ?? null,
-                            'swift_code' => null,
-                            'currency' => null,
-                            'routing_number' => null,
-                            'meta' => '',
-                            'source' => 'salt_edge',
-                        ];
-                    }
+        return $catalog;
+    }
 
-                    $fromId = $response->json('meta.next_id');
+    /**
+     * Fetch the full provider catalog from Salt Edge, already normalized.
+     * Returns [] on any failure — never throws.
+     */
+    private function fetchCatalog(): array
+    {
+        try {
+            $all = [];
+            $fromId = null;
 
-                    if (! $fromId) {
-                        break;
-                    }
+            for ($page = 0; $page < self::MAX_PAGES; $page++) {
+                $response = Http::timeout(5)
+                    ->retry(1, 200)
+                    ->withHeaders([
+                        'App-id' => config('services.salt_edge.app_id'),
+                        'Secret' => config('services.salt_edge.secret'),
+                        'Accept' => 'application/json',
+                    ])
+                    ->get('https://www.saltedge.com/api/v6/providers', array_filter([
+                        'from_id' => $fromId,
+                    ]));
+
+                if (! $response->successful()) {
+                    Log::warning('Salt Edge providers request failed', [
+                        'status' => $response->status(),
+                        'body' => $response->body(),
+                    ]);
+
+                    break;
                 }
 
-                return array_values(array_filter($all, fn (array $b) => $b['name'] !== ''));
-            } catch (\Throwable $e) {
-                Log::warning('Salt Edge providers request threw', ['message' => $e->getMessage()]);
+                foreach ($response->json('data', []) as $p) {
+                    $all[] = [
+                        'name' => (string) ($p['name'] ?? ''),
+                        'country' => $p['country_code'] ?? null,
+                        'swift_code' => null,
+                        'currency' => null,
+                        'routing_number' => null,
+                        'meta' => '',
+                        'source' => 'salt_edge',
+                    ];
+                }
 
-                return [];
+                $fromId = $response->json('meta.next_id');
+
+                if (! $fromId) {
+                    break;
+                }
             }
-        });
+
+            return array_values(array_filter($all, fn (array $b) => $b['name'] !== ''));
+        } catch (\Throwable $e) {
+            Log::warning('Salt Edge providers request threw', ['message' => $e->getMessage()]);
+
+            return [];
+        }
     }
 }

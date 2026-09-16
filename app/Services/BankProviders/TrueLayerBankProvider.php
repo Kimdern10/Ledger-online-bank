@@ -18,7 +18,9 @@ use Illuminate\Support\Facades\Log;
  * TrueLayer uses standard OAuth2 client-credentials: an access token is
  * fetched from its auth server (cached for its ~1hr lifetime, so a
  * fresh token isn't requested on every keystroke) and sent as a Bearer
- * header to POST /v3/payment-providers/search on the Payments API host.
+ * header to POST /v3/payments-providers/search on the Payments API host
+ * (note: "payments-providers", plural — a singular "/v3/payment-providers/
+ * search" 404s; confirmed against TrueLayer's own API reference).
  */
 class TrueLayerBankProvider implements BankProviderInterface
 {
@@ -46,17 +48,24 @@ class TrueLayerBankProvider implements BankProviderInterface
             $response = Http::timeout(5)
                 ->retry(1, 200)
                 ->withToken($token)
-                ->post($apiBase.'/v3/payment-providers/search', [
+                ->post($apiBase.'/v3/payments-providers/search', [
                     // GB/EU-wide sweep — this app doesn't restrict which
                     // countries show up in the "International bank" tab.
                     'countries' => ['GB', 'DE', 'FR', 'ES', 'IT', 'NL', 'IE'],
+                    // Required — omitting it (as this originally did) is
+                    // accepted at the routing level (no longer a 404 once
+                    // the path was fixed) but TrueLayer's server 500s on
+                    // it rather than returning a proper 400, confirmed
+                    // live. Covers every country above (GBP for GB, EUR
+                    // for the rest).
+                    'currencies' => ['GBP', 'EUR'],
                     'customer_segments' => ['retail', 'business'],
                     'capabilities' => ['payments' => ['bank_transfer' => new \stdClass]],
                     'authorization_flow' => ['configuration' => ['redirect' => new \stdClass]],
                 ]);
 
             if (! $response->successful()) {
-                Log::warning('TrueLayer payment-providers/search failed', [
+                Log::warning('TrueLayer payments-providers/search failed', [
                     'status' => $response->status(),
                     'body' => $response->body(),
                 ]);

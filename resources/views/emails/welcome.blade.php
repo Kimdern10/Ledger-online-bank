@@ -51,7 +51,7 @@
                             </table>
 
                             <h1 style="margin:0 0 12px;text-align:center;font-family:Georgia,'Times New Roman',serif;font-size:26px;font-weight:600;color:#10202F;">
-                                Welcome, {{ $user->first_name }}.
+                                Welcome, <?= e($user->first_name) ?>.
                             </h1>
 
                             <p style="margin:0 auto 30px;max-width:400px;text-align:center;font-size:15px;line-height:1.7;color:#5C6B72;">
@@ -62,7 +62,7 @@
                                 <tr>
                                     <td style="padding:18px 22px;">
                                         <p style="margin:0 0 4px;font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#8C9298;">Signed up with</p>
-                                        <p style="margin:0;font-size:15px;font-weight:600;color:#10202F;">{{ $user->email }}</p>
+                                        <p style="margin:0;font-size:15px;font-weight:600;color:#10202F;"><?= e($user->email) ?></p>
                                     </td>
                                 </tr>
                             </table>
@@ -70,7 +70,7 @@
                             <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
                                 <tr>
                                     <td align="center">
-                                        <a href="{{ route('login') }}" style="display:inline-block;background:#2F6F62;color:#F6F4EE;font-size:15px;font-weight:600;text-decoration:none;padding:14px 32px;border-radius:10px;">
+                                        <a href="<?= e(route('login')) ?>" style="display:inline-block;background:#2F6F62;color:#F6F4EE;font-size:15px;font-weight:600;text-decoration:none;padding:14px 32px;border-radius:10px;">
                                             Open Ledger
                                         </a>
                                     </td>

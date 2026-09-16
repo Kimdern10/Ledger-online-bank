@@ -15,8 +15,8 @@
             :separator="__('authpage.or_confirm_with_password')"
         />
 
-        <form method="POST" action="{{ route('password.confirm.store') }}" class="flex flex-col gap-6">
-            @csrf
+        <form method="POST" action="<?= e(route('password.confirm.store')) ?>" class="flex flex-col gap-6">
+            <?= csrf_field() ?>
 
             <flux:input
                 name="password"
@@ -29,7 +29,7 @@
             />
 
             <flux:button variant="primary" type="submit" class="w-full" data-test="confirm-password-button">
-                {{ __('authpage.confirm_button') }}
+                <?= e(__('authpage.confirm_button')) ?>
             </flux:button>
         </form>
     </div>

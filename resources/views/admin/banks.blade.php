@@ -8,19 +8,19 @@
       <h1>Banks</h1>
       <p>The directory customers pick from when sending to another bank or sending internationally.</p>
     </div>
-    <a href="{{ route('admin.banks.create') }}" class="admin-btn admin-btn-primary">Add bank</a>
+    <a href="<?= e(route('admin.banks.create')) ?>" class="admin-btn admin-btn-primary">Add bank</a>
   </div>
 
   <div class="admin-tabs" style="margin-bottom:16px;">
-    <a href="{{ route('admin.banks') }}" class="admin-tab {{ ! $type ? 'active' : '' }}" style="text-decoration:none; display:inline-block;">All</a>
-    <a href="{{ route('admin.banks', ['type' => 'external']) }}" class="admin-tab {{ $type === 'external' ? 'active' : '' }}" style="text-decoration:none; display:inline-block;">Domestic ({{ $externalCount }})</a>
-    <a href="{{ route('admin.banks', ['type' => 'international']) }}" class="admin-tab {{ $type === 'international' ? 'active' : '' }}" style="text-decoration:none; display:inline-block;">International ({{ $internationalCount }})</a>
+    <a href="<?= e(route('admin.banks')) ?>" class="admin-tab <?= e(! $type ? 'active' : '') ?>" style="text-decoration:none; display:inline-block;">All</a>
+    <a href="<?= e(route('admin.banks', ['type' => 'external'])) ?>" class="admin-tab <?= e($type === 'external' ? 'active' : '') ?>" style="text-decoration:none; display:inline-block;">Domestic (<?= e($externalCount) ?>)</a>
+    <a href="<?= e(route('admin.banks', ['type' => 'international'])) ?>" class="admin-tab <?= e($type === 'international' ? 'active' : '') ?>" style="text-decoration:none; display:inline-block;">International (<?= e($internationalCount) ?>)</a>
   </div>
 
   <div class="admin-card" style="padding:0; overflow-x:auto;">
-    @if($banks->isEmpty())
+    <?php if ($banks->isEmpty()): ?>
       <p class="admin-empty">No banks in the directory yet. Add one to get started.</p>
-    @else
+    <?php else: ?>
       <table class="admin-table">
         <thead>
           <tr>
@@ -34,37 +34,37 @@
           </tr>
         </thead>
         <tbody>
-          @foreach($banks as $bank)
+          <?php foreach ($banks as $bank): ?>
             <tr>
-              <td>{{ $bank->name }}</td>
-              <td><span class="admin-badge">{{ $bank->typeLabel() }}</span></td>
-              <td>{{ $bank->country ?? '—' }}</td>
-              <td>{{ $bank->routing_number ?? '—' }}</td>
-              <td>{{ $bank->swift_code ?? '—' }}</td>
+              <td><?= e($bank->name) ?></td>
+              <td><span class="admin-badge"><?= e($bank->typeLabel()) ?></span></td>
+              <td><?= e($bank->country ?? '—') ?></td>
+              <td><?= e($bank->routing_number ?? '—') ?></td>
+              <td><?= e($bank->swift_code ?? '—') ?></td>
               <td>
-                <span class="admin-pill {{ $bank->is_active ? 'status-active' : 'status-disabled' }}">{{ $bank->is_active ? 'Active' : 'Inactive' }}</span>
+                <span class="admin-pill <?= e($bank->is_active ? 'status-active' : 'status-disabled') ?>"><?= e($bank->is_active ? 'Active' : 'Inactive') ?></span>
               </td>
               <td>
                 <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                  <a href="{{ route('admin.banks.edit', $bank) }}" class="admin-btn admin-btn-outline">Edit</a>
-                  <form method="POST" action="{{ route('admin.banks.toggle', $bank) }}">
-                    @csrf
-                    <button type="submit" class="admin-btn admin-btn-outline">{{ $bank->is_active ? 'Deactivate' : 'Activate' }}</button>
+                  <a href="<?= e(route('admin.banks.edit', $bank)) ?>" class="admin-btn admin-btn-outline">Edit</a>
+                  <form method="POST" action="<?= e(route('admin.banks.toggle', $bank)) ?>">
+                    <?= csrf_field() ?>
+                    <button type="submit" class="admin-btn admin-btn-outline"><?= e($bank->is_active ? 'Deactivate' : 'Activate') ?></button>
                   </form>
-                  <form method="POST" action="{{ route('admin.banks.destroy', $bank) }}" data-confirm="Remove {{ $bank->name }} from the directory?" data-confirm-danger="1" data-confirm-button="Remove">
-                    @csrf
-                    @method('DELETE')
+                  <form method="POST" action="<?= e(route('admin.banks.destroy', $bank)) ?>" data-confirm="Remove <?= e($bank->name) ?> from the directory?" data-confirm-danger="1" data-confirm-button="Remove">
+                    <?= csrf_field() ?>
+                    <?= method_field('DELETE') ?>
                     <button type="submit" class="admin-btn admin-btn-danger">Remove</button>
                   </form>
                 </div>
               </td>
             </tr>
-          @endforeach
+          <?php endforeach; ?>
         </tbody>
       </table>
       <div style="padding:0 20px 16px;">
         @include('partials.admin-pagination', ['paginator' => $banks])
       </div>
-    @endif
+    <?php endif; ?>
   </div>
 @endsection

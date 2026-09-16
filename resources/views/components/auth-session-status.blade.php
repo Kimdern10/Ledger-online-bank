@@ -2,8 +2,8 @@
     'status',
 ])
 
-@if ($status)
-    <div {{ $attributes->merge(['class' => 'font-medium text-sm text-green-600']) }}>
-        {{ $status }}
+<?php if ($status): ?>
+    <div <?= e($attributes->merge(['class' => 'font-medium text-sm text-green-600'])) ?>>
+        <?= e($status) ?>
     </div>
-@endif
+<?php endif; ?>

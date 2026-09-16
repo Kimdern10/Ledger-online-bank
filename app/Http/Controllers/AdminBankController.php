@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Bank;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 /**
@@ -54,6 +55,7 @@ class AdminBankController extends Controller
         $data = $this->validated($request);
 
         Bank::create($data);
+        $this->clearBankSearchCache();
 
         return redirect()->route('admin.banks')->with('status', 'Bank added to the directory.');
     }
@@ -68,6 +70,7 @@ class AdminBankController extends Controller
         $data = $this->validated($request);
 
         $bank->update($data);
+        $this->clearBankSearchCache();
 
         return redirect()->route('admin.banks')->with('status', 'Bank updated.');
     }
@@ -75,6 +78,7 @@ class AdminBankController extends Controller
     public function destroy(Bank $bank): RedirectResponse
     {
         $bank->delete();
+        $this->clearBankSearchCache();
 
         return redirect()->route('admin.banks')->with('status', 'Bank removed from the directory.');
     }
@@ -89,9 +93,30 @@ class AdminBankController extends Controller
     public function toggle(Bank $bank): RedirectResponse
     {
         $bank->update(['is_active' => ! $bank->is_active]);
+        $this->clearBankSearchCache();
 
         return redirect()->route('admin.banks')
             ->with('status', $bank->is_active ? 'Bank activated.' : 'Bank deactivated.');
+    }
+
+    /**
+     * BankDirectoryController::search()/searchInternational() cache their
+     * merged (local + live-API) results per exact search query text for 5
+     * minutes — see that class's doc comment. That cache key space is
+     * unbounded (one key per distinct query string ever searched), so
+     * there's no way to invalidate just the affected key(s) when a bank
+     * changes here. Confirmed live: without this, a bank an admin just
+     * deactivated or deleted kept appearing in the picker for up to 5
+     * minutes, because the *previous* (still-valid-looking) cached result
+     * for that search term was served as-is. A full flush is safe here —
+     * this app's cache store (CACHE_STORE=database) is separate from its
+     * sessions and queue tables, so this never logs anyone out or drops a
+     * queued job; it only means the next search (and the next live-API
+     * call) does a fresh lookup instead of reading a cached one.
+     */
+    private function clearBankSearchCache(): void
+    {
+        Cache::flush();
     }
 
     private function validated(Request $request): array
