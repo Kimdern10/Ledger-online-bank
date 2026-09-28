@@ -35,13 +35,7 @@
     <button type="button" class="quick-amt-btn" onclick="setFilter(this,'received')">{{ __('history.filter_received') }}</button>
   </div>
 
-  {{-- Every group and row below comes straight from HistoryController —
-       every real transaction type this user has (transfers, withdrawals,
-       top-ups, admin balance adjustments, and card purchases), grouped by
-       real dates. Rows with a receipt page (transfers, withdrawals,
-       top-ups) link to it, exactly like Send Money's own receipt. Admin
-       adjustments and card purchases have no receipt of their own — those
-       render as plain, non-clickable rows instead. --}}
+
   @forelse($groups as $groupLabel => $items)
     <div class="date-group fade-in d3">
       <p class="date-group-label">{{ $groupLabel }}</p>
@@ -62,16 +56,7 @@
               <div class="tx-amt">{{ $item['amount_display'] }}</div>
             </a>
           @else
-            {{-- A scheduled/cancelled/failed transfer has a real receipt
-                 now (view_url — see HistoryController) but still can't be a
-                 plain <a> the way the branch above is: a still-'scheduled'
-                 row needs its Cancel form to sit inside it, and a <form>
-                 nested in an <a> is invalid HTML. So this row navigates via
-                 its own onclick instead, and the Cancel button's existing
-                 onclick="event.stopPropagation()" keeps a click on IT from
-                 also triggering the row's. A row with neither (card
-                 purchases, which have no receipt at all) just isn't
-                 clickable, same as before. --}}
+       
             <div
               class="tx-row not-clickable {{ $item['type'] === 'received' ? 'in' : 'out' }}"
               data-type="{{ $item['type'] }}"

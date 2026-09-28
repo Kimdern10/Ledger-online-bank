@@ -60,8 +60,8 @@ return [
     'banner_international_transfer_sent' => 'Your international transfer has been sent.',
     'banner_withdrawal_bank_days' => 'Arrives in your bank in 1–3 business days.',
     'banner_topup_fee_note' => 'The processing fee was charged by your card, not deducted from the amount added to Ledger.',
-    'banner_adjustment_credit' => 'This deposit was made to your account by Ledger — contact Support if you have questions about it.',
-    'banner_adjustment_debit' => 'This adjustment was made to your account by Ledger — contact Support if you have questions about it.',
+    'banner_adjustment_credit' => '',
+    'banner_adjustment_debit' => 'This adjustment was made to your account by Ledger contact Support if you have questions about it.',
 
     // Status labels (App\Support\TransactionStatus — shared by Transfer,
     // ExternalTransfer, InternationalTransfer, Withdrawal, TopUp)
