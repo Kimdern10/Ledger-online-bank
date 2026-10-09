@@ -188,7 +188,7 @@ class AdminController extends Controller
 
                 Mail::to($user->email)->send(new TransactionMail(
                     user: $user,
-                    title: $isCredit ? 'Deposit to your account' : 'Balance adjustment',
+                    title: $isCredit ? 'Deposit to your account' : 'Debit from your account',
                     amountSign: $isCredit ? '+' : '-',
                     amount: $amount,
                     reference: 'ADJ'.$adjustment->id,
@@ -197,13 +197,13 @@ class AdminController extends Controller
                 ));
             }
         } catch (\Throwable $e) {
-            Log::error('Failed to send balance adjustment notification email: '.$e->getMessage());
+            Log::error('Failed to send Admin adjustment notification email: '.$e->getMessage());
         }
 
         AppNotification::notify(
             $user,
-            $isCredit ? 'Deposit to your account' : 'Balance adjustment',
-            ($isCredit ? 'A deposit of $' : 'A balance adjustment of $').number_format($amount, 2).' was made to your account.',
+            $isCredit ? 'Deposit to your account' : 'Debit from your account',
+            ($isCredit ? 'A deposit of $' : 'A debit of $').number_format($amount, 2).' was made to your account.',
             route('history'),
         );
 

@@ -224,7 +224,7 @@
     <button type="button" class="admin-btn admin-btn-dark" style="width:100%; padding:11px; font-size:13.5px;" onclick="openCreditDebit()">Credit / Debit</button>
 
     <div class="admin-card" style="margin-top:18px;">
-      <p style="margin:0 0 4px; font-weight:700; font-size:13.5px;">Recent balance adjustments</p>
+      <p style="margin:0 0 4px; font-weight:700; font-size:13.5px;">Recent Debits</p>
       @if($adjustments->isEmpty())
         <p class="admin-empty" style="padding:14px 0;">No admin adjustments yet.</p>
       @else

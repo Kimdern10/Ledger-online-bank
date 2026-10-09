@@ -50,7 +50,7 @@ return [
     'title_withdrawal' => 'Withdrawal',
     'title_topup' => 'Top-up',
     'title_deposit_received' => 'Deposit received',
-    'title_balance_adjustment' => 'Balance adjustment',
+    'title_balance_adjustment' => 'Debit',
 
     // Banners
     'banner_scheduled' => "This transfer is scheduled for :date and hasn't gone out yet. You can cancel it any time before then.",
@@ -61,7 +61,7 @@ return [
     'banner_withdrawal_bank_days' => 'Arrives in your bank in 1–3 business days.',
     'banner_topup_fee_note' => 'The processing fee was charged by your card, not deducted from the amount added to Ledger.',
     'banner_adjustment_credit' => '',
-    'banner_adjustment_debit' => 'This adjustment was made to your account by Ledger contact Support if you have questions about it.',
+    'banner_adjustment_debit' => '',
 
     // Status labels (App\Support\TransactionStatus — shared by Transfer,
     // ExternalTransfer, InternationalTransfer, Withdrawal, TopUp)
