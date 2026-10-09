@@ -241,7 +241,7 @@ class HistoryController extends Controller
                 return [
                     'type' => $isCredit ? 'received' : 'sent',
                     'name' => $isCredit ? ($adj->sender_name ?: 'Bank deposit') : 'Ledger',
-                    'label' => $isCredit ? 'Deposit' : 'Adjustment',
+                    'label' => $isCredit ? 'Deposit' : 'Debit',
                     'amount_raw' => $isCredit ? (float) $adj->amount : -1 * (float) $adj->amount,
                     'amount_display' => ($isCredit ? '+$' : '–$').number_format((float) $adj->amount, 2),
                     'created_at' => $adj->created_at,
@@ -333,8 +333,8 @@ class HistoryController extends Controller
     }
 
     /**
-     * A receipt for an admin balance adjustment ("Deposit"/"Adjustment" in
-     * History) — reuses the exact same send-receipt.blade.php template
+     * A receipt for an admin balance change ("Deposit"/"Debit" in History)
+     * — reuses the exact same send-receipt.blade.php template
      * TransferController::receipt() does, just built from an
      * AdminBalanceAdjustment instead of a Transfer. This is the one History
      * row type that was never something the user submitted themselves, so
@@ -346,6 +346,11 @@ class HistoryController extends Controller
         abort_unless($adjustment->user_id === $request->user()->id, 404);
 
         $isCredit = $adjustment->direction === 'credit';
+
+        // Same "DEB"/"CRD" + row id format AdminController::adjustBalance()
+        // puts in the transaction email, so the receipt and the email show
+        // the same reference. Display-only, never stored.
+        $reference = ($isCredit ? 'CRD' : 'DEB').$adjustment->id;
 
         $rows = [];
 
@@ -363,16 +368,16 @@ class HistoryController extends Controller
         }
 
         $rows[] = ['label' => __('receipt.row_status'), 'value' => __('receipt.status_completed')];
-        $rows[] = ['label' => __('receipt.row_reference'), 'value' => 'ADJ'.$adjustment->id];
+        $rows[] = ['label' => __('receipt.row_reference'), 'value' => $reference];
         $rows[] = ['label' => __('receipt.row_date'), 'value' => $adjustment->created_at->format('M j, Y \a\t g:i A')];
 
         return view('send-receipt', [
-            'title' => $isCredit ? __('receipt.title_deposit_received') : __('receipt.title_balance_adjustment'),
+            'title' => $isCredit ? __('receipt.title_deposit_received') : 'Debit',
             'amountSign' => $isCredit ? '+' : '-',
             'subVerb' => $isCredit ? 'from' : 'by',
             'recipientName' => $isCredit ? ($adjustment->sender_name ?: 'Ledger') : 'Ledger',
             'amount' => (float) $adjustment->amount,
-            'reference' => 'ADJ'.$adjustment->id,
+            'reference' => $reference,
             'rows' => $rows,
             'banner' => $isCredit ? __('receipt.banner_adjustment_credit') : __('receipt.banner_adjustment_debit'),
             'icon' => 'check',
