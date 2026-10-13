@@ -33,9 +33,35 @@ use Illuminate\Support\Str;
  * host entirely. The token is cached for its ~1hr lifetime, then sent as
  * a Bearer header to GET /psd2/aspspinformation/v1/aspsps, which also
  * requires a fresh X-Request-ID (UUID) on every call.
+ *
+ * The directory returns a BIC for each bank but (confirmed live) no
+ * country and never a currency. A BIC carries its country in characters
+ * 5-6 (HANDSESS -> SE), so the country is read from there when the API
+ * doesn't send one, and the currency is then derived from the country —
+ * that's what lets the Send Money picker fill in Country, SWIFT and
+ * Currency when a bank is chosen.
  */
 class OpenPaymentsBankProvider implements BankProviderInterface
 {
+    /**
+     * Country (ISO 3166-1 alpha-2) => currency, for the countries this
+     * directory covers (Nordics, Baltics, and the rest of Europe).
+     */
+    private const COUNTRY_CURRENCY = [
+        // Nordics
+        'SE' => 'SEK', 'NO' => 'NOK', 'DK' => 'DKK', 'FI' => 'EUR', 'IS' => 'ISK',
+        // Baltics
+        'EE' => 'EUR', 'LV' => 'EUR', 'LT' => 'EUR',
+        // Eurozone
+        'AT' => 'EUR', 'BE' => 'EUR', 'CY' => 'EUR', 'DE' => 'EUR', 'ES' => 'EUR',
+        'FR' => 'EUR', 'GR' => 'EUR', 'HR' => 'EUR', 'IE' => 'EUR', 'IT' => 'EUR',
+        'LU' => 'EUR', 'MT' => 'EUR', 'NL' => 'EUR', 'PT' => 'EUR', 'SI' => 'EUR',
+        'SK' => 'EUR',
+        // Rest of Europe
+        'GB' => 'GBP', 'PL' => 'PLN', 'CZ' => 'CZK', 'HU' => 'HUF', 'RO' => 'RON',
+        'BG' => 'BGN', 'CH' => 'CHF',
+    ];
+
     public function isConfigured(): bool
     {
         return filled(config('services.open_payments.client_id')) && filled(config('services.open_payments.client_secret'));
@@ -73,15 +99,22 @@ class OpenPaymentsBankProvider implements BankProviderInterface
             $needle = mb_strtolower($query);
 
             return collect($aspsps)
-                ->map(fn (array $a): array => [
-                    'name' => (string) ($a['name'] ?? ''),
-                    'country' => $a['countryCode'] ?? null,
-                    'swift_code' => $a['bicFi'] ?? null,
-                    'currency' => null,
-                    'routing_number' => null,
-                    'meta' => trim(collect([$a['countryCode'] ?? null, $a['bicFi'] ?? null])->filter()->implode(' · ')),
-                    'source' => 'open_payments',
-                ])
+                ->map(function (array $a): array {
+                    $bic = $this->bicFrom($a);
+                    // Country from the API if it sends one, otherwise from
+                    // characters 5-6 of the BIC.
+                    $country = $this->countryFrom($a) ?? $this->countryFromBic($bic);
+
+                    return [
+                        'name' => (string) ($a['name'] ?? ''),
+                        'country' => $country,
+                        'swift_code' => $bic,
+                        'currency' => $country ? (self::COUNTRY_CURRENCY[$country] ?? null) : null,
+                        'routing_number' => null,
+                        'meta' => trim(collect([$country, $bic])->filter()->implode(' · ')),
+                        'source' => 'open_payments',
+                    ];
+                })
                 ->filter(fn (array $bank) => $bank['name'] !== '' && ($needle === '' || str_contains(mb_strtolower($bank['name']), $needle)))
                 ->values()
                 ->all();
@@ -90,6 +123,48 @@ class OpenPaymentsBankProvider implements BankProviderInterface
 
             return [];
         }
+    }
+
+    /**
+     * The country as sent by the directory, if it sends one at all
+     * (confirmed live that it often doesn't). Always a 2-letter uppercase
+     * code, or null.
+     */
+    private function countryFrom(array $aspsp): ?string
+    {
+        $candidate = $aspsp['countryCode']
+            ?? $aspsp['country_code']
+            ?? $aspsp['country']
+            ?? null;
+
+        $candidate = strtoupper(trim((string) $candidate));
+
+        return strlen($candidate) === 2 ? $candidate : null;
+    }
+
+    /**
+     * A BIC's characters 5-6 are the bank's country (HANDSESS -> SE).
+     */
+    private function countryFromBic(?string $bic): ?string
+    {
+        if ($bic === null || strlen($bic) < 6) {
+            return null;
+        }
+
+        $code = strtoupper(substr($bic, 4, 2));
+
+        return ctype_alpha($code) ? $code : null;
+    }
+
+    /**
+     * The directory's BIC field is "bicFi", with a couple of fallbacks.
+     */
+    private function bicFrom(array $aspsp): ?string
+    {
+        $bic = $aspsp['bicFi'] ?? $aspsp['bic'] ?? $aspsp['bic_fi'] ?? null;
+        $bic = strtoupper(trim((string) $bic));
+
+        return $bic !== '' ? $bic : null;
     }
 
     private function isSandbox(): bool

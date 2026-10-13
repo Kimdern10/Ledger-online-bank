@@ -21,9 +21,27 @@ use Illuminate\Support\Facades\Log;
  * header to POST /v3/payments-providers/search on the Payments API host
  * (note: "payments-providers", plural — a singular "/v3/payment-providers/
  * search" 404s; confirmed against TrueLayer's own API reference).
+ *
+ * TrueLayer only returns a bank's name and country — never a SWIFT code or
+ * currency — so the currency is derived from the country here (every
+ * country searched below is either GB or a eurozone country), which lets
+ * the Send Money picker fill in Country and Currency when a bank is chosen.
  */
 class TrueLayerBankProvider implements BankProviderInterface
 {
+    /**
+     * Currency for each country this provider searches.
+     */
+    private const COUNTRY_CURRENCY = [
+        'GB' => 'GBP',
+        'DE' => 'EUR',
+        'FR' => 'EUR',
+        'ES' => 'EUR',
+        'IT' => 'EUR',
+        'NL' => 'EUR',
+        'IE' => 'EUR',
+    ];
+
     public function isConfigured(): bool
     {
         return filled(config('services.truelayer.client_id')) && filled(config('services.truelayer.client_secret'));
@@ -77,15 +95,20 @@ class TrueLayerBankProvider implements BankProviderInterface
             $needle = mb_strtolower($query);
 
             return collect($providers)
-                ->map(fn (array $p): array => [
-                    'name' => (string) ($p['display_name'] ?? $p['provider_id'] ?? ''),
-                    'country' => $p['country'] ?? ($p['country_code'] ?? null),
-                    'swift_code' => null,
-                    'currency' => null,
-                    'routing_number' => null,
-                    'meta' => '',
-                    'source' => 'truelayer',
-                ])
+                ->map(function (array $p): array {
+                    $country = $this->countryFrom($p);
+
+                    return [
+                        'name' => (string) ($p['display_name'] ?? $p['provider_id'] ?? ''),
+                        'country' => $country,
+                        'swift_code' => null,
+                        'currency' => $country ? (self::COUNTRY_CURRENCY[$country] ?? null) : null,
+                        'routing_number' => null,
+                        // The small gray line under the bank's name in the picker.
+                        'meta' => $country ?? '',
+                        'source' => 'truelayer',
+                    ];
+                })
                 ->filter(fn (array $bank) => $bank['name'] !== '' && ($needle === '' || str_contains(mb_strtolower($bank['name']), $needle)))
                 ->values()
                 ->all();
@@ -94,6 +117,21 @@ class TrueLayerBankProvider implements BankProviderInterface
 
             return [];
         }
+    }
+
+    /**
+     * TrueLayer doesn't always put the country in the same field, so check
+     * every place it might be and return a 2-letter uppercase code.
+     */
+    private function countryFrom(array $provider): ?string
+    {
+        $candidate = $provider['country_code']
+            ?? $provider['country']
+            ?? (is_array($provider['countries'] ?? null) ? ($provider['countries'][0] ?? null) : null);
+
+        $candidate = strtoupper(trim((string) $candidate));
+
+        return strlen($candidate) === 2 ? $candidate : null;
     }
 
     /**

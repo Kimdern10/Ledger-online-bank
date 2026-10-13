@@ -152,7 +152,7 @@ function confirmPin(){
         if(e) e.stopPropagation();
         document.getElementById('moreSheetOverlay').classList.remove('open');
       }
-    
+
 
   window.openMoreSheet = openMoreSheet;
   window.closeMoreSheet = closeMoreSheet;
@@ -235,7 +235,7 @@ function confirmPin(){
           },
         });
       })();
-    
+
 
   // ---- account chip cycling ----
       // Cycles the balance card's account chip between Checking and Savings
@@ -324,7 +324,7 @@ function confirmPin(){
 
         startAutoCycle();
       })();
-    
+
 
   // ---- notification bell ----
   (function initNotifBell(){
@@ -453,7 +453,7 @@ function confirmPin(){
       }
 
       setInterval(pollNotifications, 20000);
-    
+
 
     window.toggleNotifDropdown = toggleNotifDropdown;
     window.markAllNotificationsRead = markAllNotificationsRead;
@@ -805,6 +805,7 @@ function confirmPin(){
 })();
 
 // ============================================================
+// ============================================================
 // Send money (send.blade.php)
 // ============================================================
 (function(){
@@ -870,6 +871,10 @@ function confirmPin(){
 
     if(intlRequired){
       scheduleIntlConversion();
+      // Loads the international bank list in the background the moment
+      // this tab opens, so the picker has results ready before anyone
+      // taps the search icon.
+      prefetchIntlBanks();
     } else {
       document.getElementById('intlConvertedNote').style.display = 'none';
     }
@@ -1131,9 +1136,9 @@ function confirmPin(){
     document.getElementById('intlBankSearch').value = '';
     resetIntlBankSearchPanel();
     document.getElementById('intlSheetOverlay').classList.add('open');
-    // Shows the full curated list right away — it's a short admin-managed
-    // directory, not a live third-party search, so there's no need to wait
-    // for someone to start typing before showing anything.
+    // Shows the full curated list right away. If the list was already
+    // prefetched when the International tab opened (see prefetchIntlBanks()),
+    // this renders instantly from the cache with no "Searching…" at all.
     runIntlBankSearch('');
     setTimeout(() => document.getElementById('intlBankSearch').focus(), 150);
   }
@@ -1153,36 +1158,78 @@ function confirmPin(){
     document.getElementById('intlBankOptionList').innerHTML = '';
   }
 
+  // Every query's results are remembered here (keyed by lowercase query),
+  // so searching the same thing twice — or reopening the picker — never
+  // hits the server again.
+  const intlBankCache = new Map();
   let intlBankSearchTimer = null;
   let intlBankSearchAbort = null;
+  let intlLoadingTimer = null;
 
-  function onIntlBankSearchInput(value){
-    clearTimeout(intlBankSearchTimer);
-    intlBankSearchTimer = setTimeout(() => runIntlBankSearch(value.trim()), 250);
-  }
-
-  function runIntlBankSearch(query){
-    if(intlBankSearchAbort) intlBankSearchAbort.abort();
-    intlBankSearchAbort = new AbortController();
-
-    document.getElementById('intlBankSearchHint').style.display = 'none';
-    document.getElementById('noIntlBankResults').style.display = 'none';
-    document.getElementById('intlBankSearchLoading').style.display = 'block';
-
-    fetch(cfg.banksSearchInternationalUrl + '?q=' + encodeURIComponent(query), { signal: intlBankSearchAbort.signal })
+  function fetchIntlBanks(query, signal){
+    return fetch(cfg.banksSearchInternationalUrl + '?q=' + encodeURIComponent(query), { signal: signal })
       .then(res => {
         if(!res.ok) throw new Error('Bank search request failed');
         return res.json();
       })
       .then(json => {
-        document.getElementById('intlBankSearchLoading').style.display = 'none';
         const banks = json.banks || [];
-        renderIntlBankResults(banks);
-        document.getElementById('noIntlBankResults').textContent = sendI18n.noBankResults;
-        document.getElementById('noIntlBankResults').style.display = banks.length === 0 ? 'block' : 'none';
-      })
+        intlBankCache.set(query.toLowerCase(), banks);
+        return banks;
+      });
+  }
+
+  // Warms the cache with the full list as soon as the International tab
+  // is opened, so the picker has results ready before anyone taps the
+  // search icon.
+  function prefetchIntlBanks(){
+    if(intlBankCache.has('')) return;
+    fetchIntlBanks('').catch(function(){});
+  }
+
+  function showIntlBanks(banks){
+    clearTimeout(intlLoadingTimer);
+    document.getElementById('intlBankSearchLoading').style.display = 'none';
+    renderIntlBankResults(banks);
+    const none = document.getElementById('noIntlBankResults');
+    none.textContent = sendI18n.noBankResults;
+    none.style.display = banks.length === 0 ? 'block' : 'none';
+  }
+
+  function onIntlBankSearchInput(value){
+    clearTimeout(intlBankSearchTimer);
+    const query = value.trim();
+    // Cached searches show instantly; only uncached ones wait the short debounce.
+    const delay = intlBankCache.has(query.toLowerCase()) ? 0 : 120;
+    intlBankSearchTimer = setTimeout(() => runIntlBankSearch(query), delay);
+  }
+
+  function runIntlBankSearch(query){
+    const key = query.toLowerCase();
+
+    if(intlBankSearchAbort) intlBankSearchAbort.abort();
+    clearTimeout(intlLoadingTimer);
+
+    document.getElementById('intlBankSearchHint').style.display = 'none';
+    document.getElementById('noIntlBankResults').style.display = 'none';
+
+    if(intlBankCache.has(key)){
+      showIntlBanks(intlBankCache.get(key));
+      return;
+    }
+
+    intlBankSearchAbort = new AbortController();
+
+    // Only show "Searching…" if the request is genuinely slow.
+    intlLoadingTimer = setTimeout(function(){
+      document.getElementById('intlBankSearchLoading').style.display = 'block';
+    }, 250);
+
+    fetchIntlBanks(query, intlBankSearchAbort.signal)
+      .then(showIntlBanks)
       .catch(err => {
         if(err.name === 'AbortError') return;
+        clearTimeout(intlLoadingTimer);
         document.getElementById('intlBankSearchLoading').style.display = 'none';
         clearIntlBankResults();
         document.getElementById('noIntlBankResults').textContent = sendI18n.bankSearchError;
@@ -1231,6 +1278,7 @@ function confirmPin(){
   }
 
   function selectIntlBank(el, bank){
+    console.log('Picked bank:', bank);
     document.querySelectorAll('#intlBankOptionList .bank-option').forEach(o=>{
       o.classList.remove('selected');
       const check = o.querySelector('.check');
@@ -1246,6 +1294,10 @@ function confirmPin(){
     if(bank.country) document.getElementById('intlCountryInput').value = bank.country;
     if(bank.swift_code) document.getElementById('intlSwiftInput').value = bank.swift_code;
     if(bank.currency) document.getElementById('intlCurrencyInput').value = bank.currency;
+
+    // Refreshes the "converted amount" preview now that the currency
+    // may have just changed.
+    scheduleIntlConversion();
 
     setTimeout(()=>closeIntlSheet(), 180);
   }

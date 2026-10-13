@@ -12,6 +12,7 @@ use App\Services\BankProviders\TrueLayerBankProvider;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Backs the "Select a bank" pickers on the Send Money page — the "Another
@@ -31,10 +32,25 @@ use Illuminate\Support\Facades\Cache;
  *     configured (see config/services.php) is silently skipped — it
  *     contributes zero results, never an error.
  *
+ * Empty search (the picker was just opened):
+ *  - International: live providers ARE used, so the person sees real banks
+ *    before typing anything. That first result is cached for 30 minutes
+ *    (and the Send page warms it up as soon as the International tab
+ *    opens). If nothing at all comes back, a short built-in list of
+ *    well-known banks is shown so the picker is never blank.
+ *  - Domestic: only the local directory is used (Plaid requires a
+ *    non-empty query anyway), with a built-in list of well-known banks as
+ *    the fallback.
+ *
+ * International results that arrive without a currency (live APIs rarely
+ * send one) get one filled in from the bank's country — see
+ * fillCurrencies() — so picking a bank can fill in the Currency field.
+ *
  * Results are de-duplicated by a normalized bank name (so a bank an admin
  * already added by hand doesn't also show up a second time from a live
  * API) and briefly cached per (type, query) to avoid re-hitting live APIs
- * on every debounced keystroke from the picker's search box.
+ * on every debounced keystroke from the picker's search box. Empty
+ * results are never cached.
  *
  * Local admin entries always go first, uncapped relative to the live
  * providers. The live providers themselves are merged ROUND-ROBIN, not
@@ -53,20 +69,123 @@ class BankDirectoryController extends Controller
     protected const MAX_RESULTS = 25;
 
     /**
+     * Shown in the "Another bank" picker before anyone searches, but ONLY
+     * when nothing else is available. Names only — no routing numbers,
+     * since those must come from the admin directory or the person typing
+     * them in.
+     */
+    protected const POPULAR_DOMESTIC_BANKS = [
+        'JPMorgan Chase Bank',
+        'Bank of America',
+        'Wells Fargo Bank',
+        'Citibank',
+        'U.S. Bank',
+        'PNC Bank',
+        'Capital One',
+        'TD Bank',
+        'Truist Bank',
+        'Ally Bank',
+    ];
+
+    /**
+     * Shown in the "International bank" picker before anyone searches, but
+     * ONLY when no admin entry or live provider returned anything. Name,
+     * country and currency only — SWIFT codes are left for the sender to
+     * type, since a wrong code on a real transfer is worse than a blank.
+     * Each row: [name, country, currency].
+     */
+    protected const POPULAR_INTERNATIONAL_BANKS = [
+        ['Barclays', 'GB', 'GBP'],
+        ['HSBC UK', 'GB', 'GBP'],
+        ['Lloyds Bank', 'GB', 'GBP'],
+        ['NatWest', 'GB', 'GBP'],
+        ['Deutsche Bank', 'DE', 'EUR'],
+        ['BNP Paribas', 'FR', 'EUR'],
+        ['Santander', 'ES', 'EUR'],
+        ['ING', 'NL', 'EUR'],
+        ['Handelsbanken', 'SE', 'SEK'],
+        ['Danske Bank', 'DK', 'DKK'],
+        ['DNB', 'NO', 'NOK'],
+        ['Nordea', 'FI', 'EUR'],
+        ['DBS Bank', 'SG', 'SGD'],
+        ['Mizuho Bank', 'JP', 'JPY'],
+        ['HDFC Bank', 'IN', 'INR'],
+    ];
+
+    /**
+     * ISO 3166-1 alpha-2 country code => that country's currency code.
+     */
+    protected const COUNTRY_CURRENCY = [
+        // Eurozone
+        'AT' => 'EUR', 'BE' => 'EUR', 'CY' => 'EUR', 'DE' => 'EUR', 'EE' => 'EUR',
+        'ES' => 'EUR', 'FI' => 'EUR', 'FR' => 'EUR', 'GR' => 'EUR', 'HR' => 'EUR',
+        'IE' => 'EUR', 'IT' => 'EUR', 'LT' => 'EUR', 'LU' => 'EUR', 'LV' => 'EUR',
+        'MT' => 'EUR', 'NL' => 'EUR', 'PT' => 'EUR', 'SI' => 'EUR', 'SK' => 'EUR',
+        // Rest of Europe
+        'GB' => 'GBP', 'SE' => 'SEK', 'NO' => 'NOK', 'DK' => 'DKK', 'IS' => 'ISK',
+        'PL' => 'PLN', 'CZ' => 'CZK', 'HU' => 'HUF', 'RO' => 'RON', 'BG' => 'BGN',
+        'CH' => 'CHF', 'TR' => 'TRY',
+        // Asia-Pacific
+        'AU' => 'AUD', 'NZ' => 'NZD', 'JP' => 'JPY', 'CN' => 'CNY', 'HK' => 'HKD',
+        'SG' => 'SGD', 'KR' => 'KRW', 'IN' => 'INR', 'ID' => 'IDR', 'MY' => 'MYR',
+        'TH' => 'THB', 'PH' => 'PHP', 'VN' => 'VND', 'TW' => 'TWD',
+        // Middle East & Africa
+        'AE' => 'AED', 'SA' => 'SAR', 'IL' => 'ILS', 'EG' => 'EGP', 'ZA' => 'ZAR',
+        'NG' => 'NGN', 'KE' => 'KES', 'GH' => 'GHS',
+        // Americas
+        'US' => 'USD', 'CA' => 'CAD', 'MX' => 'MXN', 'BR' => 'BRL',
+    ];
+
+    /**
+     * For live APIs that send a country NAME instead of a 2-letter code.
+     * Lowercase name => ISO code (which COUNTRY_CURRENCY then maps).
+     */
+    protected const COUNTRY_NAME_TO_CODE = [
+        'austria' => 'AT', 'belgium' => 'BE', 'cyprus' => 'CY', 'germany' => 'DE',
+        'estonia' => 'EE', 'spain' => 'ES', 'finland' => 'FI', 'france' => 'FR',
+        'greece' => 'GR', 'croatia' => 'HR', 'ireland' => 'IE', 'italy' => 'IT',
+        'lithuania' => 'LT', 'luxembourg' => 'LU', 'latvia' => 'LV', 'malta' => 'MT',
+        'netherlands' => 'NL', 'portugal' => 'PT', 'slovenia' => 'SI', 'slovakia' => 'SK',
+        'united kingdom' => 'GB', 'uk' => 'GB', 'great britain' => 'GB',
+        'sweden' => 'SE', 'norway' => 'NO', 'denmark' => 'DK', 'iceland' => 'IS',
+        'poland' => 'PL', 'czech republic' => 'CZ', 'czechia' => 'CZ', 'hungary' => 'HU',
+        'romania' => 'RO', 'bulgaria' => 'BG', 'switzerland' => 'CH', 'turkey' => 'TR',
+        'australia' => 'AU', 'new zealand' => 'NZ', 'japan' => 'JP', 'china' => 'CN',
+        'hong kong' => 'HK', 'singapore' => 'SG', 'south korea' => 'KR', 'korea' => 'KR',
+        'india' => 'IN', 'indonesia' => 'ID', 'malaysia' => 'MY', 'thailand' => 'TH',
+        'philippines' => 'PH', 'vietnam' => 'VN', 'taiwan' => 'TW',
+        'united arab emirates' => 'AE', 'uae' => 'AE', 'saudi arabia' => 'SA',
+        'israel' => 'IL', 'egypt' => 'EG', 'south africa' => 'ZA', 'nigeria' => 'NG',
+        'kenya' => 'KE', 'ghana' => 'GH',
+        'united states' => 'US', 'usa' => 'US', 'canada' => 'CA', 'mexico' => 'MX',
+        'brazil' => 'BR',
+    ];
+
+    /**
      * "Another bank" tab — domestic (type=external) entries only.
      */
     public function search(Request $request): JsonResponse
     {
         $query = trim((string) $request->query('q', ''));
 
-        $results = Cache::remember(
-            'banks:external:'.mb_strtolower($query),
-            now()->addMinutes(5),
-            fn () => $this->merge(
-                $this->localResults($query, 'external'),
-                $query,
-                [app(PlaidBankProvider::class)]
-            )
+        // "v4" in the key on purpose: it skips any older cached results
+        // from before these behaviors changed.
+        $results = $this->rememberNonEmpty(
+            'banks:v4:external:'.mb_strtolower($query),
+            5,
+            function () use ($query) {
+                $results = $this->merge(
+                    $this->localResults($query, 'external'),
+                    $query,
+                    [app(PlaidBankProvider::class)]
+                );
+
+                if ($query === '' && $results === []) {
+                    $results = $this->popularDomesticBanks();
+                }
+
+                return $results;
+            }
         );
 
         return response()->json(['banks' => $results]);
@@ -79,22 +198,57 @@ class BankDirectoryController extends Controller
     {
         $query = trim((string) $request->query('q', ''));
 
-        $results = Cache::remember(
-            'banks:international:'.mb_strtolower($query),
-            now()->addMinutes(5),
-            fn () => $this->merge(
-                $this->localResults($query, 'international'),
-                $query,
-                [
-                    app(TrueLayerBankProvider::class),
-                    app(TokenIoBankProvider::class),
-                    app(OpenPaymentsBankProvider::class),
-                    app(SaltEdgeBankProvider::class),
-                ]
-            )
+        // The opening list (empty query) is the slow one — it asks every
+        // live provider — so it's kept longer than a typed search.
+        $minutes = $query === '' ? 30 : 5;
+
+        $results = $this->rememberNonEmpty(
+            'banks:v4:international:'.mb_strtolower($query),
+            $minutes,
+            function () use ($query) {
+                $results = $this->fillCurrencies($this->merge(
+                    $this->localResults($query, 'international'),
+                    $query,
+                    [
+                        app(TrueLayerBankProvider::class),
+                        app(TokenIoBankProvider::class),
+                        app(OpenPaymentsBankProvider::class),
+                        app(SaltEdgeBankProvider::class),
+                    ],
+                    true // live providers are used even for an empty query
+                ));
+
+                if ($query === '' && $results === []) {
+                    $results = $this->popularInternationalBanks();
+                }
+
+                return $results;
+            }
         );
 
         return response()->json(['banks' => $results]);
+    }
+
+    /**
+     * Like Cache::remember(), but an empty result is never stored — so a
+     * failed or misconfigured request can't leave the picker blank for the
+     * whole cache window.
+     */
+    private function rememberNonEmpty(string $key, int $minutes, \Closure $callback): array
+    {
+        $cached = Cache::get($key);
+
+        if (is_array($cached) && $cached !== []) {
+            return $cached;
+        }
+
+        $value = $callback();
+
+        if ($value !== []) {
+            Cache::put($key, $value, now()->addMinutes($minutes));
+        }
+
+        return $value;
     }
 
     private function localResults(string $query, string $type): array
@@ -106,6 +260,7 @@ class BankDirectoryController extends Controller
         }
 
         return $banks->orderBy('name')
+            ->limit(self::MAX_RESULTS)
             ->get()
             ->map(fn (Bank $bank) => [
                 'id' => $bank->id,
@@ -126,18 +281,101 @@ class BankDirectoryController extends Controller
     }
 
     /**
+     * Built-in fallback for the domestic picker's empty-search state — see
+     * the class doc comment. Same shape as localResults() so the picker
+     * renders it exactly like a real directory entry.
+     */
+    private function popularDomesticBanks(): array
+    {
+        return array_map(fn (string $name) => [
+            'id' => null,
+            'name' => $name,
+            'country' => null,
+            'swift_code' => null,
+            'currency' => null,
+            'routing_number' => null,
+            'meta' => '',
+        ], self::POPULAR_DOMESTIC_BANKS);
+    }
+
+    /**
+     * Built-in fallback for the international picker's empty-search state.
+     */
+    private function popularInternationalBanks(): array
+    {
+        return array_map(fn (array $row) => [
+            'id' => null,
+            'name' => $row[0],
+            'country' => $row[1],
+            'swift_code' => null,
+            'currency' => $row[2],
+            'routing_number' => null,
+            'meta' => $row[1],
+        ], self::POPULAR_INTERNATIONAL_BANKS);
+    }
+
+    /**
+     * Fills in a missing currency from the bank's country, so picking a
+     * live-API bank can fill in the Currency field. A currency a bank
+     * already has (admin-entered, or sent by the API itself) is never
+     * overwritten. If the country is missing or unrecognized, the currency
+     * stays empty and the Currency field is simply left as the user had it.
+     */
+    private function fillCurrencies(array $banks): array
+    {
+        return array_map(function (array $bank) {
+            if (! empty($bank['currency'])) {
+                return $bank;
+            }
+
+            $currency = $this->currencyForCountry($bank['country'] ?? null);
+
+            // No usable country? A SWIFT/BIC code carries it in characters 5-6.
+            if (! $currency) {
+                $swift = strtoupper(trim((string) ($bank['swift_code'] ?? '')));
+
+                if (strlen($swift) >= 6) {
+                    $currency = $this->currencyForCountry(substr($swift, 4, 2));
+                }
+            }
+
+            if ($currency) {
+                $bank['currency'] = $currency;
+            }
+
+            return $bank;
+        }, $banks);
+    }
+
+    private function currencyForCountry(?string $country): ?string
+    {
+        $country = trim((string) $country);
+
+        if ($country === '') {
+            return null;
+        }
+
+        $code = strlen($country) === 2
+            ? strtoupper($country)
+            : (self::COUNTRY_NAME_TO_CODE[mb_strtolower($country)] ?? null);
+
+        return $code ? (self::COUNTRY_CURRENCY[$code] ?? null) : null;
+    }
+
+    /**
      * @param  array  $local  Already-formatted local Bank rows (see localResults()).
      * @param  BankProviderInterface[]  $providers
+     * @param  bool  $liveWhenEmpty  Ask the live providers even when the query is empty.
      */
-    private function merge(array $local, string $query, array $providers): array
+    private function merge(array $local, string $query, array $providers, bool $liveWhenEmpty = false): array
     {
         $seen = [];
         $deduped = [];
 
         $add = function (array $bank) use (&$deduped, &$seen): bool {
-            $key = mb_strtolower(trim($bank['name'] ?? ''));
+            $key = mb_strtolower(trim($bank['name'] ?? '').'|'.($bank['swift_code'] ?? ''));
 
-            if ($key === '' || isset($seen[$key])) {
+            if (trim($bank['name'] ?? '') === '' || isset($seen[$key])) {
                 return true; // skip this one, keep going
             }
 
@@ -159,6 +397,12 @@ class BankDirectoryController extends Controller
             }
         }
 
+        // Empty search = picker just opened. Unless the caller wants live
+        // banks on open too, the local list is enough to show right away.
+        if ($query === '' && ! $liveWhenEmpty) {
+            return $deduped;
+        }
+
         // Fetch every configured provider's results up front, THEN
         // interleave them round-robin (one result from each provider per
         // round) rather than draining one provider's whole result list
@@ -166,8 +410,16 @@ class BankDirectoryController extends Controller
         $providerResults = [];
 
         foreach ($providers as $provider) {
-            if ($provider->isConfigured()) {
+            if (! $provider->isConfigured()) {
+                continue;
+            }
+
+            // One provider being down or slow-failing must never break the
+            // whole search — it just contributes nothing this time.
+            try {
                 $providerResults[] = array_values($provider->search($query));
+            } catch (\Throwable $e) {
+                Log::warning('Bank provider search failed ('.get_class($provider).'): '.$e->getMessage());
             }
         }
 

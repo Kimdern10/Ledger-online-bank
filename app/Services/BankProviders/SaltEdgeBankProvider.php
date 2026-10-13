@@ -29,14 +29,33 @@ use Illuminate\Support\Facades\Log;
  * provider catalog (paginated, capped at 10 pages) once, caches it for an
  * hour, and filters by name + country client-side — the catalog changes
  * rarely, so this avoids re-hitting Salt Edge on every keystroke.
+ *
+ * Salt Edge returns a country code for each provider but never a currency
+ * or SWIFT code, so the currency is derived from the country here — that's
+ * what lets the Send Money picker fill in Country and Currency when a bank
+ * is chosen.
  */
 class SaltEdgeBankProvider implements BankProviderInterface
 {
-    private const CATALOG_CACHE_KEY = 'saltedge:providers:catalog';
+    private const CATALOG_CACHE_KEY = 'saltedge:providers:catalog:v2';
 
     private const CATALOG_CACHE_MINUTES = 60;
 
     private const MAX_PAGES = 10;
+
+    /**
+     * Country (ISO 3166-1 alpha-2) => currency. Covers the Asia-Pacific
+     * default list plus common neighbours, in case SALTEDGE_COUNTRY_CODES
+     * is widened later.
+     */
+    private const COUNTRY_CURRENCY = [
+        'JP' => 'JPY', 'SG' => 'SGD', 'HK' => 'HKD', 'CN' => 'CNY', 'IN' => 'INR',
+        'PH' => 'PHP', 'VN' => 'VND', 'MY' => 'MYR', 'TH' => 'THB', 'KR' => 'KRW',
+        'ID' => 'IDR', 'TW' => 'TWD', 'AU' => 'AUD', 'NZ' => 'NZD', 'PK' => 'PKR',
+        'BD' => 'BDT', 'LK' => 'LKR', 'AE' => 'AED', 'SA' => 'SAR', 'IL' => 'ILS',
+        'EG' => 'EGP', 'ZA' => 'ZAR', 'NG' => 'NGN', 'KE' => 'KES', 'GH' => 'GHS',
+        'US' => 'USD', 'CA' => 'CAD', 'MX' => 'MXN', 'BR' => 'BRL', 'GB' => 'GBP',
+    ];
 
     public function isConfigured(): bool
     {
@@ -125,13 +144,17 @@ class SaltEdgeBankProvider implements BankProviderInterface
                 }
 
                 foreach ($response->json('data', []) as $p) {
+                    $country = strtoupper(trim((string) ($p['country_code'] ?? '')));
+                    $country = strlen($country) === 2 ? $country : null;
+
                     $all[] = [
                         'name' => (string) ($p['name'] ?? ''),
-                        'country' => $p['country_code'] ?? null,
+                        'country' => $country,
                         'swift_code' => null,
-                        'currency' => null,
+                        'currency' => $country ? (self::COUNTRY_CURRENCY[$country] ?? null) : null,
                         'routing_number' => null,
-                        'meta' => '',
+                        // The small gray line under the bank's name in the picker.
+                        'meta' => $country ?? '',
                         'source' => 'salt_edge',
                     ];
                 }
