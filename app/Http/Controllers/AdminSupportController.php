@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -57,7 +58,7 @@ class AdminSupportController extends Controller
         $perPage = 20;
         $page = (int) $request->query('page', 1);
 
-        $paginatedConversations = new \Illuminate\Pagination\LengthAwarePaginator(
+        $paginatedConversations = new LengthAwarePaginator(
             $conversations->forPage($page, $perPage)->values(),
             $conversations->count(),
             $perPage,
@@ -124,7 +125,7 @@ class AdminSupportController extends Controller
             ->withCount('messages')
             ->with(['messages' => fn ($q) => $q->latest()->limit(1)])
             ->latest()
-            ->get();
+            ->paginate(20);
 
         return view('admin.support-history', [
             'customer' => $user,

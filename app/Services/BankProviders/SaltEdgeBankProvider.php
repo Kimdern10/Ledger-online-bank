@@ -37,7 +37,22 @@ use Illuminate\Support\Facades\Log;
  */
 class SaltEdgeBankProvider implements BankProviderInterface
 {
-    private const CATALOG_CACHE_KEY = 'saltedge:providers:catalog:v2';
+    // v3: the v2 catalog cached before the per-country fetch below was
+    // almost entirely German banks (see fetchCatalog()).
+    private const CATALOG_CACHE_KEY = 'saltedge:providers:catalog:v4';
+
+    /**
+     * Providers per page — Salt Edge's per_page parameter. At 1000 the whole
+     * catalogue (~2,250 active providers, confirmed live) is 3 requests.
+     */
+    private const PER_PAGE = 1000;
+
+    /**
+     * Salt Edge's pseudo-countries: XF is its fake sandbox banks, XO its
+     * country-less entries (wallets like PayPal) — neither is a bank a
+     * customer can send to.
+     */
+    private const NOT_A_COUNTRY = ['XF', 'XO'];
 
     private const CATALOG_CACHE_MINUTES = 60;
 
@@ -55,6 +70,10 @@ class SaltEdgeBankProvider implements BankProviderInterface
         'BD' => 'BDT', 'LK' => 'LKR', 'AE' => 'AED', 'SA' => 'SAR', 'IL' => 'ILS',
         'EG' => 'EGP', 'ZA' => 'ZAR', 'NG' => 'NGN', 'KE' => 'KES', 'GH' => 'GHS',
         'US' => 'USD', 'CA' => 'CAD', 'MX' => 'MXN', 'BR' => 'BRL', 'GB' => 'GBP',
+        // Countries the all-countries catalogue added (see fetchCatalog()).
+        'UA' => 'UAH', 'TR' => 'TRY', 'CH' => 'CHF', 'RO' => 'RON', 'HU' => 'HUF',
+        'AR' => 'ARS', 'EC' => 'USD', 'DO' => 'DOP', 'DE' => 'EUR', 'ES' => 'EUR',
+        'AT' => 'EUR', 'IE' => 'EUR', 'IT' => 'EUR', 'NL' => 'EUR',
     ];
 
     public function isConfigured(): bool
@@ -113,17 +132,46 @@ class SaltEdgeBankProvider implements BankProviderInterface
     }
 
     /**
-     * Fetch the full provider catalog from Salt Edge, already normalized.
+     * Fetch the provider catalog from Salt Edge, already normalized.
      * Returns [] on any failure — never throws.
+     *
+     * With SALTEDGE_COUNTRY_CODES empty, everything Salt Edge offers is
+     * fetched (every country, PER_PAGE at a time). With it set, each country is fetched on its own
+     * through the documented `country_code` filter. Fetching the whole
+     * catalog and filtering afterwards never worked: Salt Edge pages its
+     * list by provider id, so the first MAX_PAGES pages were ~99% German
+     * banks (confirmed live: DE 986 of 1000) and the Asia-Pacific countries
+     * this provider is configured for came back with nothing at all.
      */
     private function fetchCatalog(): array
     {
+        $countryCodes = array_values(array_filter(array_map(
+            fn (string $code) => strtoupper(trim($code)),
+            explode(',', (string) config('services.salt_edge.country_codes', ''))
+        )));
+
+        $all = [];
+
+        foreach ($countryCodes ?: [null] as $countryCode) {
+            array_push($all, ...$this->fetchProviders($countryCode));
+        }
+
+        return array_values(array_filter($all, fn (array $b) => $b['name'] !== ''));
+    }
+
+    /**
+     * Up to MAX_PAGES pages of one country's providers (or of everything,
+     * when $countryCode is null). A failed page keeps what came before it.
+     */
+    private function fetchProviders(?string $countryCode): array
+    {
+        $providers = [];
+
         try {
-            $all = [];
             $fromId = null;
 
             for ($page = 0; $page < self::MAX_PAGES; $page++) {
-                $response = Http::timeout(5)
+                $response = Http::timeout(10)
                     ->retry(1, 200)
                     ->withHeaders([
                         'App-id' => config('services.salt_edge.app_id'),
@@ -132,10 +180,14 @@ class SaltEdgeBankProvider implements BankProviderInterface
                     ])
                     ->get('https://www.saltedge.com/api/v6/providers', array_filter([
                         'from_id' => $fromId,
+                        'country_code' => $countryCode,
+                        'exclude_inactive' => 'true',
+                        'per_page' => self::PER_PAGE,
                     ]));
 
                 if (! $response->successful()) {
                     Log::warning('Salt Edge providers request failed', [
+                        'country' => $countryCode,
                         'status' => $response->status(),
                         'body' => $response->body(),
                     ]);
@@ -147,14 +199,20 @@ class SaltEdgeBankProvider implements BankProviderInterface
                     $country = strtoupper(trim((string) ($p['country_code'] ?? '')));
                     $country = strlen($country) === 2 ? $country : null;
 
-                    $all[] = [
+                    if (in_array($country, self::NOT_A_COUNTRY, true)) {
+                        continue;
+                    }
+
+                    $bic = ($p['bic_codes'] ?? [])[0] ?? null;
+
+                    $providers[] = [
                         'name' => (string) ($p['name'] ?? ''),
                         'country' => $country,
-                        'swift_code' => null,
+                        'swift_code' => $bic,
                         'currency' => $country ? (self::COUNTRY_CURRENCY[$country] ?? null) : null,
                         'routing_number' => null,
                         // The small gray line under the bank's name in the picker.
-                        'meta' => $country ?? '',
+                        'meta' => trim(collect([$country, $bic])->filter()->implode(' · ')),
                         'source' => 'salt_edge',
                     ];
                 }
@@ -165,12 +223,10 @@ class SaltEdgeBankProvider implements BankProviderInterface
                     break;
                 }
             }
-
-            return array_values(array_filter($all, fn (array $b) => $b['name'] !== ''));
         } catch (\Throwable $e) {
-            Log::warning('Salt Edge providers request threw', ['message' => $e->getMessage()]);
-
-            return [];
+            Log::warning('Salt Edge providers request threw', ['country' => $countryCode, 'message' => $e->getMessage()]);
         }
+
+        return $providers;
     }
 }

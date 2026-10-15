@@ -91,7 +91,11 @@ class TrueLayerBankProvider implements BankProviderInterface
                 return [];
             }
 
-            $providers = $response->json('results', $response->json() ?? []);
+            // The documented response is { "items": [...] } — see
+            // https://docs.truelayer.com/reference/search-payment-providers.
+            // (This used to read "results", which never existed, and fell
+            // back to mapping the whole response object.)
+            $providers = $response->json('items', []);
             $needle = mb_strtolower($query);
 
             return collect($providers)
@@ -101,11 +105,11 @@ class TrueLayerBankProvider implements BankProviderInterface
                     return [
                         'name' => (string) ($p['display_name'] ?? $p['provider_id'] ?? ''),
                         'country' => $country,
-                        'swift_code' => null,
+                        'swift_code' => $p['swift_code'] ?? null,
                         'currency' => $country ? (self::COUNTRY_CURRENCY[$country] ?? null) : null,
                         'routing_number' => null,
                         // The small gray line under the bank's name in the picker.
-                        'meta' => $country ?? '',
+                        'meta' => trim(collect([$country, $p['swift_code'] ?? null])->filter()->implode(' · ')),
                         'source' => 'truelayer',
                     ];
                 })

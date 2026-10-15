@@ -56,8 +56,8 @@ return [
 
     // Address verification page (address-verify.blade.php)
     'address_approved_title' => "You're fully verified",
-    'address_approved_body' => "Your proof of address was reviewed and approved. You're now Tier 3 — your daily limit is :limit.",
-    'address_approved_body_dated' => "Your proof of address was reviewed and approved on :date. You're now Tier 3 — your daily limit is :limit.",
+    'address_approved_body' => "Your proof of address was reviewed and approved. You're now Tier 3 your daily limit is :limit.",
+    'address_approved_body_dated' => "Your proof of address was reviewed and approved on :date. You're now Tier 3 your daily limit is :limit.",
     'address_pending_title' => 'Your document is under review',
     'address_pending_body' => 'You submitted a :type :time. Our team reviews these by hand, usually within a day. Your current daily limit stays at :limit until then.',
     'address_resubmit_notice' => 'Please try again below with a clear, recent document.',

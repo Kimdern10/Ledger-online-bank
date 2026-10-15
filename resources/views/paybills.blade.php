@@ -3,7 +3,7 @@
 @section('content')
 <?php
     $user = auth()->user();
-    $bills = $user->bills()->orderBy('due_date')->get();
+    $bills = $user->bills()->orderBy('due_date')->paginate(10);
 
     // Same "which account do we actually have" logic as the dashboard and
     // receive-money page: prefer checking, fall back to savings, so this
@@ -103,6 +103,7 @@
           </div>
         @endforeach
       </div>
+      @include('partials.pagination', ['paginator' => $bills])
     </div>
   @else
     {{-- Savings-only accounts land here — no add/pay UI at all, since

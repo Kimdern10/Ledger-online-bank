@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use Carbon\CarbonImmutable;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -27,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureDefaults();
         $this->configureSmartsuppLogout();
+        $this->configureRememberedEmail();
     }
 
     /**
@@ -64,6 +67,23 @@ class AppServiceProvider extends ServiceProvider
     {
         Event::listen(Logout::class, function (): void {
             session()->flash('smartsupp_logout', true);
+        });
+    }
+
+    /**
+     * "Remember me" on the login page also remembers the email address: it
+     * is kept in a year-long cookie and filled in on the next visit (see
+     * pages/auth/login.blade.php). Signing in without the box ticked
+     * forgets it again.
+     */
+    protected function configureRememberedEmail(): void
+    {
+        Event::listen(Login::class, function (Login $event): void {
+            if ($event->remember) {
+                Cookie::queue('remembered_email', $event->user->email, 60 * 24 * 365);
+            } else {
+                Cookie::queue(Cookie::forget('remembered_email'));
+            }
         });
     }
 }

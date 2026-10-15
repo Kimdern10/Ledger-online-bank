@@ -9,6 +9,11 @@
         <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 
         <style>
+            /* The form's focus glow reaches a little past the screen edge on phones;
+               clip it so the page never scrolls sideways. */
+            @supports (overflow-x: clip){
+                html, body{ overflow-x: clip; }
+            }
             :root{
                 --ledger-ink:#10202F;
                 --ledger-ink-2:#1B3145;

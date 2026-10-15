@@ -18,7 +18,7 @@
       id="guestChatThread"
       data-last-id="{{ optional($messages->last())->id ?? 0 }}"
       data-open="{{ $conversation->isOpen() ? '1' : '0' }}"
-      style="max-height:56vh; overflow-y:auto; padding-right:4px;"
+      style="max-height:56vh; max-height:56dvh; overflow-y:auto; padding-right:4px;"
     >
       @forelse($messages as $message)
         <div class="msg-row {{ $message->isFromAdmin() ? 'support' : 'user' }}" data-msg-id="{{ $message->id }}">

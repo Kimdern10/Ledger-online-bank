@@ -4,7 +4,7 @@
 
 @section('content')
   <div class="admin-header">
-    <p class="eyebrow"><a href="{{ route('admin.support') }}">← Support inbox</a></p>
+    <p class="eyebrow">Customer support</p>
     <h1>Guest messages</h1>
     <p>
       {{ $conversations->total() }} conversation{{ $conversations->total() === 1 ? '' : 's' }} from the
@@ -31,10 +31,12 @@
       <button type="button" class="admin-tab" data-filter="open" onclick="setGuestFilter(this, 'open')">Open</button>
       <button type="button" class="admin-tab" data-filter="closed" onclick="setGuestFilter(this, 'closed')">Ended</button>
     </div>
-    <label class="admin-search">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
-      <input type="text" id="guestSearchInput" placeholder="Search by name or email" oninput="applyGuestFilters()">
-    </label>
+    <div class="admin-filter-row" style="display:flex; gap:10px; flex-wrap:wrap;">
+      <label class="admin-search" style="flex:1; min-width:200px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" id="guestSearchInput" placeholder="Search by name or email" oninput="applyGuestFilters()">
+      </label>
+    </div>
   </div>
 
   <div class="admin-card" style="padding:0;">

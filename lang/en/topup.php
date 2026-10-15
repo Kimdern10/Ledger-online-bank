@@ -22,9 +22,9 @@ return [
     'add_money_btn' => 'Add money',
     'processing' => 'Processing your top-up…',
     'processing_sub' => "Please don't close or refresh this page.",
-    'pin_modal_title' => 'Enter your transaction PIN',
-    'pin_modal_body' => 'Confirm this top-up with your 4-digit transaction PIN.',
+    'pin_modal_title' => 'Enter the code from your email',
+    'pin_modal_body' => 'Confirm this top-up with the 4-digit code we just emailed you.',
     'pin_confirm' => 'Confirm',
-    'pin_error' => 'Enter your 4-digit PIN.',
+    'pin_error' => 'Enter the 4-digit code from your email.',
     'link_account_first_alert' => 'Link a bank account or card first.',
 ];

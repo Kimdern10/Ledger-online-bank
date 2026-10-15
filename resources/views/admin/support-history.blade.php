@@ -6,7 +6,7 @@
   <div class="admin-header">
     <p class="eyebrow"><a href="{{ route('admin.support.show', $customer) }}">← Back to {{ $customer->name }}</a></p>
     <h1>Conversation history</h1>
-    <p>{{ $customer->name }} &middot; {{ $customer->email }} &middot; {{ $conversations->count() }} conversation{{ $conversations->count() === 1 ? '' : 's' }} total.</p>
+    <p>{{ $customer->name }} &middot; {{ $customer->email }} &middot; {{ $conversations->total() }} conversation{{ $conversations->total() === 1 ? '' : 's' }} total.</p>
   </div>
 
   <div class="admin-card" style="padding:0; overflow-x:auto;">
@@ -59,6 +59,7 @@
           @endforeach
         </tbody>
       </table>
+      @include('partials.admin-pagination', ['paginator' => $conversations])
     @endif
   </div>
 @endsection

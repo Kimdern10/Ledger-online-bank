@@ -35,7 +35,7 @@
       <button type="button" class="admin-tab" data-filter="urgent" onclick="setSupportFilter(this, 'urgent')">Urgent</button>
       <button type="button" class="admin-tab" data-filter="closed" onclick="setSupportFilter(this, 'closed')">Ended</button>
     </div>
-    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+    <div class="admin-filter-row" style="display:flex; gap:10px; flex-wrap:wrap;">
       <label class="admin-search" style="flex:1; min-width:200px;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
         <input type="text" id="supportSearchInput" placeholder="Search by name or email" oninput="applySupportFilters()">

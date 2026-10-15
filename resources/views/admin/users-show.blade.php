@@ -32,6 +32,14 @@
         'suspended' => 'suspend',
         'disabled' => 'disable',
     ];
+    // What each one actually does, shown in its confirmation and as a hint
+    // on hover — see User::canSignIn() / isWalletFrozen().
+    $statusEffect = [
+        'active' => 'They can sign in and use their account normally again.',
+        'frozen' => 'They can still sign in and see their balance and history, but no money can be sent, withdrawn, topped up, paid or received.',
+        'suspended' => "They're signed out and can't sign in until reactivated.",
+        'disabled' => 'They are signed out and the account is closed.',
+    ];
     $otherStatuses = collect($statusLabels)->forget($user->account_status);
 
     // Backs the "Feature access" toggles below. Each slug is one of the
@@ -173,34 +181,16 @@
         <div>
           <p style="margin:0 0 6px; font-size:12px; color:var(--admin-text-2); font-weight:600;">Account status</p>
           <span class="admin-pill status-{{ $user->account_status }}">{{ $user->accountStatusLabel() }}</span>
-          @if($user->isRestricted())
-            <span class="admin-pill status-disabled" style="margin-left:6px;">Restricted</span>
-          @endif
         </div>
         <div class="status-actions">
           @foreach($otherStatuses as $value => $label)
-            <form method="POST" action="{{ route('admin.users.status', $user) }}" data-confirm="Are you sure you want to {{ $statusConfirmText[$value] }} this account?" @if($value !== 'active') data-confirm-danger="1" @endif data-confirm-button="Confirm">
+            <form method="POST" action="{{ route('admin.users.status', $user) }}" data-confirm="Are you sure you want to {{ $statusConfirmText[$value] }} this account? {{ $statusEffect[$value] }}" @if($value !== 'active') data-confirm-danger="1" @endif data-confirm-button="Confirm">
               @csrf
               <input type="hidden" name="account_status" value="{{ $value }}">
-              <button type="submit" class="admin-btn {{ $statusButtonClass[$value] }}">{{ $label }}</button>
+              <button type="submit" class="admin-btn {{ $statusButtonClass[$value] }}" title="{{ $statusEffect[$value] }}">{{ $label }}</button>
             </form>
           @endforeach
         </div>
-      </div>
-
-      {{-- Separate from account_status above — this doesn't sign the user
-           out or stop them opening their dashboard, it only blocks Send,
-           Withdraw, Top Up, and Scan (see EnsureAccountIsNotRestricted).
-           They see a popup pointing to Support instead of each form. --}}
-      <div class="verify-row" style="margin-top:4px;">
-        <div>
-          <p class="label">Restrict transactions</p>
-          <p class="sub">Blocks Send, Withdraw, Top Up &amp; Scan to Pay. Sign-in and the dashboard stay unaffected.</p>
-        </div>
-        <form method="POST" action="{{ route('admin.users.restriction.toggle', $user) }}" data-confirm="Are you sure you want to {{ $user->isRestricted() ? 'remove the restriction from' : 'restrict' }} this account?" data-confirm-danger="1" data-confirm-button="Confirm">
-          @csrf
-          <button type="submit" class="admin-toggle {{ $user->isRestricted() ? 'on' : '' }}" aria-label="Toggle account restriction"></button>
-        </form>
       </div>
     </div>
 

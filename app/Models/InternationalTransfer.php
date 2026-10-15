@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasReferenceRouteKey;
+use App\Support\TransactionStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -11,6 +13,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class InternationalTransfer extends Model
 {
+    use HasReferenceRouteKey;
+
     protected $fillable = [
         'reference',
         'sender_id',
@@ -19,6 +23,8 @@ class InternationalTransfer extends Model
         'scheduled_for',
         'fee',
         'recipient_name',
+        'recipient_name_status',
+        'recipient_name_provider',
         'bank_name',
         'country',
         'swift_code',
@@ -38,6 +44,27 @@ class InternationalTransfer extends Model
         'scheduled_for' => 'date',
     ];
 
+    /**
+     * Never claims more than the provider said — see
+     * PayeeVerificationManager::outcomeFor(). Anything short of a
+     * confirmation reads "not verified by the bank".
+     */
+    /**
+     * The provider returned the name, or matched the one the sender typed.
+     */
+    public function hasVerifiedRecipientName(): bool
+    {
+        return in_array($this->recipient_name_status, ['verified', 'match'], true);
+    }
+
+    public function recipientNameStatusLabel(): string
+    {
+        return __('receipt.recipient_name_'.match ($this->recipient_name_status) {
+            'verified', 'match', 'close_match', 'no_match', 'unavailable', 'failed' => $this->recipient_name_status,
+            default => 'manual',
+        });
+    }
+
     public function sender(): BelongsTo
     {
         return $this->belongsTo(User::class, 'sender_id');
@@ -49,7 +76,7 @@ class InternationalTransfer extends Model
      */
     public function statusLabel(): string
     {
-        return \App\Support\TransactionStatus::label($this->status);
+        return TransactionStatus::label($this->status);
     }
 
     /**

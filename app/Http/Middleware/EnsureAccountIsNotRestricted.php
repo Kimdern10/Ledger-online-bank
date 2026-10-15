@@ -7,19 +7,16 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Backs the "Restrict transactions" toggle on the admin per-user page (see
- * AdminController::toggleRestriction()). Attached to every route that
- * actually moves money — Send, Withdraw, Top Up, Pay Bills, and Scan to
- * Pay (which only ever leads to Send) — on BOTH the page-open (GET) and
- * submit (POST) routes, so a restricted user is bounced before the form
- * ever loads, not just when they try to submit it.
+ * Enforces "Freeze wallet" (see User::isWalletFrozen()) on every route that
+ * actually moves money — Send, Withdraw, Top Up, Pay Bills, and Scan to Pay
+ * (which only ever leads to Send) — on BOTH the page-open (GET) and submit
+ * (POST) routes, so a frozen user is bounced to the dashboard (with a popup
+ * pointing to Support) before the form ever loads, not just on submit.
  *
- * Deliberately does NOT touch account_status or log the user out —
- * unlike EnsureAccountIsActive, a restricted account can still sign in,
- * see its balance, view History, manage linked accounts/cards, and use
- * Support — it just can't send, withdraw, top up, or pay a bill. Skipped
- * for admins, same reasoning as every other middleware here: nothing
- * ever restricts an admin's own account.
+ * A frozen account can still sign in, see its balance, view History,
+ * manage linked accounts/cards, and use Support. Skipped for admins. (The
+ * old separate "Restrict transactions" toggle did the same job and was
+ * folded into Freeze wallet; the route alias is still 'not-restricted'.)
  */
 class EnsureAccountIsNotRestricted
 {
@@ -27,11 +24,8 @@ class EnsureAccountIsNotRestricted
     {
         $user = $request->user();
 
-        if ($user && ! $user->isAdmin() && $user->isRestricted()) {
-            return redirect()->route('dashboard')->with(
-                'restricted',
-                'Your account was restricted. Contact our support to help you fix that.'
-            );
+        if ($user && ! $user->isAdmin() && $user->isWalletFrozen()) {
+            return redirect()->route('dashboard')->with('restricted', __('authpage.wallet_frozen'));
         }
 
         return $next($request);

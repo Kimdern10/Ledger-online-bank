@@ -201,6 +201,71 @@
   });
 })();
 
+// ---------- Section links without "#" in the address bar ----------
+// The menu and footer link to sections of the home page (About, Services,
+// FAQ, Contact…) with "#about"-style links. Instead of letting the browser
+// jump there and add "#about" to the address, this scrolls there itself and
+// keeps the address as just the home page:
+//  - on the home page: smooth-scroll to the section, no "#" added;
+//  - on any other page: go to the home page, remembering which section, and
+//    scroll there once it has loaded (still no "#");
+//  - opened from an old/shared link that has "#about" in it: the browser has
+//    already scrolled there, so the "#about" is just removed from the address.
+(function(){
+  var SCROLL_KEY = 'ledgerScrollToSection';
+
+  function scrollToSection(id){
+    var el = id && document.getElementById(id);
+    if(el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return !!el;
+  }
+
+  function stripHash(){
+    if(window.location.hash && window.history && window.history.replaceState){
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+  }
+
+  document.addEventListener('click', function(e){
+    var link = e.target.closest && e.target.closest('a[href*="#"]');
+    if(!link || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || link.target === '_blank') return;
+
+    var url;
+    try { url = new URL(link.href, window.location.href); } catch(err){ return; }
+    if(url.origin !== window.location.origin || !url.hash) return;
+
+    var id = decodeURIComponent(url.hash.slice(1));
+    e.preventDefault();
+
+    if(url.pathname === window.location.pathname){
+      scrollToSection(id);
+      stripHash();
+      return;
+    }
+
+    try { sessionStorage.setItem(SCROLL_KEY, id); } catch(err){}
+    window.location.href = url.origin + url.pathname + url.search;
+  });
+
+  document.addEventListener('DOMContentLoaded', function(){
+    var pending = null;
+    try { pending = sessionStorage.getItem(SCROLL_KEY); sessionStorage.removeItem(SCROLL_KEY); } catch(err){}
+    // Opened with "#section" in the address (an old or shared link): go to
+    // that section ourselves, then drop the "#section" from the address —
+    // removing it first could cancel the browser's own jump.
+    var fromAddress = window.location.hash ? decodeURIComponent(window.location.hash.slice(1)) : null;
+    stripHash();
+    scrollToSection(pending || fromAddress);
+  });
+
+  // A "#section" typed or pasted onto a page that's already open: the
+  // browser jumps there itself — just tidy the address afterwards.
+  window.addEventListener('hashchange', function(){
+    var id = decodeURIComponent(window.location.hash.slice(1));
+    stripHash();
+    scrollToSection(id);
+  });
+})();
 // ---------- Scrollspy: highlight the nav link for the section in view ----------
 // Deferred to DOMContentLoaded: this script sits in the header, above the
 // yielded page content in the layout, so the section elements it looks for

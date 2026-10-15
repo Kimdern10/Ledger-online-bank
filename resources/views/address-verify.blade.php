@@ -35,11 +35,8 @@
       </div>
       <p style="margin:0 0 8px; font-size:16.5px; font-weight:700;">{{ __('verify.address_approved_title') }}</p>
       <p style="margin:0 auto 22px; max-width:380px; font-size:13.5px; opacity:0.75; line-height:1.55;">
-        @if($addressVerification->reviewed_at)
-          {{ __('verify.address_approved_body_dated', ['date' => $addressVerification->reviewed_at->translatedFormat('M j, Y'), 'limit' => '$'.number_format(auth()->user()->tierDailyLimit())]) }}
-        @else
-          {{ __('verify.address_approved_body', ['limit' => '$'.number_format(auth()->user()->tierDailyLimit())]) }}
-        @endif
+        {{-- No approval date shown, by request — just that it's approved. --}}
+        {{ __('verify.address_approved_body', ['limit' => '$'.number_format(auth()->user()->tierDailyLimit())]) }}
       </p>
       <a href="{{ route('setting') }}" class="btn btn-primary">{{ __('verify.back_to_settings') }}</a>
     </div>

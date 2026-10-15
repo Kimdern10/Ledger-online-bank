@@ -59,22 +59,7 @@ trait EnforcesTierLimits
         $movedToday = $this->movedTodayBy($user);
 
         if ($movedToday + $amount > $limit) {
-            $remaining = max(0, $limit - $movedToday);
-
-            $tier = $user->tier();
-            $hint = match ($tier) {
-                1 => ' Verify your identity in Settings to raise it.',
-                2 => ' Verify your address in Settings to raise it further.',
-                default => '',
-            };
-
-            return back()->withInput()->with($errorKey, sprintf(
-                '%s daily limit is $%s — you have $%s left today.%s',
-                $user->tierLabel(),
-                number_format($limit, 2),
-                number_format($remaining, 2),
-                $hint,
-            ));
+            return back()->withInput()->with($errorKey, 'You have reached your daily limit.');
         }
 
         return null;

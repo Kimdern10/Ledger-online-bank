@@ -95,4 +95,13 @@
     },
   };
 </script>
+{{-- "Your transfer has been sent." — a toast that counts down and closes
+     itself, right after sending (see TransferController::sentToast()). --}}
+@if(!empty($sentToast))
+<script>
+  document.addEventListener('DOMContentLoaded', function(){
+    if (window.ledgerToast) window.ledgerToast(@json($sentToast), 'success');
+  });
+</script>
+@endif
 @endsection

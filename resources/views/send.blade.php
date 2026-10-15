@@ -7,6 +7,20 @@
     // already handles both destination types generically (see its own fee
     // logic), so there's no reason to hide the bank half of what's linked.
     $linkedCards = auth()->user()->linkedAccounts()->latest()->get();
+
+    // Countries where a provider can check the recipient's name right now
+    // (config/payee_verification.php + credentials in .env) — see
+    // App\Services\PayeeVerification. Everywhere else the name is typed
+    // and saved as manual, "Not verified by the bank".
+    $payeeVerification = app(\App\Services\PayeeVerification\PayeeVerificationManager::class);
+    $payeeCountries = collect(config('payee_verification.countries', []))
+        ->map(fn (array $settings, string $code) => [$code, $payeeVerification->providerFor($code), $settings['aliases'] ?? []])
+        ->filter(fn (array $row) => $row[1] !== null)
+        ->mapWithKeys(fn (array $row) => [$row[0] => [
+            'aliases' => $row[2],
+            'returnsName' => $row[1]->returnsName(),
+            'bankCodeLabel' => $row[1]->bankCodeLabel(),
+        ]]);
 ?>
 <div class="send-wrap">
 
@@ -79,7 +93,17 @@
       <div class="bank-mark">L</div>
       <div class="bank-info">
         <p class="name">Ledger Federal Credit Union</p>
-        <p class="meta">{{ __('send.checking_label') }} •••• 4471</p>
+        {{-- The sender's own account — same "prefer checking, fall back to
+             savings" rule as Pay Bills, Withdraw and Top Up. --}}
+        <?php
+          $fromUser = auth()->user();
+          [$fromAccountType, $fromAccountNumber] = match (true) {
+              ! empty($fromUser->checking_account_number) => [__('send.checking_label'), $fromUser->checking_account_number],
+              ! empty($fromUser->savings_account_number) => [__('send.savings_label'), $fromUser->savings_account_number],
+              default => [__('send.account_label'), null],
+          };
+        ?>
+        <p class="meta">{{ $fromAccountType }} •••• {{ $fromAccountNumber ? substr((string) $fromAccountNumber, -4) : '----' }}</p>
       </div>
       <div class="bank-balance">
         <p class="amt">${{ number_format((float) auth()->user()->balance, 2) }}</p>
@@ -109,7 +133,9 @@
         </button>
       </div>
 
-      <!-- ============ 1) Ledger: fully manual — account number and name are both just typed in ============ -->
+      <!-- ============ 1) Ledger: the account number is typed, the name is looked up — once a full account
+           number is in, TransferController::lookup() says who it belongs to and the name field is filled
+           in (and locked) with the real account holder from our own records. See runLedgerLookup(). ============ -->
       <div id="ledgerOption">
         <div class="field-group">
           <p class="label">{{ __('send.account_number') }}</p>
@@ -118,6 +144,7 @@
         <div class="field-group">
           <p class="label">{{ __('send.recipient_name') }}</p>
           <input type="text" class="text-input" id="recipientNameInput" name="recipient_name" value="{{ old('recipient_name') }}" placeholder="{{ __('send.recipient_name_placeholder') }}" autocomplete="off" required>
+          <p class="verify-note" id="ledgerVerifyNote" style="display:none;" aria-live="polite"></p>
         </div>
         <p class="receive-note instant">
           <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
@@ -145,6 +172,11 @@
         <div class="field-group">
           <p class="label">{{ __('send.recipient_name') }}</p>
           <input type="text" class="text-input" name="bank_recipient_name" value="{{ old('bank_recipient_name') }}" placeholder="{{ __('send.recipient_placeholder') }}" autocomplete="off">
+          {{-- The provider's answer once name, account and routing number
+               are in — see runPayeeVerify(). --}}
+          {{-- Hidden until a provider actually has something to say — see
+               runPayeeVerify(). --}}
+          <p class="verify-note" id="bankPayeeNote" aria-live="polite" style="display:none;"></p>
         </div>
         <div class="field-group">
           <p class="label">{{ __('send.account_number') }}</p>
@@ -152,7 +184,7 @@
         </div>
         <div class="field-group">
           <p class="label">{{ __('send.routing_number') }}</p>
-          <input type="text" class="text-input" name="bank_routing_number" value="{{ old('bank_routing_number') }}" placeholder="{{ __('send.recipient_routing_number_placeholder') }}" inputmode="numeric">
+          <input type="text" class="text-input" name="bank_routing_number" value="{{ old('bank_routing_number') }}" placeholder="{{ __('send.recipient_routing_number_placeholder') }}" inputmode="numeric" maxlength="9">
         </div>
       </div>
 
@@ -172,6 +204,7 @@
         <div class="field-group">
           <p class="label">{{ __('send.recipient_name') }}</p>
           <input type="text" class="text-input" id="intlRecipientNameInput" name="intl_recipient_name" value="{{ old('intl_recipient_name') }}" placeholder="{{ __('send.recipient_placeholder') }}" autocomplete="off">
+          <p class="verify-note" id="intlPayeeNote" aria-live="polite" style="display:none;"></p>
         </div>
         <div class="field-group">
           <p class="label">{{ __('send.intl_country_label') }}</p>
@@ -180,6 +213,13 @@
         <div class="field-group">
           <p class="label">{{ __('send.intl_account_label') }}</p>
           <input type="text" class="text-input" id="intlAccountInput" name="intl_account_number" value="{{ old('intl_account_number') }}" placeholder="{{ __('send.intl_account_placeholder') }}" autocomplete="off">
+        </div>
+        {{-- Only for a country whose provider needs a local bank code to
+             look the account up (an IFSC for India) — label set by
+             onIntlCountryChange(). --}}
+        <div class="field-group" id="intlBankCodeGroup" style="display:none;">
+          <p class="label" id="intlBankCodeLabel">{{ __('send.intl_bank_code_label') }}</p>
+          <input type="text" class="text-input" id="intlBankCodeInput" name="intl_bank_code" value="{{ old('intl_bank_code') }}" placeholder="{{ __('send.intl_bank_code_placeholder') }}" autocomplete="off" style="text-transform:uppercase;">
         </div>
         <div class="field-group">
           <p class="label">{{ __('send.intl_swift_label') }}</p>
@@ -403,6 +443,9 @@
         'bankSearchError' => __('send.bank_search_error'),
         'creditUnion' => __('send.credit_union'),
         'bankFallback' => __('send.bank_fallback'),
+        'payeeChecking' => __('send.payee_checking'),
+        'ledgerNotFound' => __('send.ledger_account_not_found'),
+        'intlBankCodeLabel' => __('send.intl_bank_code_label'),
     ];
 ?>
 <script>
@@ -414,6 +457,10 @@
     sendLookupUrl: "{{ route('send.lookup') }}",
     banksSearchUrl: "{{ route('banks.search') }}",
     banksSearchInternationalUrl: "{{ route('banks.search.international') }}",
+    verifyRecipientUrl: "{{ route('send.verify-recipient') }}",
+    csrfToken: "{{ csrf_token() }}",
+    // ISO code => how that country's provider works. No secrets here.
+    payeeCountries: @json($payeeCountries),
   };
 </script>
 @endsection

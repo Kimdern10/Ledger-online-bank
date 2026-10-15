@@ -62,6 +62,19 @@ return [
         'env' => env('PLAID_ENV', 'sandbox'),
         // Matches this app's existing seeded domestic banks (all US).
         'country_codes' => env('PLAID_COUNTRY_CODES', 'US'),
+        // The International tab's Plaid search (PlaidInternationalBankProvider)
+        // — every non-US country Plaid documents for institutions/search.
+        'international_country_codes' => env('PLAID_INTERNATIONAL_COUNTRY_CODES', 'GB,IE,ES,FR,IT,DE,NL,BE,AT,PT,PL,DK,NO,SE,FI,EE,LT,LV,CA'),
+    ],
+
+    // Cashfree Bank Account Verification — recipient name lookup for India
+    // (see App\Services\PayeeVerification\CashfreePayeeVerifier).
+    // The service must be activated on the Cashfree account.
+    'cashfree' => [
+        'client_id' => env('CASHFREE_CLIENT_ID'),
+        'client_secret' => env('CASHFREE_CLIENT_SECRET'),
+        // sandbox | production
+        'env' => env('CASHFREE_ENV', 'sandbox'),
     ],
 
     // TrueLayer Payments v3 provider search — one of three international

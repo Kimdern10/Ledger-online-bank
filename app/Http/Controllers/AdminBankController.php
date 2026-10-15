@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bank;
+use App\Services\BankProviders\ProviderBankBrowser;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -28,6 +29,8 @@ class AdminBankController extends Controller
     public function index(Request $request): View
     {
         $type = $request->query('type');
+        $search = trim((string) $request->query('q', ''));
+        $status = (string) $request->query('status', '');
 
         $query = Bank::query()->latest();
 
@@ -35,14 +38,105 @@ class AdminBankController extends Controller
             $query->where('type', $type);
         }
 
+        // Name, country or either code — one box, like the Users page.
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('country', 'like', '%'.$search.'%')
+                    ->orWhere('routing_number', 'like', '%'.$search.'%')
+                    ->orWhere('swift_code', 'like', '%'.$search.'%');
+            });
+        }
+
+        if ($status === 'active' || $status === 'inactive') {
+            $query->where('is_active', $status === 'active');
+        }
+
         $banks = $query->paginate(15)->withQueryString();
 
         return view('admin.banks', [
             'banks' => $banks,
             'type' => $type,
+            'search' => $search,
+            'status' => $status,
             'externalCount' => Bank::ofType('external')->count(),
             'internationalCount' => Bank::ofType('international')->count(),
         ]);
+    }
+
+    /**
+     * Admin > Banks > Provider banks — every bank each configured provider
+     * offers, searchable and paginated (see ProviderBankBrowser). Read-only:
+     * nothing here changes what customers see until a bank is added to the
+     * directory with import().
+     */
+    public function providerBanks(Request $request, ProviderBankBrowser $browser): View
+    {
+        $sources = $browser->sources();
+        $source = (string) $request->query('source', 'plaid');
+        $source = isset($sources[$source]) ? $source : array_key_first($sources);
+        $search = trim(mb_substr((string) $request->query('q', ''), 0, 100));
+
+        // Only a country this source actually has banks in is honoured.
+        $countries = $browser->countries($source);
+        $country = strtoupper((string) $request->query('country', ''));
+        $country = isset($countries[$country]) ? $country : null;
+
+        $result = $browser->page($source, $search, (int) $request->query('page', 1), 25, route('admin.banks.providers'), $country);
+        $result['banks']->appends(array_filter(['source' => $source, 'q' => $search, 'country' => $country]));
+
+        // Which of this page's banks are already in the directory, so the
+        // row shows "In directory" instead of an Add button.
+        $inDirectory = Bank::query()
+            ->whereIn('name', collect($result['banks']->items())->pluck('name'))
+            ->get(['name', 'type'])
+            ->map(fn (Bank $bank) => $bank->type.'|'.mb_strtolower($bank->name))
+            ->flip();
+
+        return view('admin.banks-providers', [
+            'sources' => collect($sources)->map(fn (array $entry) => [
+                'label' => $entry['label'],
+                'configured' => $entry['provider']->isConfigured(),
+            ]),
+            'source' => $source,
+            'search' => $search,
+            'countries' => $countries,
+            'country' => $country,
+            'banks' => $result['banks'],
+            'failed' => $result['failed'],
+            'configured' => $sources[$source]['provider']->isConfigured(),
+            'inDirectory' => $inDirectory,
+        ]);
+    }
+
+    /**
+     * The "Add to directory" button on Provider banks — copies one bank in
+     * as an active directory entry. A bank already there (same name and
+     * type) is left as it is rather than duplicated.
+     */
+    public function import(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:150'],
+            'type' => ['required', 'in:external,international'],
+            'country' => ['nullable', 'string', 'max:100'],
+            'routing_number' => ['nullable', 'string', 'max:20'],
+            'swift_code' => ['nullable', 'string', 'max:20'],
+            'currency' => ['nullable', 'string', 'max:3'],
+        ]);
+
+        $bank = Bank::firstOrCreate(
+            ['name' => $data['name'], 'type' => $data['type']],
+            $data + ['is_active' => true]
+        );
+
+        if ($bank->wasRecentlyCreated) {
+            $this->clearBankSearchCache();
+        }
+
+        return back()->with('status', $bank->wasRecentlyCreated
+            ? $bank->name.' added to the directory.'
+            : $bank->name.' is already in the directory.');
     }
 
     public function create(): View

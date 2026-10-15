@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Concerns;
 
 use App\Models\User;
+use App\Support\TransferCode;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 /**
  * Shared by every controller that actually moves real money — currently
@@ -13,30 +13,28 @@ use Illuminate\Support\Facades\Hash;
  * calls blockedByTransactionPin() right after its own field/destination
  * validation passes, and bails out with whatever it gets back instead of
  * touching a single balance.
+ *
+ * What's checked is the one-time 4-digit code just emailed to the user
+ * (App\Support\TransferCode) — a new one for every transfer — not a fixed
+ * PIN. It still arrives in the `transaction_pin` field, so the shared
+ * confirmation pop-up (openPinModal() in dashboard.js) works unchanged.
  */
 trait RequiresTransactionPin
 {
     /**
      * Returns null when it's fine to proceed. Otherwise returns the
-     * redirect the controller should return immediately:
-     *
-     *  - No PIN created yet: flashes 'pinRequired' (a plain boolean flag,
-     *    not text) so the page can show its own "create one in Settings"
-     *    banner with a real link — see send/withdraw/top-up.blade.php.
-     *  - Wrong PIN entered: flashes $errorKey (each controller's own error
-     *    key — 'sendError' / 'withdrawError' / 'topUpError') with a plain
-     *    message, same as every other rejection those already show.
+     * redirect the controller should return immediately, flashing
+     * $errorKey (each controller's own error key — 'sendError' /
+     * 'withdrawError' / 'topUpError') with a plain message.
      */
     protected function blockedByTransactionPin(Request $request, User $user, string $errorKey): ?RedirectResponse
     {
-        if (! $user->hasTransactionPin()) {
-            return back()->withInput()->with('pinRequired', true);
-        }
+        $code = trim((string) $request->input('transaction_pin', ''));
 
-        $pin = (string) $request->input('transaction_pin', '');
-
-        if ($pin === '' || ! Hash::check($pin, $user->transaction_pin)) {
-            return back()->withInput()->with($errorKey, 'Incorrect transaction PIN.');
+        if (! TransferCode::verify($user, $code)) {
+            // Shown as a SweetAlert pop-up (layouts/app.blade.php), not in the
+            // page's error box. $errorKey stays in the signature for callers.
+            return back()->withInput()->with('transferCodeError', __('transfer_code.incorrect'));
         }
 
         return null;

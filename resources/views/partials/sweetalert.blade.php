@@ -16,9 +16,35 @@
      reportLostOrStolen()) — call the global ledgerConfirm(text, onConfirm,
      options) helper instead, and put whatever used to run after the old
      `if (confirm(...))` check inside the onConfirm callback.
+
+  3. A short success message that disappears on its own — call
+     ledgerToast(text, icon). It slides in at the top with a line along its
+     bottom that shrinks as it counts down, then closes itself (e.g. the
+     "Your transfer has been sent." on send-receipt.blade.php).
 --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+  /* The shrinking countdown line under ledgerToast() — in the app's green. */
+  .swal2-timer-progress-bar { background: #2F6F62; }
+</style>
 <script>
+  window.ledgerToast = function(text, icon){
+    Swal.fire({
+      toast: true,
+      position: 'top',
+      icon: icon || 'success',
+      title: text,
+      showConfirmButton: false,
+      timer: 3500,
+      timerProgressBar: true,
+      // Hovering pauses the countdown so it can be read.
+      didOpen: function(toast){
+        toast.addEventListener('mouseenter', Swal.stopTimer);
+        toast.addEventListener('mouseleave', Swal.resumeTimer);
+      }
+    });
+  };
+
   window.ledgerConfirm = function(text, onConfirm, options){
     options = options || {};
 

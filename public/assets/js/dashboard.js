@@ -92,6 +92,53 @@ function openPinModal(form, errorText){
   err.style.display = 'none';
   overlay.classList.add('open');
   setTimeout(function(){ input.focus(); }, 150);
+
+  // Every confirmation gets its own code, emailed now — see
+  // App\Support\TransferCode and TransferCodeController.
+  requestTransferCode();
+}
+
+// The line under the code box: "Sending…", then where the code went (or
+// that it failed), followed by a Resend link. Created here rather than in
+// each page, so send/withdraw/top-up all get it from the same pop-up.
+function transferCodeStatus(){
+  let status = document.getElementById('pinModalStatus');
+  if(!status){
+    const input = document.getElementById('pinModalInput');
+    status = document.createElement('p');
+    status.id = 'pinModalStatus';
+    status.setAttribute('aria-live', 'polite');
+    status.style.cssText = 'margin:10px 0 0; font-size:12.5px; color:var(--text-3); text-align:center;';
+    input.insertAdjacentElement('afterend', status);
+  }
+  return status;
+}
+
+function requestTransferCode(){
+  const cfg = window.LedgerTransferCode;
+  if(!cfg) return;
+  const status = transferCodeStatus();
+  status.textContent = cfg.i18n.sending;
+
+  fetch(cfg.url, {
+    method: 'POST',
+    headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': cfg.csrfToken },
+  })
+    .then(function(res){ return res.json().catch(function(){ return {}; }); })
+    .then(function(data){ showTransferCodeStatus(data && data.sent ? data.message : (data && data.message) || cfg.i18n.sendFailed); })
+    .catch(function(){ showTransferCodeStatus(cfg.i18n.sendFailed); });
+}
+
+function showTransferCodeStatus(text){
+  const cfg = window.LedgerTransferCode;
+  const status = transferCodeStatus();
+  status.textContent = text + ' ';
+  const resend = document.createElement('a');
+  resend.href = '#';
+  resend.textContent = cfg.i18n.resend;
+  resend.style.cssText = 'color:inherit; text-decoration:underline;';
+  resend.addEventListener('click', function(e){ e.preventDefault(); requestTransferCode(); });
+  status.appendChild(resend);
 }
 
 function closePinModal(e){
@@ -117,6 +164,35 @@ function confirmPin(){
   const form = pinModalTargetForm;
   if(!form) return;
 
+  // Ask first whether the code is right, so a wrong one keeps the user in
+  // this pop-up (with a SweetAlert saying so) instead of submitting the
+  // page — see TransferCodeController::check(). If that check can't be
+  // reached, submit anyway: the server checks the code for real either way.
+  const cfg = window.LedgerTransferCode;
+  if(!cfg || !cfg.checkUrl){
+    submitWithTransferCode(form, pin);
+    return;
+  }
+
+  fetch(cfg.checkUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': cfg.csrfToken },
+    body: JSON.stringify({ code: pin }),
+  })
+    .then(function(res){ return res.ok ? res.json() : null; })
+    .then(function(data){
+      if(data && data.valid === false){
+        input.value = '';
+        input.focus();
+        if(window.ledgerToast) window.ledgerToast(data.message || cfg.i18n.incorrect, 'error');
+        return;
+      }
+      submitWithTransferCode(form, pin);
+    })
+    .catch(function(){ submitWithTransferCode(form, pin); });
+}
+
+function submitWithTransferCode(form, pin){
   let pinField = form.querySelector('input[name="transaction_pin"]');
   if(!pinField){
     pinField = document.createElement('input');
@@ -956,13 +1032,16 @@ function confirmPin(){
     setReceiveMode(document.getElementById('modeInput').value || 'ledger');
 
     prefillFromScan();
+
+    // Also covers a number already in the field — Scan to Pay above, or
+    // a rejected submission's old() input.
+    document.getElementById('recipientAccountInput').addEventListener('input', scheduleLedgerLookup);
+    runLedgerLookup();
   });
 
   // Arriving here from Scan to Pay (see scan.blade.php) puts the account
-  // number it already confirmed exists in ?account= — this re-looks it up
-  // (never trusts a name from the URL) and fills both fields on the Ledger
-  // tab, so the only thing left for the sender to do is enter an amount and
-  // hit Send.
+  // number it already confirmed exists in ?account= — the name is never
+  // trusted from the URL; runLedgerLookup() looks it up right after this.
   function prefillFromScan(){
     const params = new URLSearchParams(window.location.search);
     const account = params.get('account');
@@ -970,23 +1049,94 @@ function confirmPin(){
 
     setReceiveMode('ledger');
     document.getElementById('recipientAccountInput').value = account;
+  }
+
+  // ---------- Ledger tab: show the recipient's real name ----------
+  // Ledger accounts are rows in our own database, so this is a real
+  // lookup (TransferController::lookup()), not a guess: the holder's name
+  // fills the field and locks it. TransferController::storeLedgerTransfer()
+  // finds the recipient by account number again on submit, so the name
+  // shown here is never what decides who gets paid.
+  const LEDGER_ACCOUNT_LENGTH = 10; // every Ledger number — see App\Support\AccountNumbers
+  let ledgerLookupTimer = null;
+  let ledgerLookupAbort = null;
+  // true/false = the lookup's answer for the number typed; null = not
+  // checked, or the check failed (throttled, offline) — then the server
+  // decides on submit.
+  let ledgerAccountFound = null;
+  let ledgerNameAutofilled = false;
+
+  function setLedgerNote(state, text){
+    const note = document.getElementById('ledgerVerifyNote');
+    note.className = 'verify-note' + (state ? ' ' + state : '');
+    note.textContent = text || '';
+    note.style.display = text ? 'block' : 'none';
+  }
+
+  function releaseLedgerName(){
+    const nameInput = document.getElementById('recipientNameInput');
+    nameInput.readOnly = false;
+    if(ledgerNameAutofilled) nameInput.value = '';
+    ledgerNameAutofilled = false;
+  }
+
+  function scheduleLedgerLookup(){
+    clearTimeout(ledgerLookupTimer);
+    ledgerLookupTimer = setTimeout(runLedgerLookup, 350);
+  }
+
+  function runLedgerLookup(){
+    const account = document.getElementById('recipientAccountInput').value.trim();
+
+    if(ledgerLookupAbort) ledgerLookupAbort.abort();
+    ledgerAccountFound = null;
+
+    if(account.length < LEDGER_ACCOUNT_LENGTH){
+      releaseLedgerName();
+      setLedgerNote();
+      return;
+    }
+
+    ledgerLookupAbort = new AbortController();
+    setLedgerNote('', sendI18n.payeeChecking);
 
     fetch(cfg.sendLookupUrl + '?account_number=' + encodeURIComponent(account), {
       headers: { 'Accept': 'application/json' },
+      signal: ledgerLookupAbort.signal,
     })
       .then(function(res){
         const contentType = res.headers.get('content-type') || '';
-        if(!res.ok || !contentType.includes('application/json')) return { found: false };
+        if(!res.ok || !contentType.includes('application/json')) return null;
         return res.json();
       })
       .then(function(data){
-        if(data && data.found){
-          document.getElementById('recipientNameInput').value = data.name;
+        if(!data){
+          releaseLedgerName();
+          setLedgerNote();
+          return;
+        }
+
+        ledgerAccountFound = !!data.found;
+
+        if(data.found){
+          const nameInput = document.getElementById('recipientNameInput');
+          nameInput.value = data.name;
+          nameInput.readOnly = true;
+          ledgerNameAutofilled = true;
+          // The name filling in (and locking) is confirmation enough — no
+          // separate "Ledger account holder · Name" line under it.
+          setLedgerNote();
+        } else {
+          releaseLedgerName();
+          setLedgerNote('bad', sendI18n.ledgerNotFound);
         }
       })
-      .catch(function(){});
+      .catch(function(err){
+        if(err.name === 'AbortError') return;
+        releaseLedgerName();
+        setLedgerNote();
+      });
   }
-
   // Shows the processing overlay the instant the form is submitted, and
   // disables both "Send" buttons (the in-form one and the fixed
   // duplicate) so a slow connection can't tempt a second click into a
@@ -999,6 +1149,13 @@ function confirmPin(){
 
     if(document.getElementById('modeInput').value === 'linked' && !document.getElementById('linkedAccountIdInput').value){
       alert(sendI18n.linkCardFirstAlert);
+      return;
+    }
+
+    // The lookup already said this isn't a Ledger account — no point
+    // asking for a PIN on a transfer the server will refuse.
+    if(document.getElementById('modeInput').value === 'ledger' && ledgerAccountFound === false){
+      document.getElementById('recipientAccountInput').focus();
       return;
     }
 
@@ -1109,13 +1266,18 @@ function confirmPin(){
       // meta stays blank so the picker just shows name + routing/account
       // number fields, same as the old "Bank of America"/"Wells Fargo"
       // entries used to.
-      el.addEventListener('click', () => selectBank(el, name, '', color, initial));
+      el.addEventListener('click', () => selectBank(el, name, bank.routing_number || ''));
 
       list.appendChild(el);
     });
   }
 
-  function selectBank(el, name, meta, color, initial){
+  // True while the Routing number field holds what a picked bank filled
+  // in (not something the sender typed), so picking a different bank can
+  // replace or clear it without ever overwriting the sender's own entry.
+  let routingAutofilled = false;
+
+  function selectBank(el, name, routingNumber){
     document.querySelectorAll('.bank-option').forEach(o=>{
       o.classList.remove('selected');
       const check = o.querySelector('.check');
@@ -1124,11 +1286,29 @@ function confirmPin(){
     el.classList.add('selected');
     el.querySelector('.check').innerHTML = '<svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5"/></svg>';
 
+    // Close first: nothing below (filling fields, the name check) may ever
+    // leave the picker stuck open if it fails.
+    setTimeout(()=>closeSheet(), 180);
+
     // Just fills in the real "Bank" text field — same field you could have
     // typed into directly. This is a shortcut, not the only way in.
     document.getElementById('bankNameInput').value = name;
 
-    setTimeout(()=>closeSheet(), 180);
+    // Directory banks carry their routing number (admin-entered, seeded,
+    // or from Plaid's institution data) — fill it in too, same as the Link
+    // Account picker does. A bank without one leaves the field to the
+    // sender, clearing only a number an earlier pick had filled in.
+    const routingInput = document.querySelector("input[name='bank_routing_number']");
+    if(routingNumber){
+      routingInput.value = routingNumber;
+      routingAutofilled = true;
+    } else if(routingAutofilled){
+      routingInput.value = '';
+      routingAutofilled = false;
+    }
+
+    // The routing number feeds the recipient name check.
+    runPayeeVerify('bank');
   }
 
   // ---------- international bank picker (admin-managed directory, type=international) ----------
@@ -1278,7 +1458,6 @@ function confirmPin(){
   }
 
   function selectIntlBank(el, bank){
-    console.log('Picked bank:', bank);
     document.querySelectorAll('#intlBankOptionList .bank-option').forEach(o=>{
       o.classList.remove('selected');
       const check = o.querySelector('.check');
@@ -1287,6 +1466,9 @@ function confirmPin(){
     el.classList.add('selected');
     el.querySelector('.check').innerHTML = '<svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5"/></svg>';
 
+    // Close first — see selectBank().
+    setTimeout(()=>closeIntlSheet(), 180);
+
     // Fills in the real fields — same ones you could type into directly —
     // so nothing about the International tab's own required fields
     // changes just because this shortcut was used.
@@ -1294,16 +1476,176 @@ function confirmPin(){
     if(bank.country) document.getElementById('intlCountryInput').value = bank.country;
     if(bank.swift_code) document.getElementById('intlSwiftInput').value = bank.swift_code;
     if(bank.currency) document.getElementById('intlCurrencyInput').value = bank.currency;
+    // The country may have just changed which provider (if any) applies.
+    onIntlCountryChange();
 
     // Refreshes the "converted amount" preview now that the currency
     // may have just changed.
     scheduleIntlConversion();
-
-    setTimeout(()=>closeIntlSheet(), 180);
   }
 
-  window.setReceiveMode = setReceiveMode;
-  window.selectLinkedChip = selectLinkedChip;
+  // ---------- recipient name verification (Another bank / International) ----------
+  // Asks RecipientVerificationController what the destination country's
+  // provider says about this exact account. A provider that RETRIEVES the
+  // name (Cashfree, India) fills the name in and locks it; one that only
+  // SCORES a typed name (Plaid, US) reports match / close / no match on
+  // what the sender typed. The server re-checks its own record when the
+  // transfer is saved (TransferController::recipientNameFields()), so
+  // nothing decided here is trusted. No provider, or no answer, means the
+  // name is the sender's own, saved as unverified.
+  const payeeTabs = {
+    bank: {
+      note: 'bankPayeeNote',
+      name: () => document.querySelector("input[name='bank_recipient_name']"),
+      account: () => document.querySelector("input[name='bank_account_number']"),
+      code: () => document.querySelector("input[name='bank_routing_number']"),
+      country: () => 'US',
+    },
+    international: {
+      note: 'intlPayeeNote',
+      name: () => document.getElementById('intlRecipientNameInput'),
+      account: () => document.getElementById('intlAccountInput'),
+      code: () => document.getElementById('intlBankCodeInput'),
+      country: () => intlCountryCode(),
+    },
+  };
+  const payeeAborts = {};
+  const payeeNameAutofilled = {};
+
+  // ISO code for the International tab's country, if it's one with a
+  // provider (cfg.payeeCountries) — '' otherwise.
+  function intlCountryCode(){
+    const typed = document.getElementById('intlCountryInput').value.trim().toLowerCase();
+    if(!typed) return '';
+    const countries = cfg.payeeCountries || {};
+    return Object.keys(countries).find(code =>
+      code.toLowerCase() === typed || (countries[code].aliases || []).includes(typed)) || '';
+  }
+
+  function payeeProvider(tab){
+    return (cfg.payeeCountries || {})[payeeTabs[tab].country()] || null;
+  }
+
+  function onIntlCountryChange(){
+    const provider = payeeProvider('international');
+    const label = provider ? provider.bankCodeLabel : '';
+    document.getElementById('intlBankCodeGroup').style.display = label ? 'block' : 'none';
+    document.getElementById('intlBankCodeLabel').textContent = label || sendI18n.intlBankCodeLabel;
+    runPayeeVerify('international');
+  }
+
+  function releasePayeeName(tab){
+    const nameInput = payeeTabs[tab].name();
+    nameInput.readOnly = false;
+    if(payeeNameAutofilled[tab]) nameInput.value = '';
+    payeeNameAutofilled[tab] = false;
+  }
+
+  function setPayeeNote(tab, state, text){
+    const note = document.getElementById(payeeTabs[tab].note);
+    note.className = 'verify-note' + (state ? ' ' + state : '');
+    note.textContent = text || '';
+    note.style.display = text ? 'block' : 'none';
+  }
+
+  function runPayeeVerify(tab){
+    const fields = payeeTabs[tab];
+    const provider = payeeProvider(tab);
+    const nameInput = fields.name();
+    const account = fields.account().value.trim();
+    const code = fields.code().value.trim();
+
+    if(payeeAborts[tab]) payeeAborts[tab].abort();
+
+    if(!provider){
+      releasePayeeName(tab);
+      // No provider for this country: no message — the name is just typed.
+      setPayeeNote(tab);
+      return;
+    }
+
+    // A name the provider filled in belongs to the account it was looked
+    // up for — once anything about the account changes, look it up again.
+    if(provider.returnsName) releasePayeeName(tab);
+
+    const typedName = provider.returnsName ? '' : nameInput.value.trim();
+    if(!account || !code || (!provider.returnsName && !typedName)){
+      // Not enough typed yet to check anything — say nothing.
+      setPayeeNote(tab);
+      return;
+    }
+
+    payeeAborts[tab] = new AbortController();
+    // Checked quietly — no "Checking…" line while it runs.
+    setPayeeNote(tab);
+
+    fetch(cfg.verifyRecipientUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': cfg.csrfToken },
+      body: JSON.stringify({ country: fields.country(), account_number: account, bank_code: code, name: typedName || null }),
+      signal: payeeAborts[tab].signal,
+    })
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        // The check couldn't run: say nothing — the sender just carries on
+        // with the name they typed.
+        if(!data){
+          setPayeeNote(tab);
+          return;
+        }
+
+
+        // Only a name the provider itself returned goes in the field.
+        if(data.status === 'verified' && data.verified_name){
+          nameInput.value = data.verified_name;
+          nameInput.readOnly = true;
+          payeeNameAutofilled[tab] = true;
+        }
+
+        // Same for a provider that had no name to give: no message.
+        if(['unsupported', 'unavailable', 'needs_name', 'failed'].includes(data.status)){
+          setPayeeNote(tab);
+          return;
+        }
+
+        const state = { verified: 'ok', match: 'ok', no_match: 'bad', invalid: 'bad', needs_name: '' }[data.status];
+        const via = data.method && ['verified', 'match', 'close_match', 'no_match'].includes(data.status) ? ' · ' + data.method : '';
+        // No message (removed from the language file) = nothing shown.
+        if(!data.message){
+          setPayeeNote(tab);
+          return;
+        }
+        setPayeeNote(tab, state === undefined ? 'warn' : state, data.message + via);
+      })
+      .catch(err => {
+        if(err.name === 'AbortError') return;
+        setPayeeNote(tab);
+      });
+  }
+
+  // 'change' (fires when a field is left), not 'input': every check is a
+  // paid provider call, so it runs once per finished field, not per key.
+  document.addEventListener('DOMContentLoaded', function(){
+    Object.keys(payeeTabs).forEach(tab => {
+      const fields = payeeTabs[tab];
+      [fields.name(), fields.account(), fields.code()].forEach(input => {
+        input.addEventListener('change', function(){
+          // Leaving a provider-filled (locked) name isn't an edit.
+          if(input === fields.name() && payeeNameAutofilled[tab]) return;
+          runPayeeVerify(tab);
+        });
+      });
+    });
+    document.getElementById('intlCountryInput').addEventListener('change', onIntlCountryChange);
+    // Once the sender types their own routing number, a later bank pick
+    // with no number of its own leaves it alone.
+    document.querySelector("input[name='bank_routing_number']").addEventListener('input', () => { routingAutofilled = false; });
+
+    onIntlCountryChange();
+    runPayeeVerify('bank');
+  });
+
+  window.setReceiveMode = setReceiveMode;  window.selectLinkedChip = selectLinkedChip;
   window.setAmount = setAmount;
   window.scheduleIntlConversion = scheduleIntlConversion;
   window.openSheet = openSheet;

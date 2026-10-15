@@ -15,7 +15,7 @@
       Showing {{ $paginator->firstItem() }}&ndash;{{ $paginator->lastItem() }} of {{ $paginator->total() }}
     </p>
     <div class="app-pagination-links">
-      <a href="{{ $paginator->previousPageUrl() ?? '#' }}" class="app-page-link @disabled($paginator->onFirstPage())" aria-label="Previous page">&larr;</a>
+      <a href="{{ $paginator->previousPageUrl() ?? '#' }}" class="app-page-link {{ $paginator->onFirstPage() ? 'disabled' : '' }}" aria-label="Previous page">&larr;</a>
 
       @if($appPagFirst > 1)
         <a href="{{ $paginator->url(1) }}" class="app-page-link">1</a>
@@ -35,7 +35,7 @@
         <a href="{{ $paginator->url($paginator->lastPage()) }}" class="app-page-link">{{ $paginator->lastPage() }}</a>
       @endif
 
-      <a href="{{ $paginator->nextPageUrl() ?? '#' }}" class="app-page-link @disabled(! $paginator->hasMorePages())" aria-label="Next page">&rarr;</a>
+      <a href="{{ $paginator->nextPageUrl() ?? '#' }}" class="app-page-link {{ $paginator->hasMorePages() ? '' : 'disabled' }}" aria-label="Next page">&rarr;</a>
     </div>
   </div>
 @endif

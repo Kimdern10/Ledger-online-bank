@@ -27,6 +27,9 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Test User']
         );
 
-        $this->call(BankSeeder::class);
+        // BankSeeder is deliberately no longer called: the bank list comes
+        // from the provider APIs (Admin > Banks > API banks), and the
+        // directory only holds banks an admin adds. Run it by hand
+        // (php artisan db:seed --class=BankSeeder) to bring the starter set back.
     }
 }

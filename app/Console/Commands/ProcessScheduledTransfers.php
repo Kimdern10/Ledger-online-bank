@@ -323,7 +323,7 @@ class ProcessScheduledTransfers extends Command
             $sender,
             'Money sent',
             'Your scheduled transfer of $'.number_format((float) $externalTransfer->amount, 2)." to {$externalTransfer->recipient_name} went out.",
-            route('send.receipt.external', $externalTransfer),
+            route('send.receipt', $externalTransfer),
         );
     }
 
@@ -435,7 +435,7 @@ class ProcessScheduledTransfers extends Command
             $sender,
             'Money sent',
             'Your scheduled transfer of $'.number_format((float) $internationalTransfer->amount, 2)." to {$internationalTransfer->recipient_name} went out.",
-            route('send.receipt.international', $internationalTransfer),
+            route('send.receipt', $internationalTransfer),
         );
     }
 }

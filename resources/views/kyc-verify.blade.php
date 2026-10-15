@@ -35,11 +35,8 @@
       </div>
       <p style="margin:0 0 8px; font-size:16.5px; font-weight:700;">{{ __('verify.kyc_approved_title') }}</p>
       <p style="margin:0 auto 22px; max-width:380px; font-size:13.5px; opacity:0.75; line-height:1.55;">
-        @if($kyc->reviewed_at)
-          {{ __('verify.kyc_approved_body_dated', ['date' => $kyc->reviewed_at->translatedFormat('M j, Y')]) }}
-        @else
-          {{ __('verify.kyc_approved_body') }}
-        @endif
+        {{-- No approval date shown, by request — just that it's approved. --}}
+        {{ __('verify.kyc_approved_body') }}
       </p>
       <a href="{{ route('dashboard') }}" class="btn btn-primary">{{ __('verify.back_to_dashboard') }}</a>
     </div>

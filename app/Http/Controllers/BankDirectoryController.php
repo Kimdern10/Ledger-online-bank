@@ -6,6 +6,7 @@ use App\Models\Bank;
 use App\Services\BankProviders\BankProviderInterface;
 use App\Services\BankProviders\OpenPaymentsBankProvider;
 use App\Services\BankProviders\PlaidBankProvider;
+use App\Services\BankProviders\PlaidInternationalBankProvider;
 use App\Services\BankProviders\SaltEdgeBankProvider;
 use App\Services\BankProviders\TokenIoBankProvider;
 use App\Services\BankProviders\TrueLayerBankProvider;
@@ -124,16 +125,22 @@ class BankDirectoryController extends Controller
         // Rest of Europe
         'GB' => 'GBP', 'SE' => 'SEK', 'NO' => 'NOK', 'DK' => 'DKK', 'IS' => 'ISK',
         'PL' => 'PLN', 'CZ' => 'CZK', 'HU' => 'HUF', 'RO' => 'RON', 'BG' => 'BGN',
-        'CH' => 'CHF', 'TR' => 'TRY',
+        'CH' => 'CHF', 'TR' => 'TRY', 'UA' => 'UAH', 'RS' => 'RSD', 'MD' => 'MDL',
+        'GE' => 'GEL',
         // Asia-Pacific
         'AU' => 'AUD', 'NZ' => 'NZD', 'JP' => 'JPY', 'CN' => 'CNY', 'HK' => 'HKD',
         'SG' => 'SGD', 'KR' => 'KRW', 'IN' => 'INR', 'ID' => 'IDR', 'MY' => 'MYR',
-        'TH' => 'THB', 'PH' => 'PHP', 'VN' => 'VND', 'TW' => 'TWD',
+        'TH' => 'THB', 'PH' => 'PHP', 'VN' => 'VND', 'TW' => 'TWD', 'PK' => 'PKR',
+        'BD' => 'BDT', 'LK' => 'LKR', 'KZ' => 'KZT',
         // Middle East & Africa
         'AE' => 'AED', 'SA' => 'SAR', 'IL' => 'ILS', 'EG' => 'EGP', 'ZA' => 'ZAR',
+        'QA' => 'QAR', 'KW' => 'KWD', 'BH' => 'BHD', 'OM' => 'OMR',
         'NG' => 'NGN', 'KE' => 'KES', 'GH' => 'GHS',
         // Americas
-        'US' => 'USD', 'CA' => 'CAD', 'MX' => 'MXN', 'BR' => 'BRL',
+        'US' => 'USD', 'CA' => 'CAD', 'MX' => 'MXN', 'BR' => 'BRL', 'AR' => 'ARS',
+        'CL' => 'CLP', 'CO' => 'COP', 'PE' => 'PEN', 'UY' => 'UYU', 'DO' => 'DOP',
+        // Ecuador uses the US dollar.
+        'EC' => 'USD',
     ];
 
     /**
@@ -210,6 +217,9 @@ class BankDirectoryController extends Controller
                     $this->localResults($query, 'international'),
                     $query,
                     [
+                        // First, so UK/EU/Canadian banks lead the round-robin
+                        // ahead of Open Payments' mostly-Nordic list.
+                        app(PlaidInternationalBankProvider::class),
                         app(TrueLayerBankProvider::class),
                         app(TokenIoBankProvider::class),
                         app(OpenPaymentsBankProvider::class),

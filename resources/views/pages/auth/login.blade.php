@@ -18,7 +18,7 @@
             <flux:input
                 name="email"
                 :label="__('authpage.field_email')"
-                :value="old('email')"
+                :value="old('email', request()->cookie('remembered_email'))"
                 type="email"
                 required
                 autofocus
@@ -46,7 +46,7 @@
             </div>
 
             <!-- Remember Me -->
-            <flux:checkbox name="remember" :label="__('authpage.remember_me')" :checked="old('remember')" />
+            <flux:checkbox name="remember" :label="__('authpage.remember_me')" :checked="old('remember', request()->hasCookie('remembered_email'))" />
 
             <div class="flex items-center justify-end">
                 <flux:button variant="primary" type="submit" class="w-full" data-test="login-button">

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AdminBalanceAdjustment;
 use App\Models\Card;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\View\View;
 
 class HistoryController extends Controller
@@ -60,7 +61,7 @@ class HistoryController extends Controller
                 // another" — that button only makes sense right after
                 // actually sending money, not while browsing back through
                 // old transactions. See TransferController::receipt().
-                'url' => route('send.receipt', ['transfer' => $transfer, 'from' => 'history']),
+                'url' => route('send.receipt', ['reference' => $transfer->reference, 'from' => 'history']),
                 'affects_balance' => true,
                 'cancel_route' => null,
             ];
@@ -74,7 +75,7 @@ class HistoryController extends Controller
                 'amount_raw' => (float) $transfer->amount,
                 'amount_display' => '+$'.number_format((float) $transfer->amount, 2),
                 'created_at' => $transfer->created_at,
-                'url' => route('send.receipt', ['transfer' => $transfer, 'from' => 'history']),
+                'url' => route('send.receipt', ['reference' => $transfer->reference, 'from' => 'history']),
                 'affects_balance' => true,
                 'cancel_route' => null,
             ];
@@ -88,7 +89,7 @@ class HistoryController extends Controller
                 'amount_raw' => -1 * (float) $transfer->amount,
                 'amount_display' => '–$'.number_format((float) $transfer->amount, 2),
                 'created_at' => $transfer->created_at,
-                'url' => route('send.receipt.external', ['externalTransfer' => $transfer, 'from' => 'history']),
+                'url' => route('send.receipt', ['reference' => $transfer->reference, 'from' => 'history']),
                 'affects_balance' => true,
                 'cancel_route' => null,
             ];
@@ -102,7 +103,7 @@ class HistoryController extends Controller
                 'amount_raw' => -1 * (float) $transfer->amount,
                 'amount_display' => '–$'.number_format((float) $transfer->amount, 2),
                 'created_at' => $transfer->created_at,
-                'url' => route('send.receipt.international', ['internationalTransfer' => $transfer, 'from' => 'history']),
+                'url' => route('send.receipt', ['reference' => $transfer->reference, 'from' => 'history']),
                 'affects_balance' => true,
                 'cancel_route' => null,
             ];
@@ -137,7 +138,7 @@ class HistoryController extends Controller
                     // receipt page instead, now that receipt() understands
                     // scheduled/cancelled/failed transfers too.
                     'url' => null,
-                    'view_url' => route('send.receipt', ['transfer' => $transfer, 'from' => 'history']),
+                    'view_url' => route('send.receipt', ['reference' => $transfer->reference, 'from' => 'history']),
                     'affects_balance' => false,
                     'cancel_route' => $transfer->status === 'scheduled'
                         ? route('send.scheduled.cancel', $transfer)
@@ -163,7 +164,7 @@ class HistoryController extends Controller
                     // See $scheduledLedger above for why this is 'view_url',
                     // not 'url'.
                     'url' => null,
-                    'view_url' => route('send.receipt.external', ['externalTransfer' => $transfer, 'from' => 'history']),
+                    'view_url' => route('send.receipt', ['reference' => $transfer->reference, 'from' => 'history']),
                     'affects_balance' => false,
                     'cancel_route' => $transfer->status === 'scheduled'
                         ? route('send.scheduled.cancel.external', $transfer)
@@ -189,7 +190,7 @@ class HistoryController extends Controller
                     // See $scheduledLedger above for why this is 'view_url',
                     // not 'url'.
                     'url' => null,
-                    'view_url' => route('send.receipt.international', ['internationalTransfer' => $transfer, 'from' => 'history']),
+                    'view_url' => route('send.receipt', ['reference' => $transfer->reference, 'from' => 'history']),
                     'affects_balance' => false,
                     'cancel_route' => $transfer->status === 'scheduled'
                         ? route('send.scheduled.cancel.international', $transfer)
@@ -295,7 +296,7 @@ class HistoryController extends Controller
         $perPage = 20;
         $page = (int) $request->query('page', 1);
 
-        $transactions = new \Illuminate\Pagination\LengthAwarePaginator(
+        $transactions = new LengthAwarePaginator(
             $all->forPage($page, $perPage)->values(),
             $all->count(),
             $perPage,

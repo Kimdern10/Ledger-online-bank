@@ -6,7 +6,10 @@
 <title>{{ $title ?? 'Online Banking' }}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,72,400;0,72,500;0,72,600;1,72,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{!! asset('assets/css/dashboard.css') !!}">
+{{-- ?v= is the file's last-modified time, so a browser fetches the new file
+     the moment it changes instead of running an old cached copy against
+     newer page HTML. --}}
+<link rel="stylesheet" href="{!! asset('assets/css/dashboard.css') !!}?v={{ filemtime(public_path('assets/css/dashboard.css')) }}">
 </head>
 <body>
 
@@ -72,6 +75,32 @@ smartsupp('email', @json(auth()->user()->email));
 </script>
 <!-- End Smartsupp Live Chat script -->
 
-<script src="{!! asset('assets/js/dashboard.js') !!}"></script>
+{{-- Used by the transfer confirmation pop-up (openPinModal() in
+     dashboard.js) to email a one-time code — see App\Support\TransferCode. --}}
+@auth
+<script>
+  window.LedgerTransferCode = {
+    url: @json(route('transfer-code.send')),
+    checkUrl: @json(route('transfer-code.check')),
+    csrfToken: @json(csrf_token()),
+    i18n: {
+      sending: @json(__('transfer_code.sending')),
+      sendFailed: @json(__('transfer_code.send_failed')),
+      resend: @json(__('transfer_code.resend')),
+      incorrect: @json(__('transfer_code.incorrect')),
+    },
+  };
+</script>
+{{-- A wrong code that still reached the server (RequiresTransactionPin)
+     — shown the same way as one caught in the pop-up. --}}
+@if(session('transferCodeError'))
+<script>
+  document.addEventListener('DOMContentLoaded', function(){
+    if (window.ledgerToast) window.ledgerToast(@json(session('transferCodeError')), 'error');
+  });
+</script>
+@endif
+@endauth
+<script src="{!! asset('assets/js/dashboard.js') !!}?v={{ filemtime(public_path('assets/js/dashboard.js')) }}"></script>
 </body>
 </html>

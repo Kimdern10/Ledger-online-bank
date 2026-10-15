@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>@yield('title', 'Admin') · Ledger Admin</title>
-  <link rel="stylesheet" href="{!! asset('admin_asset/css/admin.css') !!}">
+  <link rel="stylesheet" href="{{ asset('admin_asset/css/admin.css') }}?v={{ filemtime(public_path('admin_asset/css/admin.css')) }}">
 </head>
 <body>
   <div class="admin-mobile-bar">
@@ -29,7 +29,7 @@
 
       <p class="admin-nav-section">Financial</p>
       <a href="{!! route('admin.bills') !!}" class="admin-nav-link {!! request()->routeIs('admin.bills') ? 'active' : '' !!}">Bills</a>
-      <a href="{!! route('admin.banks') !!}" class="admin-nav-link {!! request()->routeIs('admin.banks*') ? 'active' : '' !!}">Banks</a>
+      <a href="{!! route('admin.banks.providers') !!}" class="admin-nav-link {!! request()->routeIs('admin.banks*') ? 'active' : '' !!}">Banks</a>
 
       <p class="admin-nav-section">Cards</p>
       <?php
@@ -153,6 +153,6 @@
   {{-- Shared JS for every admin page (sidebar toggle, plus each individual
        page's own logic guarded on its own elements existing) — see the
        file's own header comment for why it's safe to load everywhere. --}}
-  <script src="{!! asset('admin_asset/js/admin.js') !!}"></script>
+  <script src="{{ asset('admin_asset/js/admin.js') }}?v={{ filemtime(public_path('admin_asset/js/admin.js')) }}"></script>
 </body>
 </html>

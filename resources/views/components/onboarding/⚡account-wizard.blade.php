@@ -97,6 +97,18 @@ new #[Layout('layouts.onboarding')] class extends Component
     }
 
     /**
+     * Custom validation messages for the wizard's fields.
+     *
+     * @return array<string, string>
+     */
+    protected function messages(): array
+    {
+        return [
+            'account_type.in' => 'You can only choose one account type: Checking or Savings.',
+        ];
+    }
+
+    /**
      * Validation rules scoped to the step currently on screen, so moving
      * from step 1 to step 2 doesn't demand step 4's fields already be filled.
      */
@@ -135,8 +147,8 @@ new #[Layout('layouts.onboarding')] class extends Component
                 'net_worth' => ['required', 'numeric', 'min:0'],
             ],
             5 => [
-                'account_type' => ['required', 'string'],
-                'currency' => ['required', 'string', 'max:3'],
+                // One account per customer: Checking or Savings, not both.
+                'account_type' => ['required', 'in:checking,savings'],
                 'agree_terms' => ['accepted'],
             ],
             default => [],
@@ -266,7 +278,8 @@ new #[Layout('layouts.onboarding')] class extends Component
         // own fields and flip the "done" flag that unlocks the dashboard.
         $user->profile()->updateOrCreate([], [
             'account_type' => $this->account_type,
-            'currency' => $this->currency,
+            // A US bank: every account is held in US dollars.
+            'currency' => 'USD',
             'onboarding_step' => $this->totalSteps,
             'onboarding_completed' => true,
         ]);
@@ -545,13 +558,8 @@ new #[Layout('layouts.onboarding')] class extends Component
                     <flux:select wire:model="account_type" label="Account Type" placeholder="Select account type" required>
                         <flux:select.option value="savings">Savings</flux:select.option>
                         <flux:select.option value="checking">Checking</flux:select.option>
-                        <flux:select.option value="both">Both</flux:select.option>
                     </flux:select>
-                    <flux:select wire:model="currency" label="Preferred Currency" required>
-                        <flux:select.option value="USD">USD</flux:select.option>
-                        <flux:select.option value="EUR">EUR</flux:select.option>
-                        <flux:select.option value="GBP">GBP</flux:select.option>
-                    </flux:select>
+                    <flux:input label="Currency" value="USD US dollar" readonly disabled />
                 </div>
 
                 <div class="ledger-wizard-review">

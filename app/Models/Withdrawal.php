@@ -2,11 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasReferenceRouteKey;
+use App\Support\TransactionStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Withdrawal extends Model
 {
+    use HasReferenceRouteKey;
+
     protected $fillable = [
         'user_id',
         'linked_account_id',
@@ -40,6 +44,6 @@ class Withdrawal extends Model
      */
     public function statusLabel(): string
     {
-        return \App\Support\TransactionStatus::label($this->status);
+        return TransactionStatus::label($this->status);
     }
 }

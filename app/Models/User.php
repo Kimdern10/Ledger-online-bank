@@ -29,7 +29,6 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property string $account_status
  * @property Carbon|null $account_deleted_at
  * @property Carbon|null $permanently_deleted_at
- * @property bool $is_restricted
  * @property string $account_balance
  * @property string|null $transaction_pin
  * @property string $language
@@ -95,7 +94,6 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
             'balance' => 'decimal:2',
             'account_balance' => 'decimal:2',
             'is_admin' => 'boolean',
-            'is_restricted' => 'boolean',
             'can_send' => 'boolean',
             'can_pay_bills' => 'boolean',
             'can_link_account' => 'boolean',
@@ -112,7 +110,7 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     }
 
     /**
-     * is_admin, account_status, account_deleted_at, is_restricted,
+     * is_admin, account_status, account_deleted_at,
      * account_balance, and the six can_* feature flags are all deliberately
      * left out of #[Fillable(...)] above, so nothing — not registration,
      * not any form on the site, not the user themselves — can ever touch
@@ -154,7 +152,21 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
      */
     public function canSignIn(): bool
     {
-        return $this->account_status === 'active';
+        // A frozen wallet still signs in (to see balance and history) — only
+        // its money is stopped, see isWalletFrozen(). Suspended and disabled
+        // accounts can't sign in at all.
+        return in_array($this->account_status, ['active', 'frozen'], true);
+    }
+
+    /**
+     * Freeze wallet: the user can sign in and look around, but nothing moves
+     * in or out — no sending, withdrawing, topping up or paying bills (see
+     * EnsureAccountIsNotRestricted), no incoming Ledger transfers (see
+     * TransferController). Admin balance adjustments still work.
+     */
+    public function isWalletFrozen(): bool
+    {
+        return $this->account_status === 'frozen';
     }
 
     public function accountStatusLabel(): string
@@ -165,18 +177,6 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
             'disabled' => 'Disabled',
             default => 'Active',
         };
-    }
-
-    /**
-     * Separate from account_status on purpose — a restricted account can
-     * still sign in and see its dashboard (canSignIn() doesn't check this
-     * at all), it just can't move money. See EnsureAccountIsNotRestricted,
-     * which is what actually blocks Send/Withdraw/Top Up/Pay Bills/Scan for
-     * an account this returns true for.
-     */
-    public function isRestricted(): bool
-    {
-        return (bool) $this->is_restricted;
     }
 
     /**

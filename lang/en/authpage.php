@@ -105,7 +105,8 @@ return [
     // error for a frozen/suspended/disabled account, and mid-session by
     // EnsureAccountIsActive middleware.
     'account_frozen' => 'This account is frozen. Contact support for help.',
-    'account_suspended' => 'This account is suspended. Contact support for help.',
-    'account_disabled' => 'This account has been disabled.',
+    'account_suspended' => 'This account is suspended for now. Contact support to have it reviewed.',
+    'wallet_frozen' => 'Your wallet is frozen. You can still sign in and see your account, but no money can be sent or received. Contact support to unfreeze it.',
+    'account_disabled' => 'This account has been closed. Contact support if you think this is a mistake.',
     'account_blocked_default' => 'This account cannot sign in right now.',
 ];

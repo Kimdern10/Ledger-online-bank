@@ -2,11 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasReferenceRouteKey;
+use App\Support\TransactionStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Transfer extends Model
 {
+    use HasReferenceRouteKey;
+
     protected $fillable = [
         'reference',
         'sender_id',
@@ -44,6 +48,6 @@ class Transfer extends Model
      */
     public function statusLabel(): string
     {
-        return \App\Support\TransactionStatus::label($this->status);
+        return TransactionStatus::label($this->status);
     }
 }

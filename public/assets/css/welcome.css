@@ -220,7 +220,9 @@ h1,h2,h3,h4{font-family:'Newsreader', serif; font-weight:500; color:var(--text-1
 
 @media (max-width:960px){
   .main-nav{
-    position:fixed; inset:0 0 0 auto; width:min(320px, 84vw); height:100vh;
+    /* dvh = the screen height a phone actually shows (minus its own address
+       and tool bars), so the drawer's bottom buttons are never out of reach. */
+    position:fixed; inset:0 0 0 auto; width:min(320px, 84vw); height:100vh; height:100dvh;
     background:var(--paper-2); flex-direction:column; align-items:stretch;
     padding:90px 24px 24px; gap:4px; transform:translateX(100%);
     transition:transform .3s cubic-bezier(.4,0,.2,1); box-shadow:-10px 0 30px rgba(16,32,47,0.12);
@@ -610,13 +612,14 @@ h1,h2,h3,h4{font-family:'Newsreader', serif; font-weight:500; color:var(--text-1
   position:fixed; right:24px; bottom:142px; z-index:1050;
   width:368px; max-width:calc(100vw - 32px);
   height:min(560px, calc(100vh - 190px));
+  height:min(560px, calc(100dvh - 190px));
   background:var(--paper-2); border-radius:20px; border:1px solid var(--mist);
   box-shadow:0 24px 60px rgba(16,32,47,0.28);
   display:flex; flex-direction:column; overflow:hidden;
 }
 @media (max-width:480px){
   .gs-launcher{ right:16px; bottom:16px; }
-  .gs-panel{ right:12px; left:12px; bottom:76px; width:auto; height:min(72vh, 560px); }
+  .gs-panel{ right:12px; left:12px; bottom:76px; width:auto; height:min(72vh, 560px); height:min(72dvh, 560px); }
 }
 
 /* While the mobile hamburger drawer is open (see headers.blade.php's
@@ -740,3 +743,14 @@ body.nav-open .gs-launcher{
 .gs-send-btn:hover{ background:#28594e; }
 .gs-send-btn:disabled{ opacity:.5; cursor:default; }
 .gs-send-btn svg{ width:16px; height:16px; }
+
+/* ============ MOBILE: never wider than the screen ============
+   An element sticking out past the right edge (like the closed slide-out
+   menu) makes phones lay the whole page out wider and zoom out, so
+   everything looks tiny. overflow-x on <body> alone isn't enough — phones
+   size the page from <html> — and "clip" (unlike "hidden") doesn't turn
+   html/body into scroll boxes, so window scrolling and sticky headers keep
+   working. Older browsers without clip keep their existing behaviour. */
+@supports (overflow-x: clip){
+  html, body{ overflow-x: clip; }
+}

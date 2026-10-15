@@ -24,12 +24,15 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\NotificationSettingController;
 use App\Http\Controllers\PasswordSettingController;
 use App\Http\Controllers\ProfileSettingController;
+use App\Http\Controllers\RecipientVerificationController;
 use App\Http\Controllers\SupportController;
 use App\Http\Controllers\TopUpController;
 use App\Http\Controllers\TransactionPinController;
+use App\Http\Controllers\TransferCodeController;
 use App\Http\Controllers\TransferController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WithdrawalController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
@@ -50,6 +53,16 @@ Route::get('/send', [UserController::class, 'sendout'])
     ->middleware(['auth', 'not-admin', 'account.active', 'feature:can_send', 'kyc-approved', 'not-restricted'])
     ->name('send');
 
+// Emails a one-time code to confirm a transfer, withdrawal or top-up —
+// see App\Support\TransferCode. 5 a minute is plenty for Resend.
+Route::post('/transfer-code', [TransferCodeController::class, 'send'])
+    ->middleware(['auth', 'not-admin', 'account.active', 'throttle:5,1'])
+    ->name('transfer-code.send');
+
+Route::post('/transfer-code/check', [TransferCodeController::class, 'check'])
+    ->middleware(['auth', 'not-admin', 'account.active', 'throttle:20,1'])
+    ->name('transfer-code.check');
+
 Route::post('/send', [TransferController::class, 'store'])
     ->middleware(['auth', 'not-admin', 'account.active', 'feature:can_send', 'kyc-approved', 'not-restricted'])
     ->name('send.store');
@@ -58,21 +71,32 @@ Route::get('/send/lookup', [TransferController::class, 'lookup'])
     ->middleware(['auth', 'not-admin', 'account.active', 'feature:can_send', 'kyc-approved', 'throttle:20,1'])
     ->name('send.lookup');
 
+// POST, not GET like the lookup above: it carries a recipient's account
+// number and name, which don't belong in a URL. CSRF-protected (web group).
+Route::post('/send/verify-recipient', RecipientVerificationController::class)
+    ->middleware(['auth', 'not-admin', 'account.active', 'feature:can_send', 'kyc-approved', 'throttle:20,1'])
+    ->name('send.verify-recipient');
+
 Route::get('/send/international/convert', [TransferController::class, 'convertPreview'])
     ->middleware(['auth', 'not-admin', 'account.active', 'feature:can_send', 'kyc-approved', 'throttle:30,1'])
     ->name('send.international.convert');
 
-Route::get('/send/receipt/{transfer}', [TransferController::class, 'receipt'])
-    ->middleware(['auth', 'not-admin'])
-    ->name('send.receipt');
-
-Route::get('/send/receipt/external/{externalTransfer}', [TransferController::class, 'externalReceipt'])
+// Old /send/receipt/external/7 and /send/receipt/international/3 links (in
+// emails, notifications, bookmarks) forward to the one receipt link below.
+// Registered first so "external"/"international" never reach {reference}.
+Route::get('/send/receipt/external/{externalTransfer}', [TransferController::class, 'legacyExternalReceipt'])
     ->middleware(['auth', 'not-admin'])
     ->name('send.receipt.external');
 
-Route::get('/send/receipt/international/{internationalTransfer}', [TransferController::class, 'internationalReceipt'])
+Route::get('/send/receipt/international/{internationalTransfer}', [TransferController::class, 'legacyInternationalReceipt'])
     ->middleware(['auth', 'not-admin'])
     ->name('send.receipt.international');
+
+// One receipt link for every kind of transfer, by its reference —
+// /send/receipt/LDG261014K7Q2MX. See TransferController::showReceipt().
+Route::get('/send/receipt/{reference}', [TransferController::class, 'showReceipt'])
+    ->middleware(['auth', 'not-admin'])
+    ->name('send.receipt');
 
 Route::post('/send/scheduled/{transfer}/cancel', [TransferController::class, 'cancelScheduled'])
     ->middleware(['auth', 'not-admin'])
@@ -185,7 +209,7 @@ Route::delete('/link-account/{linkedAccount}', [LinkedAccountController::class, 
 
 Route::get('/pay-bills', [UserController::class, 'payBills'])->middleware(['auth', 'not-admin', 'account.active', 'feature:can_pay_bills'])->name('pay-bills');
 
-Route::post('/bills', [BillController::class, 'store'])->middleware(['auth', 'not-admin', 'account.active', 'feature:can_pay_bills'])->name('bills.store');
+Route::post('/bills', [BillController::class, 'store'])->middleware(['auth', 'not-admin', 'account.active', 'feature:can_pay_bills', 'not-restricted'])->name('bills.store');
 
 Route::delete('/bills/{bill}', [BillController::class, 'destroy'])->middleware(['auth', 'not-admin', 'account.active', 'feature:can_pay_bills'])->name('bills.destroy');
 Route::get('/withdraw', [UserController::class, 'withdraw'])
@@ -378,7 +402,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/users/{user}', [AdminController::class, 'show'])->name('users.show');
     Route::post('/users/{user}/status', [AdminController::class, 'updateStatus'])->name('users.status');
 
-    Route::post('/users/{user}/restriction/toggle', [AdminController::class, 'toggleRestriction'])->name('users.restriction.toggle');
     Route::post('/users/{user}/balance', [AdminController::class, 'adjustBalance'])->name('users.balance');
     Route::post('/users/{user}/email-verification', [AdminController::class, 'toggleEmailVerification'])->name('users.email-verification');
     Route::post('/users/{user}/two-factor/reset', [AdminController::class, 'resetTwoFactor'])->name('users.two-factor.reset');
@@ -399,6 +422,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // trying to find a Bank with id "create".
     Route::get('/banks', [AdminBankController::class, 'index'])->name('banks');
     Route::get('/banks/create', [AdminBankController::class, 'create'])->name('banks.create');
+    // Every bank the configured providers offer (read-only), and copying
+    // one into the directory — see AdminBankController::providerBanks().
+    Route::get('/banks/providers', [AdminBankController::class, 'providerBanks'])->name('banks.providers');
+    Route::post('/banks/import', [AdminBankController::class, 'import'])->name('banks.import');
     Route::post('/banks', [AdminBankController::class, 'store'])->name('banks.store');
     Route::get('/banks/{bank}/edit', [AdminBankController::class, 'edit'])->name('banks.edit');
     Route::put('/banks/{bank}', [AdminBankController::class, 'update'])->name('banks.update');
@@ -458,3 +485,19 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 });
 
 require __DIR__.'/settings.php';
+
+// For a short while every page lived under /ledger, and old addresses were
+// sent there with a permanent (301) redirect that browsers remember — so a
+// browser may still jump from /login to /ledger/login by itself. This sends
+// any /ledger/... address back to the same page without it:
+//  - with ?r=1 added, an address the browser has never saved, so it loads
+//    the page fresh instead of bouncing back to /ledger/... from memory;
+//  - with Clear-Site-Data: "cache", so the browser forgets the old 301 and
+//    plain /login works directly from then on;
+//  - as a temporary (302) redirect, so this one is never remembered.
+Route::get('/ledger/{path?}', function (Request $request, ?string $path = null) {
+    $query = array_merge($request->query(), ['r' => 1]);
+
+    return redirect('/'.ltrim((string) $path, '/').'?'.http_build_query($query))
+        ->header('Clear-Site-Data', '"cache"');
+})->where('path', '.*');

@@ -10,6 +10,8 @@ use App\Models\ExternalTransfer;
 use App\Models\InternationalTransfer;
 use App\Models\Transfer;
 use App\Models\User;
+use App\Services\PayeeVerification\PayeeDetails;
+use App\Services\PayeeVerification\PayeeVerificationManager;
 use App\Support\CurrencyRates;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -84,6 +86,9 @@ class TransferController extends Controller
             'intl_bank_name' => ['required_if:mode,international', 'nullable', 'string', 'max:150'],
             'intl_recipient_name' => ['required_if:mode,international', 'nullable', 'string', 'max:150'],
             'intl_country' => ['required_if:mode,international', 'nullable', 'string', 'max:100'],
+            // Only used to verify the recipient's name (an IFSC for India,
+            // say) — see RecipientVerificationController. Not stored.
+            'intl_bank_code' => ['nullable', 'string', 'max:20'],
             'intl_swift_code' => ['required_if:mode,international', 'nullable', 'string', 'max:20'],
             'intl_account_number' => ['required_if:mode,international', 'nullable', 'string', 'max:34'],
             'intl_currency' => ['required_if:mode,international', 'nullable', 'string', 'max:3'],
@@ -132,6 +137,44 @@ class TransferController extends Controller
     }
 
     /**
+     * What PayeeVerificationManager itself recorded for this sender's last
+     * check of this exact account — see its outcomeFor() for each status.
+     * Nothing the browser submits can set it; a country with no provider,
+     * no check, or a name changed afterwards all mean 'manual'.
+     *
+     * @return array{status: string, provider: ?string}
+     */
+    private function recipientNameOutcome(User $sender, string $country, string $accountNumber, ?string $bankCode, string $name): array
+    {
+        $verification = app(PayeeVerificationManager::class);
+        $countryCode = $verification->countryCode($country);
+
+        if ($countryCode === null || blank($bankCode)) {
+            return ['status' => 'manual', 'provider' => null];
+        }
+
+        return $verification->outcomeFor($sender, new PayeeDetails(
+            countryCode: $countryCode,
+            accountNumber: $accountNumber,
+            bankCode: $bankCode,
+            name: $name,
+        ));
+    }
+
+    /**
+     * @return array{recipient_name_status: string, recipient_name_provider: ?string}
+     */
+    private function recipientNameFields(User $sender, string $country, string $accountNumber, ?string $bankCode, string $name): array
+    {
+        $outcome = $this->recipientNameOutcome($sender, $country, $accountNumber, $bankCode, $name);
+
+        return [
+            'recipient_name_status' => $outcome['status'],
+            'recipient_name_provider' => $outcome['provider'],
+        ];
+    }
+
+    /**
      * Ledger-to-Ledger: real recipient, found by account number, both
      * balances actually move in one atomic step.
      */
@@ -155,6 +198,11 @@ class TransferController extends Controller
 
         if ($recipient->id === $sender->id) {
             return back()->withInput()->with('sendError', "You can't send money to your own account.");
+        }
+
+        // A frozen wallet takes nothing in (see User::isWalletFrozen()).
+        if ($recipient->isWalletFrozen()) {
+            return back()->withInput()->with('sendError', "This account can't receive money right now.");
         }
 
         $amount = (float) $data['amount'];
@@ -268,7 +316,8 @@ class TransferController extends Controller
             route('send.receipt', $transfer),
         );
 
-        return redirect()->route('send.receipt', $transfer);
+        // One-time flag for the "sent" toast — see sentToast().
+        return redirect()->route('send.receipt', $transfer)->with('transferSent', true);
     }
 
     /**
@@ -297,6 +346,11 @@ class TransferController extends Controller
 
         if ($recipient->id === $sender->id) {
             return back()->withInput()->with('sendError', "You can't send money to your own account.");
+        }
+
+        // A frozen wallet takes nothing in (see User::isWalletFrozen()).
+        if ($recipient->isWalletFrozen()) {
+            return back()->withInput()->with('sendError', "This account can't receive money right now.");
         }
 
         $amount = (float) $data['amount'];
@@ -358,6 +412,7 @@ class TransferController extends Controller
                     'status' => 'completed',
                     'fee' => 0,
                     'recipient_name' => $data['bank_recipient_name'],
+                    ...$this->recipientNameFields($sender, 'US', $data['bank_account_number'], $data['bank_routing_number'], $data['bank_recipient_name']),
                     'bank_name' => $data['bank_name'],
                     'account_number' => $data['bank_account_number'],
                     'routing_number' => $data['bank_routing_number'],
@@ -403,10 +458,10 @@ class TransferController extends Controller
             $sender,
             'Money sent',
             'You sent $'.number_format($amount, 2)." to {$externalTransfer->recipient_name}.",
-            route('send.receipt.external', $externalTransfer),
+            route('send.receipt', $externalTransfer),
         );
 
-        return redirect()->route('send.receipt.external', $externalTransfer);
+        return redirect()->route('send.receipt', $externalTransfer)->with('transferSent', true);
     }
 
     /**
@@ -427,6 +482,7 @@ class TransferController extends Controller
             'scheduled_for' => $data['scheduled_date'],
             'fee' => 0,
             'recipient_name' => $data['bank_recipient_name'],
+            ...$this->recipientNameFields($sender, 'US', $data['bank_account_number'], $data['bank_routing_number'], $data['bank_recipient_name']),
             'bank_name' => $data['bank_name'],
             'account_number' => $data['bank_account_number'],
             'routing_number' => $data['bank_routing_number'],
@@ -483,6 +539,7 @@ class TransferController extends Controller
                     'status' => 'completed',
                     'fee' => 0,
                     'recipient_name' => $data['intl_recipient_name'],
+                    ...$this->recipientNameFields($sender, $data['intl_country'], $data['intl_account_number'], $data['intl_bank_code'] ?? null, $data['intl_recipient_name']),
                     'bank_name' => $data['intl_bank_name'],
                     'country' => $data['intl_country'],
                     'swift_code' => strtoupper($data['intl_swift_code']),
@@ -529,10 +586,10 @@ class TransferController extends Controller
             $sender,
             'Money sent',
             'You sent $'.number_format($amount, 2)." to {$internationalTransfer->recipient_name}.",
-            route('send.receipt.international', $internationalTransfer),
+            route('send.receipt', $internationalTransfer),
         );
 
-        return redirect()->route('send.receipt.international', $internationalTransfer);
+        return redirect()->route('send.receipt', $internationalTransfer)->with('transferSent', true);
     }
 
     /**
@@ -561,6 +618,7 @@ class TransferController extends Controller
             'scheduled_for' => $data['scheduled_date'],
             'fee' => 0,
             'recipient_name' => $data['intl_recipient_name'],
+            ...$this->recipientNameFields($sender, $data['intl_country'], $data['intl_account_number'], $data['intl_bank_code'] ?? null, $data['intl_recipient_name']),
             'bank_name' => $data['intl_bank_name'],
             'country' => $data['intl_country'],
             'swift_code' => strtoupper($data['intl_swift_code']),
@@ -710,6 +768,87 @@ class TransferController extends Controller
     }
 
     /**
+     * The one receipt link for every kind of transfer —
+     * /send/receipt/{reference}, e.g. /send/receipt/LDG261014K7Q2MX. The
+     * reference alone says which table it's in; the matching receipt method
+     * below still does its own "is this yours?" check.
+     *
+     * A plain number is an old Ledger-to-Ledger link (/send/receipt/7) and
+     * is forwarded to its reference link — only for someone who was part of
+     * that transfer, so old numbers can't be used to discover references.
+     */
+    public function showReceipt(Request $request, string $reference): View|RedirectResponse
+    {
+        if (ctype_digit($reference)) {
+            $transfer = Transfer::findOrFail((int) $reference);
+            abort_unless(in_array($request->user()->id, [$transfer->sender_id, $transfer->recipient_id], true), 404);
+
+            return $this->redirectToReceipt($request, $transfer);
+        }
+
+        if ($transfer = Transfer::where('reference', $reference)->first()) {
+            return $this->receipt($request, $transfer);
+        }
+
+        if ($externalTransfer = ExternalTransfer::where('reference', $reference)->first()) {
+            return $this->externalReceipt($request, $externalTransfer);
+        }
+
+        if ($internationalTransfer = InternationalTransfer::where('reference', $reference)->first()) {
+            return $this->internationalReceipt($request, $internationalTransfer);
+        }
+
+        abort(404);
+    }
+
+    /**
+     * Old /send/receipt/external/7 links — forwarded to the reference link.
+     */
+    public function legacyExternalReceipt(Request $request, ExternalTransfer $externalTransfer): RedirectResponse
+    {
+        abort_unless($externalTransfer->sender_id === $request->user()->id, 404);
+
+        return $this->redirectToReceipt($request, $externalTransfer);
+    }
+
+    /**
+     * Old /send/receipt/international/3 links — forwarded to the reference link.
+     */
+    public function legacyInternationalReceipt(Request $request, InternationalTransfer $internationalTransfer): RedirectResponse
+    {
+        abort_unless($internationalTransfer->sender_id === $request->user()->id, 404);
+
+        return $this->redirectToReceipt($request, $internationalTransfer);
+    }
+
+    /**
+     * Keeps ?from=history (and anything else) on the way through, and the
+     * one-time "sent" flag so the toast still shows after a forward.
+     */
+    private function redirectToReceipt(Request $request, Transfer|ExternalTransfer|InternationalTransfer $transfer): RedirectResponse
+    {
+        $request->session()->reflash();
+
+        return redirect()->route('send.receipt', ['reference' => $transfer->reference] + $request->query());
+    }
+
+    /**
+     * "Your transfer has been sent." as a SweetAlert toast on the receipt
+     * (see send-receipt.blade.php) — shown ONCE, on the page the send
+     * redirects to. That redirect flashes 'transferSent' to the session,
+     * which lasts exactly one request, so refreshing the receipt, going back
+     * to it, or opening it from History or a notification shows no toast.
+     */
+    private function sentToast(string $status, Request $request): ?string
+    {
+        if ($status !== 'completed' || ! $request->session()->get('transferSent')) {
+            return null;
+        }
+
+        return __('receipt.banner_transfer_sent');
+    }
+
+    /**
      * The Ledger-to-Ledger bank-debit-style confirmation page. Scoped to
      * whoever was actually part of the transfer — sender OR recipient —
      * so History (see HistoryController) can link a received transfer to
@@ -834,6 +973,7 @@ class TransferController extends Controller
             'banner' => $statusBanner,
             'icon' => $statusIcon,
             'hideSendAnother' => $hideSendAnother,
+            'sentToast' => $this->sentToast($transfer->status, $request),
         ]);
     }
 
@@ -853,17 +993,23 @@ class TransferController extends Controller
             'scheduled' => ['clock', __('receipt.banner_scheduled', ['date' => $externalTransfer->scheduled_for->format('M j, Y')])],
             'cancelled' => ['x', __('receipt.banner_cancelled')],
             'failed' => ['x', __('receipt.banner_failed')],
-            default => ['check', __('receipt.banner_transfer_sent')],
+            // "Sent" is a SweetAlert toast now (see sentToast()), not a banner.
+            default => ['check', null],
         };
 
-        $rows = [
+        // The recipient-name line only appears when a provider actually
+        // confirmed the name — a manually entered one gets no line at all.
+        $rows = array_values(array_filter([
             ['label' => __('receipt.row_recipient'), 'value' => $externalTransfer->recipient_name],
+            $externalTransfer->hasVerifiedRecipientName()
+                ? ['label' => __('receipt.row_recipient_name_check'), 'value' => $externalTransfer->recipientNameStatusLabel()]
+                : null,
             ['label' => __('receipt.row_bank'), 'value' => $externalTransfer->bank_name],
             ['label' => __('receipt.row_account_number'), 'value' => '•••• '.substr($externalTransfer->account_number, -4)],
             ['label' => __('receipt.row_routing_number'), 'value' => '•••'.substr($externalTransfer->routing_number, -3)],
             ['label' => __('receipt.row_from'), 'value' => $externalTransfer->sender->name],
             ['label' => __('receipt.row_status'), 'value' => $externalTransfer->statusLabel()],
-        ];
+        ]));
 
         if ($externalTransfer->status === 'scheduled') {
             $rows[] = ['label' => __('receipt.row_scheduled_for'), 'value' => $externalTransfer->scheduled_for->format('M j, Y')];
@@ -892,6 +1038,7 @@ class TransferController extends Controller
             'rows' => $rows,
             'banner' => $statusBanner,
             'icon' => $statusIcon,
+            'sentToast' => $this->sentToast($externalTransfer->status, $request),
             // Same "hide it when browsing back through History" rule as
             // receipt() above.
             'hideSendAnother' => $request->query('from') === 'history',
@@ -912,17 +1059,23 @@ class TransferController extends Controller
             'scheduled' => ['clock', __('receipt.banner_scheduled', ['date' => $internationalTransfer->scheduled_for->format('M j, Y')])],
             'cancelled' => ['x', __('receipt.banner_cancelled')],
             'failed' => ['x', __('receipt.banner_failed')],
-            default => ['check', __('receipt.banner_international_transfer_sent')],
+            // "Sent" is a SweetAlert toast now (see sentToast()), not a banner.
+            default => ['check', null],
         };
 
-        $rows = [
+        // The recipient-name line only appears when a provider actually
+        // confirmed the name — a manually entered one gets no line at all.
+        $rows = array_values(array_filter([
             ['label' => __('receipt.row_recipient'), 'value' => $internationalTransfer->recipient_name],
+            $internationalTransfer->hasVerifiedRecipientName()
+                ? ['label' => __('receipt.row_recipient_name_check'), 'value' => $internationalTransfer->recipientNameStatusLabel()]
+                : null,
             ['label' => __('receipt.row_bank'), 'value' => $internationalTransfer->bank_name],
             ['label' => __('receipt.row_country'), 'value' => $internationalTransfer->country],
             ['label' => __('receipt.row_swift_bic'), 'value' => $internationalTransfer->swift_code],
             ['label' => __('receipt.row_account_iban'), 'value' => '•••• '.substr($internationalTransfer->account_number, -4)],
             ['label' => __('receipt.row_currency'), 'value' => $internationalTransfer->currency],
-        ];
+        ]));
 
         // Only shown when a rate was actually locked in at send/schedule
         // time (see storeInternationalTransfer()/scheduleInternationalTransfer())
@@ -965,6 +1118,7 @@ class TransferController extends Controller
             'rows' => $rows,
             'banner' => $statusBanner,
             'icon' => $statusIcon,
+            'sentToast' => $this->sentToast($internationalTransfer->status, $request),
             'hideSendAnother' => $request->query('from') === 'history',
         ]);
     }

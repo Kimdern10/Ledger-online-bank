@@ -43,6 +43,30 @@ document.addEventListener('keydown', function(e){
   if (e.key === 'Escape') closeAdminSidebar();
 });
 
+/* ---------- Tables on phones (every admin list) ----------
+   Wraps each list table in a box that scrolls sideways on its own, so on a
+   phone the table keeps its normal layout and the columns past the edge
+   are a swipe away instead of being cut off (see .admin-table-scroll in
+   admin.css). */
+document.querySelectorAll('table.admin-table').forEach(function(table){
+  if (table.parentElement.classList.contains('admin-table-scroll')) return;
+  var wrapper = document.createElement('div');
+  wrapper.className = 'admin-table-scroll';
+  table.parentNode.insertBefore(wrapper, table);
+  wrapper.appendChild(table);
+});
+
+/* ---------- Sidebar scroll lock on phones ----------
+   While the drawer is open, the page behind it stays still, so a swipe
+   inside the drawer scrolls the menu itself down to Log out. */
+(function(){
+  var sidebar = document.getElementById('adminSidebar');
+  if (!sidebar || !window.MutationObserver) return;
+  new MutationObserver(function(){
+    document.body.classList.toggle('admin-drawer-open', sidebar.classList.contains('open'));
+  }).observe(sidebar, { attributes: true, attributeFilter: ['class'] });
+})();
+
 /* ---------- Bank form (admin/banks-form.blade.php) ---------- */
 function toggleBankTypeFields(){
   var typeEl = document.getElementById('type');

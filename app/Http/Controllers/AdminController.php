@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\TransactionMail;
 use App\Models\AppNotification;
 use App\Models\Bill;
+use App\Models\Transfer;
 use App\Models\User;
 use App\Support\AccountAnonymizer;
 use Illuminate\Http\RedirectResponse;
@@ -127,9 +128,16 @@ class AdminController extends Controller
     {
         abort_if($user->isAdmin(), 404);
 
+        // "1,000,000" and "$1,000,000" are typed as often as "1000000" —
+        // strip the formatting before the number is validated.
+        $request->merge([
+            'amount' => str_replace([',', '$', ' '], '', (string) $request->input('amount', '')),
+        ]);
+
         $data = $request->validate([
             'direction' => ['required', 'in:credit,debit'],
-            'amount' => ['required', 'numeric', 'min:0.01', 'max:999999.99'],
+            // Up to $1,000,000,000 per adjustment.
+            'amount' => ['required', 'numeric', 'min:0.01', 'max:1000000000'],
             'sender_name' => ['nullable', 'string', 'max:150'],
             'sender_account_name' => ['nullable', 'string', 'max:150'],
             'sender_account_number' => ['nullable', 'string', 'max:50'],
@@ -211,29 +219,6 @@ class AdminController extends Controller
             'status',
             ucfirst($data['direction']).'ed $'.number_format($amount, 2)." to {$user->name}'s balance."
         );
-    }
-
-    /**
-     * Flips is_restricted on or off — separate from account_status/
-     * updateStatus() above. This never signs the user out or stops them
-     * from reaching their dashboard; it only blocks Send, Withdraw, Top
-     * Up, Pay Bills, and Scan (see EnsureAccountIsNotRestricted), showing
-     * them a popup pointing to Support instead of the form. Freeze/
-     * Suspend/Disable are still the right tool for "this person shouldn't
-     * be signed in at all" — this is for "let them see their account, but
-     * don't let them move money."
-     */
-    public function toggleRestriction(User $user): RedirectResponse
-    {
-        abort_if($user->isAdmin(), 404);
-
-        $user->is_restricted = ! $user->is_restricted;
-        $user->save();
-
-        $state = $user->is_restricted ? 'restricted' : 'unrestricted';
-
-        return redirect()->route('admin.users.show', $user)
-            ->with('status', "{$user->name}'s account is now {$state}.");
     }
 
     /**

@@ -67,6 +67,24 @@ class CurrencyRates
         'DKK' => 6.86,
         'CZK' => 22.9,
         'HUF' => 358.0,
+        // Added with the wider international bank list (Salt Edge, Plaid) —
+        // same approximate reference values as above; update to keep current.
+        'UAH' => 41.3,
+        'RON' => 4.6,
+        'BGN' => 1.8,
+        'ISK' => 138.0,
+        'RSD' => 108.0,
+        'MDL' => 17.9,
+        'GEL' => 2.73,
+        'TWD' => 32.2,
+        'LKR' => 293.0,
+        'KZT' => 495.0,
+        'KWD' => 0.307,
+        'BHD' => 0.376,
+        'OMR' => 0.385,
+        'PEN' => 3.75,
+        'UYU' => 41.5,
+        'DOP' => 60.4,
     ];
 
     /**

@@ -20,6 +20,36 @@ use Illuminate\Support\Facades\Log;
  */
 class PlaidBankProvider implements BankProviderInterface
 {
+    /**
+     * Set by forCountry() — narrows the next requests to one country.
+     *
+     * @var list<string>|null
+     */
+    private ?array $countryFilter = null;
+
+    /**
+     * A copy that only asks Plaid about one country — what Admin > Banks >
+     * API banks uses for its Country filter. Plaid does the filtering
+     * (country_codes), so its own paging and totals stay correct.
+     */
+    public function forCountry(string $countryCode): static
+    {
+        $copy = clone $this;
+        $copy->countryFilter = [strtoupper(trim($countryCode))];
+
+        return $copy;
+    }
+
+    /**
+     * The countries this source covers, for the Country filter.
+     *
+     * @return list<string>
+     */
+    public function supportedCountries(): array
+    {
+        return $this->countryCodes();
+    }
+
     public function isConfigured(): bool
     {
         return filled(config('services.plaid.client_id')) && filled(config('services.plaid.secret'));
@@ -27,7 +57,7 @@ class PlaidBankProvider implements BankProviderInterface
 
     public function search(string $query): array
     {
-        if (! $this->isConfigured() || $query === '') {
+        if (! $this->isConfigured() || $query === '' || $this->requestCountryCodes() === []) {
             // institutions/search requires a non-empty query string — an
             // empty query is left to the local Bank directory to fill in.
             return [];
@@ -41,18 +71,13 @@ class PlaidBankProvider implements BankProviderInterface
                 default => 'https://sandbox.plaid.com',
             };
 
-            $countryCodes = array_values(array_filter(array_map(
-                'trim',
-                explode(',', (string) config('services.plaid.country_codes', 'US'))
-            )));
-
             $response = Http::timeout(5)
                 ->retry(1, 200)
                 ->post($base.'/institutions/search', [
                     'client_id' => config('services.plaid.client_id'),
                     'secret' => config('services.plaid.secret'),
                     'query' => $query,
-                    'country_codes' => $countryCodes ?: ['US'],
+                    'country_codes' => $this->requestCountryCodes(),
                     // Plaid rejects an EMPTY products array with
                     // INVALID_PRODUCT ("products must either be null or a
                     // list of strings containing at least one valid
@@ -70,30 +95,132 @@ class PlaidBankProvider implements BankProviderInterface
                 return [];
             }
 
-            $institutions = $response->json('institutions', []);
-
-            return collect($institutions)
-                ->map(function (array $inst): array {
-                    $routingNumbers = $inst['routing_numbers'] ?? [];
-                    $countryCodes = $inst['country_codes'] ?? [];
-
-                    return [
-                        'name' => (string) ($inst['name'] ?? ''),
-                        'country' => $countryCodes[0] ?? null,
-                        'swift_code' => null,
-                        'currency' => null,
-                        'routing_number' => $routingNumbers[0] ?? null,
-                        'meta' => $routingNumbers ? 'Routing '.$routingNumbers[0] : '',
-                        'source' => 'plaid',
-                    ];
-                })
-                ->filter(fn (array $bank) => $bank['name'] !== '')
-                ->values()
-                ->all();
+            return $this->formatInstitutions($response->json('institutions', []));
         } catch (\Throwable $e) {
             Log::warning('Plaid institutions/search threw', ['message' => $e->getMessage()]);
 
             return [];
         }
+    }
+
+    /**
+     * One page of every institution Plaid supports in countryCodes(), via
+     * POST /institutions/get (count + offset, with Plaid's own `total`) —
+     * what Admin > Banks > Provider banks pages through when nothing is
+     * searched. Null when Plaid couldn't be asked or refused.
+     * Docs: https://plaid.com/docs/api/institutions/#institutionsget
+     *
+     * @return array{banks: list<array<string, mixed>>, total: int}|null
+     */
+    public function listInstitutions(int $count, int $offset): ?array
+    {
+        if (! $this->isConfigured()) {
+            return null;
+        }
+
+        // A country this source doesn't cover — nothing to ask Plaid for.
+        if ($this->requestCountryCodes() === []) {
+            return ['banks' => [], 'total' => 0];
+        }
+
+        try {
+            $response = Http::timeout(15)
+                ->retry(1, 200)
+                ->post($this->baseUrl().'/institutions/get', [
+                    'client_id' => config('services.plaid.client_id'),
+                    'secret' => config('services.plaid.secret'),
+                    // Plaid allows 1-500 per page.
+                    'count' => max(1, min(500, $count)),
+                    'offset' => max(0, $offset),
+                    'country_codes' => $this->requestCountryCodes(),
+                ]);
+
+            if (! $response->successful()) {
+                Log::warning('Plaid institutions/get failed', [
+                    'status' => $response->status(),
+                    'error_code' => $response->json('error_code'),
+                ]);
+
+                return null;
+            }
+
+            return [
+                'banks' => $this->formatInstitutions($response->json('institutions', [])),
+                'total' => (int) $response->json('total', 0),
+            ];
+        } catch (\Throwable $e) {
+            Log::warning('Plaid institutions/get threw', ['message' => $e->getMessage()]);
+
+            return null;
+        }
+    }
+
+    /**
+     * Plaid institution rows in the shape the bank pickers expect.
+     *
+     * @param  array<int, array<string, mixed>>  $institutions
+     * @return list<array<string, mixed>>
+     */
+    protected function formatInstitutions(array $institutions): array
+    {
+        return collect($institutions)
+            ->map(function (array $inst): array {
+                $routingNumbers = $inst['routing_numbers'] ?? [];
+                $countryCodes = $inst['country_codes'] ?? [];
+
+                return [
+                    'name' => (string) ($inst['name'] ?? ''),
+                    'country' => $countryCodes[0] ?? null,
+                    'swift_code' => null,
+                    'currency' => null,
+                    'routing_number' => $routingNumbers[0] ?? null,
+                    'meta' => $routingNumbers ? 'Routing '.$routingNumbers[0] : '',
+                    'source' => 'plaid',
+                ];
+            })
+            ->filter(fn (array $bank) => $bank['name'] !== '')
+            ->values()
+            ->all();
+    }
+
+    protected function baseUrl(): string
+    {
+        return match (config('services.plaid.env', 'sandbox')) {
+            'production' => 'https://production.plaid.com',
+            'development' => 'https://development.plaid.com',
+            default => 'https://sandbox.plaid.com',
+        };
+    }
+
+    /**
+     * The countries searched — PLAID_COUNTRY_CODES (US by default) for the
+     * domestic "Another bank" picker. See PlaidInternationalBankProvider
+     * for the International tab's set.
+     *
+     * @return list<string>
+     */
+    /**
+     * countryCodes(), narrowed to the forCountry() country when one is set
+     * (empty when that country isn't one this source covers).
+     *
+     * @return list<string>
+     */
+    protected function requestCountryCodes(): array
+    {
+        if ($this->countryFilter === null) {
+            return $this->countryCodes();
+        }
+
+        return array_values(array_intersect($this->countryFilter, $this->countryCodes()));
+    }
+
+    protected function countryCodes(): array
+    {
+        $codes = array_values(array_filter(array_map(
+            'trim',
+            explode(',', (string) config('services.plaid.country_codes', 'US'))
+        )));
+
+        return $codes ?: ['US'];
     }
 }

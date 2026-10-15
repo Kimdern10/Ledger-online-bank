@@ -904,6 +904,15 @@
   .receive-note svg{width:12px; height:12px; stroke:currentColor; stroke-width:2; flex-shrink:0;}
   .receive-note.instant{color:var(--sage);}
 
+  /* recipient name check result — see runPayeeVerify() */
+  .verify-note{font-size:11.5px; color:var(--text-3); padding:0 2px; margin:6px 0 0;}
+  .verify-note.ok{color:var(--sage);}
+  .verify-note.warn{color:#9A6B00;}
+  .verify-note.bad{color:#B4121B;}
+  .verify-note .verify-retry{margin-left:6px; background:none; border:0; padding:0; color:inherit; font:inherit; text-decoration:underline; cursor:pointer;}
+  .unverified-tag{display:inline-block; margin-left:6px; padding:1px 7px; border-radius:999px; font-size:10.5px; font-weight:500; color:#9A6B00; background:rgba(154,107,0,0.10);}
+  .unverified-tag[hidden]{display:none;}
+
   /* ---- form fields (category / note) ---- */
   .field-group{margin-bottom:16px;}
   .field-group p.label{
@@ -1049,6 +1058,7 @@
     align-items:flex-start;
     justify-content:center;
     padding-top:12vh;
+    padding-top:12dvh;
   }
   .sheet-overlay.open{display:flex;}
   .sheet{
@@ -1058,6 +1068,7 @@
     border-radius:22px;
     padding:8px 18px 18px;
     max-height:60vh;
+    max-height:60dvh;
     overflow-y:auto;
     animation:sheetIn .18s ease both;
   }
@@ -1076,9 +1087,15 @@
     border-radius:0 0 22px 22px;
   }
   @media (max-width:899px){
-    .sheet-overlay{padding-top:6vh;}
-    .sheet{max-height:80vh;}
+    /* dvh: sized to what the phone actually shows, so the sheet's bottom
+       (and its sticky button) never sits under the browser's toolbar. */
+    .sheet-overlay{padding-top:6vh; padding-top:6dvh;}
+    .sheet{max-height:80vh; max-height:80dvh;}
   }
+  /* Notices and forms (the frozen-wallet reminder, transfer code, add a
+     bill...) sit in the middle of the screen. Pickers with a search box
+     stay near the top so the box doesn't jump while the list filters. */
+  .sheet-overlay:not(:has(.sheet-search)){align-items:center; padding-top:20px; padding-bottom:20px;}
   .sheet-search{position:relative; margin-bottom:12px;}
   .sheet-search input{
     width:100%; background:var(--paper); border:1px solid var(--mist); border-radius:12px;
@@ -1530,3 +1547,14 @@
   @media (prefers-reduced-motion:reduce){
     .bill-row.is-removing{ animation:none; opacity:0; }
   }
+
+/* ============ MOBILE: never wider than the screen ============
+   An element sticking out past the right edge (like the closed slide-out
+   menu) makes phones lay the whole page out wider and zoom out, so
+   everything looks tiny. overflow-x on <body> alone isn't enough — phones
+   size the page from <html> — and "clip" (unlike "hidden") doesn't turn
+   html/body into scroll boxes, so window scrolling and sticky headers keep
+   working. Older browsers without clip keep their existing behaviour. */
+@supports (overflow-x: clip){
+  html, body{ overflow-x: clip; }
+}
