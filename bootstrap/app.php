@@ -1,8 +1,18 @@
 <?php
 
+use App\Http\Middleware\EnsureAccountIsActive;
+use App\Http\Middleware\EnsureAccountIsNotRestricted;
+use App\Http\Middleware\EnsureFeatureEnabled;
+use App\Http\Middleware\EnsureKycApproved;
+use App\Http\Middleware\EnsureOnboardingIsComplete;
+use App\Http\Middleware\EnsureUserIsAdmin;
+use App\Http\Middleware\RedirectAdminFromUserArea;
+use App\Http\Middleware\SetLocale;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -20,20 +30,20 @@ return Application::configure(basePath: dirname(__DIR__))
         // exactly what "the user can still access the page even when it's
         // turned off" looks like.
         $middleware->alias([
-            'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
-            'not-admin' => \App\Http\Middleware\RedirectAdminFromUserArea::class,
-            'account.active' => \App\Http\Middleware\EnsureAccountIsActive::class,
-            'not-restricted' => \App\Http\Middleware\EnsureAccountIsNotRestricted::class,
-            'onboarding.complete' => \App\Http\Middleware\EnsureOnboardingIsComplete::class,
-            'feature' => \App\Http\Middleware\EnsureFeatureEnabled::class,
-            'kyc-approved' => \App\Http\Middleware\EnsureKycApproved::class,
+            'admin' => EnsureUserIsAdmin::class,
+            'not-admin' => RedirectAdminFromUserArea::class,
+            'account.active' => EnsureAccountIsActive::class,
+            'not-restricted' => EnsureAccountIsNotRestricted::class,
+            'onboarding.complete' => EnsureOnboardingIsComplete::class,
+            'feature' => EnsureFeatureEnabled::class,
+            'kyc-approved' => EnsureKycApproved::class,
         ]);
 
         // Runs on every web request (not just an aliased route) so a signed
         // in user's saved language preference (Settings > Language) takes
         // effect everywhere at once, the moment it's set — see SetLocale.
         $middleware->web(append: [
-            \App\Http\Middleware\SetLocale::class,
+            SetLocale::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
@@ -54,7 +64,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // recorded as an intended redirect target. Every other request
         // (including this app's regular polling fetch() calls, which all
         // already send Accept: application/json) is completely unaffected.
-        $exceptions->render(function (\Illuminate\Auth\AuthenticationException $e, \Illuminate\Http\Request $request) {
+        $exceptions->render(function (AuthenticationException $e, Request $request) {
             if ($request->headers->get('Accept') === 'text/event-stream') {
                 return response('', 401);
             }

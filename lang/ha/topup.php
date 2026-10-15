@@ -23,7 +23,7 @@ return [
     'processing' => 'Ana sarrafa cikawar kuɗinka…',
     'processing_sub' => 'Da fatan kada ka rufe ko sabunta wannan shafin.',
     'pin_modal_title' => "Shigar da PIN ɗin ma'amalarka",
-    'pin_modal_body' => "Tabbatar da wannan cikawa da PIN ɗinka mai lambobi 4.",
+    'pin_modal_body' => 'Tabbatar da wannan cikawa da PIN ɗinka mai lambobi 4.',
     'pin_confirm' => 'Tabbatar',
     'pin_error' => 'Shigar da PIN ɗinka mai lambobi 4.',
     'link_account_first_alert' => 'Haɗa asusun banki ko kati tukuna.',

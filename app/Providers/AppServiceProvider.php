@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
@@ -79,7 +80,7 @@ class AppServiceProvider extends ServiceProvider
     protected function configureRememberedEmail(): void
     {
         Event::listen(Login::class, function (Login $event): void {
-            if ($event->remember) {
+            if ($event->remember && $event->user instanceof User) {
                 Cookie::queue('remembered_email', $event->user->email, 60 * 24 * 365);
             } else {
                 Cookie::queue(Cookie::forget('remembered_email'));

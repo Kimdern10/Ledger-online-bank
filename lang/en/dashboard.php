@@ -37,6 +37,7 @@ return [
     // Sidebar (desktop) / bottom tab bar (mobile) nav labels — see
     // layouts/partials/header.blade.php and footer.blade.php.
     'nav_home' => 'Home',
+    'nav_dashboard' => 'Dashboard',
     'nav_cards' => 'Cards',
     'nav_pay_scan' => 'Pay / Scan',
     'nav_messages' => 'Messages',

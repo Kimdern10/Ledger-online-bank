@@ -66,7 +66,7 @@ return [
     'field_confirm_new_password' => 'Confirmar nova senha',
     'use_different_email' => 'Usar outro email',
     'resend_code' => 'Reenviar código',
-    'status_code_sent_known' => "Se existir uma conta para :email, enviamos um código de 6 dígitos para ela.",
+    'status_code_sent_known' => 'Se existir uma conta para :email, enviamos um código de 6 dígitos para ela.',
     'status_code_resent' => 'Um novo código foi enviado, caso esse email tenha uma conta.',
     'error_code_invalid' => 'Esse código é inválido ou expirou. Solicite um novo abaixo.',
     'status_password_reset_done' => 'Sua senha foi redefinida. Entre com sua nova senha.',

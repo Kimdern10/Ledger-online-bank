@@ -53,9 +53,9 @@ return [
     'title_balance_adjustment' => '残高調整',
 
     // Banners
-    'banner_scheduled' => "この送金は:date に予定されており、まだ送信されていません。それまではいつでもキャンセルできます。",
+    'banner_scheduled' => 'この送金は:date に予定されており、まだ送信されていません。それまではいつでもキャンセルできます。',
     'banner_cancelled' => 'この送金はキャンセルされ、送信されませんでした。',
-    'banner_failed' => "この送金は実行されませんでした — 予定日に残高が不足していました。",
+    'banner_failed' => 'この送金は実行されませんでした — 予定日に残高が不足していました。',
     'banner_transfer_sent' => '送金が完了しました。',
     'banner_international_transfer_sent' => '国際送金が完了しました。',
     'banner_withdrawal_bank_days' => '1〜3営業日以内に銀行口座に着金します。',
@@ -74,8 +74,8 @@ return [
     'share_text_prefix' => 'Ledger 支払い領収書',
     'share_title' => 'Ledger 領収書',
     'js_preparing_pdf' => 'PDFを準備しています…',
-    'js_pdf_error' => "PDFを生成できませんでした。もう一度お試しください。",
+    'js_pdf_error' => 'PDFを生成できませんでした。もう一度お試しください。',
     'js_preparing_share' => '共有用の領収書を準備しています…',
-    'js_share_error' => "領収書を共有できませんでした。代わりにダウンロードをお試しください。",
+    'js_share_error' => '領収書を共有できませんでした。代わりにダウンロードをお試しください。',
     'js_share_unsupported' => 'このブラウザでは共有機能がサポートされていません。代わりにダウンロードをご利用ください。',
 ];

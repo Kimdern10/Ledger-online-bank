@@ -2,7 +2,7 @@
 
 return [
     'title' => 'Àwọn Káàdì Mi',
-    'no_cards_yet' => "O kò tíì ní káàdì kankan.",
+    'no_cards_yet' => 'O kò tíì ní káàdì kankan.',
     'add_a_card' => 'Fi káàdì kún',
 
     'request_pending_prefix' => 'Ìbéèrè rẹ fún',

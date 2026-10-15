@@ -30,7 +30,7 @@ class GuestSupportController extends Controller
 
     private const COOKIE_MINUTES = 60 * 24 * 60; // 60 days
 
-    private const GREETING = "Thanks for reaching out! A member of our team will be with you shortly — feel free to add any more details while you wait.";
+    private const GREETING = 'Thanks for reaching out! A member of our team will be with you shortly — feel free to add any more details while you wait.';
 
     /**
      * Called once, the first time a visitor opens the widget on a given
@@ -40,7 +40,7 @@ class GuestSupportController extends Controller
      */
     public function init(Request $request): JsonResponse
     {
-        $conversation = GuestSupportConversation::findByToken($request->cookie(self::COOKIE_NAME));
+        $conversation = GuestSupportConversation::findByToken($this->guestToken($request));
 
         if (! $conversation) {
             return response()->json(['has_conversation' => false]);
@@ -130,7 +130,7 @@ class GuestSupportController extends Controller
             return response()->json(['error' => 'Type a message or attach a photo.'], 422);
         }
 
-        $conversation = GuestSupportConversation::findByToken($request->cookie(self::COOKIE_NAME));
+        $conversation = GuestSupportConversation::findByToken($this->guestToken($request));
 
         if (! $conversation || ! $conversation->isOpen()) {
             return response()->json([
@@ -159,6 +159,8 @@ class GuestSupportController extends Controller
      * Saves an uploaded photo/PDF to the "public" disk (needs
      * `php artisan storage:link`) and returns [path, originalName,
      * mimeType] — or [null, null, null] when this request has no file.
+     *
+     * @return array{0: string|null, 1: string|null, 2: string|null}
      */
     private function storeAttachment(Request $request): array
     {
@@ -167,9 +169,16 @@ class GuestSupportController extends Controller
         }
 
         $file = $request->file('attachment');
+        $path = $file->store('support-attachments', 'public');
+
+        // store() returns false when the disk couldn't save the file — send
+        // the message without an attachment rather than a broken one.
+        if ($path === false) {
+            return [null, null, null];
+        }
 
         return [
-            $file->store('support-attachments', 'public'),
+            $path,
             $file->getClientOriginalName(),
             $file->getMimeType(),
         ];
@@ -181,7 +190,7 @@ class GuestSupportController extends Controller
      */
     public function end(Request $request): JsonResponse
     {
-        $conversation = GuestSupportConversation::findByToken($request->cookie(self::COOKIE_NAME));
+        $conversation = GuestSupportConversation::findByToken($this->guestToken($request));
 
         if ($conversation && $conversation->isOpen()) {
             $conversation->close('guest');
@@ -198,7 +207,7 @@ class GuestSupportController extends Controller
     public function poll(Request $request): JsonResponse
     {
         $afterId = (int) $request->query('after', 0);
-        $conversation = GuestSupportConversation::findByToken($request->cookie(self::COOKIE_NAME));
+        $conversation = GuestSupportConversation::findByToken($this->guestToken($request));
 
         if (! $conversation) {
             return response()->json(['messages' => [], 'conversation_open' => false]);
@@ -221,6 +230,20 @@ class GuestSupportController extends Controller
         ]);
     }
 
+    /**
+     * The visitor's conversation token from their cookie, or null when the
+     * cookie is missing or isn't a plain string.
+     */
+    private function guestToken(Request $request): ?string
+    {
+        $token = $request->cookie(self::COOKIE_NAME);
+
+        return is_string($token) ? $token : null;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
     private function messagePayload(GuestSupportMessage $m): array
     {
         return [

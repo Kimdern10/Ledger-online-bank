@@ -54,7 +54,7 @@ return [
     // ---- Forgot / reset password — the live 6-digit-code flow
     // (livewire/auth/forgot-password-code.blade.php, both steps)
     'forgot_password_title' => 'Manta da kalmar sirri',
-    'forgot_password_description' => "Shigar da imel ɗinka kuma za mu turo maka lambar sirri mai lamba 6 domin sake saita ta.",
+    'forgot_password_description' => 'Shigar da imel ɗinka kuma za mu turo maka lambar sirri mai lamba 6 domin sake saita ta.',
     'send_reset_code' => 'Aika lambar sake saitawa',
     'or_return_to' => 'Ko, koma zuwa',
     'log_in_lowercase' => 'shiga',
@@ -96,7 +96,7 @@ return [
     'verify_sent_suffix' => 'Shigar da ita a ƙasa domin ci gaba.',
     'field_verification_code' => 'Lambar tabbatarwa',
     'verify_button' => 'Tabbatar',
-    'status_new_code_sent' => "An turo sabuwar lambar zuwa imel ɗinka.",
+    'status_new_code_sent' => 'An turo sabuwar lambar zuwa imel ɗinka.',
     'status_account_verified' => 'An tabbatar da asusunka. Shiga domin fara amfani.',
     'js_code_expired_request' => 'Lambar ta ƙare. Nemi sabuwa a ƙasa.',
     'js_no_active_code' => 'Babu wata lambar da take aiki a halin yanzu. Yi amfani da "Sake tura lambar" a ƙasa domin samun ɗaya.',

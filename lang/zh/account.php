@@ -12,7 +12,7 @@ return [
 
     // Notifications
     'notifications_title' => '通知',
-    'notifications_intro' => "这些设置会保存到您的账户中，但 Ledger 目前尚未发送任何交易、安全或推广类邮件。这只是先记录您的偏好，以便日后启用该功能时使用。",
+    'notifications_intro' => '这些设置会保存到您的账户中，但 Ledger 目前尚未发送任何交易、安全或推广类邮件。这只是先记录您的偏好，以便日后启用该功能时使用。',
     'transaction_emails' => '交易邮件',
     'transaction_emails_desc' => '转账、收款、提现和充值通知。',
     'security_alerts' => '安全提醒',
@@ -22,7 +22,7 @@ return [
     'save_preferences' => '保存偏好设置',
 
     // Password
-    'password_intro' => "输入您当前的密码以确认是您本人操作，然后设置新密码。",
+    'password_intro' => '输入您当前的密码以确认是您本人操作，然后设置新密码。',
     'current_password' => '当前密码',
     'new_password' => '新密码',
     'confirm_new_password' => '确认新密码',
@@ -34,8 +34,8 @@ return [
     'save_budget' => '保存预算',
 
     // Transaction PIN
-    'pin_intro_has' => "您的交易密码会在“转账”“提现”或“充值”实际转移真实资金之前确认是您本人操作。请输入当前的交易密码，然后设置新的密码。",
-    'pin_intro_new' => "创建一个 4 位数的交易密码。设置完成后，“转账”“提现”和“充值”在实际转移资金前都会要求输入该密码。这可以防止即使有人进入您的账户会话，也无法转移您的资金。",
+    'pin_intro_has' => '您的交易密码会在“转账”“提现”或“充值”实际转移真实资金之前确认是您本人操作。请输入当前的交易密码，然后设置新的密码。',
+    'pin_intro_new' => '创建一个 4 位数的交易密码。设置完成后，“转账”“提现”和“充值”在实际转移资金前都会要求输入该密码。这可以防止即使有人进入您的账户会话，也无法转移您的资金。',
     'current_pin' => '当前交易密码',
     'new_pin' => '新交易密码',
     'create_pin' => '创建交易密码',
@@ -44,7 +44,7 @@ return [
     'update_pin' => '更新交易密码',
 
     // Delete account
-    'delete_warning_title' => "此操作一旦执行将无法在此撤销。",
+    'delete_warning_title' => '此操作一旦执行将无法在此撤销。',
     'delete_intro' => '删除账户将永久注销您的登录状态。您将无法重新登录。您的余额必须先为 $0，因此在继续操作之前，请使用“提现”或“转账”转移所有剩余资金。如果这是误操作，请日后联系 :support_link。系统不会立即抹除任何数据，因此我们这边可以撤销此操作。',
     'support_link_text' => '客服支持',
     'current_balance' => '当前余额',

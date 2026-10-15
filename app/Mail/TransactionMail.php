@@ -37,8 +37,7 @@ class TransactionMail extends Mailable
         public string $reference,
         public array $rows,
         public float $newBalance,
-    ) {
-    }
+    ) {}
 
     public function envelope(): Envelope
     {

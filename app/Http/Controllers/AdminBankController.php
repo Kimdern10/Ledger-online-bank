@@ -6,6 +6,7 @@ use App\Models\Bank;
 use App\Services\BankProviders\ProviderBankBrowser;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
@@ -82,13 +83,18 @@ class AdminBankController extends Controller
         $country = strtoupper((string) $request->query('country', ''));
         $country = isset($countries[$country]) ? $country : null;
 
-        $result = $browser->page($source, $search, (int) $request->query('page', 1), 25, route('admin.banks.providers'), $country);
-        $result['banks']->appends(array_filter(['source' => $source, 'q' => $search, 'country' => $country]));
+        $page = max(1, (int) $request->query('page', 1));
+        $result = $browser->page($source, $search, $page, 25, $country);
+        $banks = new LengthAwarePaginator($result['items'], $result['total'], 25, $page, [
+            'path' => route('admin.banks.providers'),
+            'pageName' => 'page',
+        ]);
+        $banks->appends(array_filter(['source' => $source, 'q' => $search, 'country' => $country]));
 
         // Which of this page's banks are already in the directory, so the
         // row shows "In directory" instead of an Add button.
         $inDirectory = Bank::query()
-            ->whereIn('name', collect($result['banks']->items())->pluck('name'))
+            ->whereIn('name', collect($banks->items())->pluck('name'))
             ->get(['name', 'type'])
             ->map(fn (Bank $bank) => $bank->type.'|'.mb_strtolower($bank->name))
             ->flip();
@@ -102,7 +108,7 @@ class AdminBankController extends Controller
             'search' => $search,
             'countries' => $countries,
             'country' => $country,
-            'banks' => $result['banks'],
+            'banks' => $banks,
             'failed' => $result['failed'],
             'configured' => $sources[$source]['provider']->isConfigured(),
             'inDirectory' => $inDirectory,
@@ -213,6 +219,9 @@ class AdminBankController extends Controller
         Cache::flush();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function validated(Request $request): array
     {
         $data = $request->validate([

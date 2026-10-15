@@ -13,7 +13,7 @@ return [
     'start_new_confirm' => 'Fara sabuwar tattaunawa? Za a ajiye hirar da kake yi yanzu a cikin tattaunawar da ta gabata.',
     'start_new_button' => 'Fara sabuwar tattaunawa',
     'viewing_past' => 'Kana duban tattaunawar da ta gabata (karantawa kawai).',
-    'assistant_intro' => "Mataimakinmu ne yake amsawa da farko. Wani ɗan ƙungiyarmu na gaske zai shigo nan da nan idan an buƙace shi.",
+    'assistant_intro' => 'Mataimakinmu ne yake amsawa da farko. Wani ɗan ƙungiyarmu na gaske zai shigo nan da nan idan an buƙace shi.',
     'back_to_conversations' => 'Koma zuwa tattaunawarka',
     'view_past_conversations' => 'Duba tattaunawar da ta gabata',
     'greeting' => 'Sannu :name 👋 Ina nan don taimaka maka. Me zan iya taimaka maka da shi yau?',

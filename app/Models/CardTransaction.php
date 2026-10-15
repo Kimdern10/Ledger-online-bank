@@ -23,6 +23,9 @@ class CardTransaction extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<Card, $this>
+     */
     public function card(): BelongsTo
     {
         return $this->belongsTo(Card::class);

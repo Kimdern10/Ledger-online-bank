@@ -25,6 +25,9 @@ class LinkedAccount extends Model
         'card_expiry',
     ];
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

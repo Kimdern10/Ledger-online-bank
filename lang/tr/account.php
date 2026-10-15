@@ -35,7 +35,7 @@ return [
 
     // Transaction PIN
     'pin_intro_has' => "İşlem PIN'iniz, Para Gönder, Çek veya Bakiye Yükle işlemleri gerçek parayı hareket ettirmeden önce gerçekten siz olduğunuzu doğrular. Mevcut PIN'inizi girin, ardından yenisini seçin.",
-    'pin_intro_new' => "4 haneli bir PIN oluşturun. Ayarlandıktan sonra Para Gönder, Çek ve Bakiye Yükle işlemlerinin tümü herhangi bir işlem gerçekleşmeden önce bunu isteyecektir. Bu, oturumunuza birinin erişim sağlaması durumunda bile paranızı taşımasını engelleyen şeydir.",
+    'pin_intro_new' => '4 haneli bir PIN oluşturun. Ayarlandıktan sonra Para Gönder, Çek ve Bakiye Yükle işlemlerinin tümü herhangi bir işlem gerçekleşmeden önce bunu isteyecektir. Bu, oturumunuza birinin erişim sağlaması durumunda bile paranızı taşımasını engelleyen şeydir.',
     'current_pin' => 'Mevcut PIN',
     'new_pin' => 'Yeni PIN',
     'create_pin' => 'PIN oluştur',
@@ -45,7 +45,7 @@ return [
 
     // Delete account
     'delete_warning_title' => 'Bu işlem buradan geri alınamaz.',
-    'delete_intro' => "Hesabınızı silmek oturumunuzu kalıcı olarak kapatır. Tekrar giriş yapamazsınız. Bakiyenizin önce $0 olması gerekir, bu yüzden devam etmeden önce kalan tutarı Çek veya Gönder ile taşıyın. Bu bir hataysa, daha sonra :support_link ile iletişime geçin. Hiçbir şey silinmez, bu yüzden bizim tarafımızda geri alınabilir.",
+    'delete_intro' => 'Hesabınızı silmek oturumunuzu kalıcı olarak kapatır. Tekrar giriş yapamazsınız. Bakiyenizin önce $0 olması gerekir, bu yüzden devam etmeden önce kalan tutarı Çek veya Gönder ile taşıyın. Bu bir hataysa, daha sonra :support_link ile iletişime geçin. Hiçbir şey silinmez, bu yüzden bizim tarafımızda geri alınabilir.',
     'support_link_text' => 'Destek',
     'current_balance' => 'Mevcut bakiye',
     'confirm_password_field' => 'Şifrenizi onaylayın',

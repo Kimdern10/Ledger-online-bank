@@ -243,6 +243,8 @@ class BankDirectoryController extends Controller
      * Like Cache::remember(), but an empty result is never stored — so a
      * failed or misconfigured request can't leave the picker blank for the
      * whole cache window.
+     *
+     * @return array<int|string, mixed>
      */
     private function rememberNonEmpty(string $key, int $minutes, \Closure $callback): array
     {
@@ -261,6 +263,9 @@ class BankDirectoryController extends Controller
         return $value;
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     private function localResults(string $query, string $type): array
     {
         $banks = Bank::query()->active()->ofType($type);
@@ -294,6 +299,8 @@ class BankDirectoryController extends Controller
      * Built-in fallback for the domestic picker's empty-search state — see
      * the class doc comment. Same shape as localResults() so the picker
      * renders it exactly like a real directory entry.
+     *
+     * @return array<int, array<string, mixed>>
      */
     private function popularDomesticBanks(): array
     {
@@ -310,6 +317,8 @@ class BankDirectoryController extends Controller
 
     /**
      * Built-in fallback for the international picker's empty-search state.
+     *
+     * @return array<int, array<string, mixed>>
      */
     private function popularInternationalBanks(): array
     {
@@ -330,6 +339,9 @@ class BankDirectoryController extends Controller
      * already has (admin-entered, or sent by the API itself) is never
      * overwritten. If the country is missing or unrecognized, the currency
      * stays empty and the Currency field is simply left as the user had it.
+     *
+     * @param  array<int, array<string, mixed>>  $banks
+     * @return array<int, array<string, mixed>>
      */
     private function fillCurrencies(array $banks): array
     {
@@ -373,9 +385,10 @@ class BankDirectoryController extends Controller
     }
 
     /**
-     * @param  array  $local  Already-formatted local Bank rows (see localResults()).
+     * @param  array<int, array<string, mixed>>  $local  Already-formatted local Bank rows (see localResults()).
      * @param  BankProviderInterface[]  $providers
      * @param  bool  $liveWhenEmpty  Ask the live providers even when the query is empty.
+     * @return array<int, array<string, mixed>>
      */
     private function merge(array $local, string $query, array $providers, bool $liveWhenEmpty = false): array
     {

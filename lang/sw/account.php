@@ -12,7 +12,7 @@ return [
 
     // Notifications
     'notifications_title' => 'Arifa',
-    'notifications_intro' => "Haya yanahifadhiwa kwenye akaunti yako, lakini Ledger bado haitumi barua pepe za miamala, usalama, au matangazo. Hii ni kuweka tu mapendeleo yako kwenye rekodi kwa wakati vipengele hivyo vitakapojengwa.",
+    'notifications_intro' => 'Haya yanahifadhiwa kwenye akaunti yako, lakini Ledger bado haitumi barua pepe za miamala, usalama, au matangazo. Hii ni kuweka tu mapendeleo yako kwenye rekodi kwa wakati vipengele hivyo vitakapojengwa.',
     'transaction_emails' => 'Barua pepe za miamala',
     'transaction_emails_desc' => 'Kutuma, kupokea, kutoa, na kuongeza fedha.',
     'security_alerts' => 'Arifa za usalama',
@@ -22,7 +22,7 @@ return [
     'save_preferences' => 'Hifadhi mapendeleo',
 
     // Password
-    'password_intro' => "Ingiza nenosiri lako la sasa ili kuthibitisha ni wewe kweli, kisha chagua jipya.",
+    'password_intro' => 'Ingiza nenosiri lako la sasa ili kuthibitisha ni wewe kweli, kisha chagua jipya.',
     'current_password' => 'Nenosiri la sasa',
     'new_password' => 'Nenosiri jipya',
     'confirm_new_password' => 'Thibitisha nenosiri jipya',
@@ -34,8 +34,8 @@ return [
     'save_budget' => 'Hifadhi bajeti',
 
     // Transaction PIN
-    'pin_intro_has' => "PIN yako ya miamala inathibitisha ni wewe kweli kabla Tuma Fedha, Toa, au Ongeza Fedha havijawahi kuhamisha fedha halisi. Ingiza PIN yako ya sasa, kisha chagua mpya.",
-    'pin_intro_new' => "Unda PIN ya tarakimu 4. Ikishawekwa, Tuma Fedha, Toa, na Ongeza Fedha vyote vitaihitaji kabla ya chochote kuhamishwa kwa hakika. Hii ndiyo inayomzuia mtu mwingine kuhamisha fedha zako hata kama ataingia kwenye kipindi chako.",
+    'pin_intro_has' => 'PIN yako ya miamala inathibitisha ni wewe kweli kabla Tuma Fedha, Toa, au Ongeza Fedha havijawahi kuhamisha fedha halisi. Ingiza PIN yako ya sasa, kisha chagua mpya.',
+    'pin_intro_new' => 'Unda PIN ya tarakimu 4. Ikishawekwa, Tuma Fedha, Toa, na Ongeza Fedha vyote vitaihitaji kabla ya chochote kuhamishwa kwa hakika. Hii ndiyo inayomzuia mtu mwingine kuhamisha fedha zako hata kama ataingia kwenye kipindi chako.',
     'current_pin' => 'PIN ya sasa',
     'new_pin' => 'PIN mpya',
     'create_pin' => 'Unda PIN',
@@ -44,7 +44,7 @@ return [
     'update_pin' => 'Sasisha PIN',
 
     // Delete account
-    'delete_warning_title' => "Hili haliwezi kubatilishwa kutoka hapa.",
+    'delete_warning_title' => 'Hili haliwezi kubatilishwa kutoka hapa.',
     'delete_intro' => 'Kufuta akaunti yako kunakuondoa kwenye mfumo kwa kudumu. Hutaweza kuingia tena. Salio lako lazima liwe $0 kwanza, hivyo hamisha kilichobaki kwa kutumia Toa au Tuma kabla ya kuendelea. Ikiwa hili lilikuwa kosa baadaye, wasiliana na :support_link. Hakuna kinachofutwa, hivyo kinaweza kurejeshwa upande wetu.',
     'support_link_text' => 'Msaada',
     'current_balance' => 'Salio la sasa',

@@ -2,7 +2,7 @@
 
 return [
     'title' => 'Thẻ của tôi',
-    'no_cards_yet' => "Bạn chưa có thẻ nào.",
+    'no_cards_yet' => 'Bạn chưa có thẻ nào.',
     'add_a_card' => 'Thêm thẻ',
 
     'request_pending_prefix' => 'Yêu cầu của bạn về',

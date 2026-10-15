@@ -30,6 +30,8 @@ class SupportMessage extends Model
      * The customer this CONVERSATION belongs to — not necessarily who sent
      * this particular message (see sender() below). Every message in a
      * thread shares the same user_id regardless of who wrote it.
+     *
+     * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {
@@ -40,6 +42,8 @@ class SupportMessage extends Model
      * The specific support "session" this message is part of. A customer
      * can have several conversations over time (see SupportConversation) —
      * this is what separates today's chat from one they ended last month.
+     *
+     * @return BelongsTo<SupportConversation, $this>
      */
     public function conversation(): BelongsTo
     {
@@ -49,6 +53,8 @@ class SupportMessage extends Model
     /**
      * Whoever actually typed this one message — the customer themselves,
      * or whichever admin replied.
+     *
+     * @return BelongsTo<User, $this>
      */
     public function sender(): BelongsTo
     {

@@ -28,11 +28,17 @@ class Withdrawal extends Model
         'fee' => 'decimal:2',
     ];
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return BelongsTo<LinkedAccount, $this>
+     */
     public function linkedAccount(): BelongsTo
     {
         return $this->belongsTo(LinkedAccount::class);

@@ -2,7 +2,7 @@
 
 return [
     'title' => 'Kadi Zangu',
-    'no_cards_yet' => "Bado huna kadi yoyote.",
+    'no_cards_yet' => 'Bado huna kadi yoyote.',
     'add_a_card' => 'Ongeza kadi',
 
     'request_pending_prefix' => 'Ombi lako la',

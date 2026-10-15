@@ -29,18 +29,18 @@ return [
     'submit_for_review' => 'Tinye maka nyocha',
     'verify_identity' => 'Gosi onye ị bụ',
     'verify_address' => 'Gosi adreesị gị',
-    'last_submission_rejected' => "Ihe i tinyere ikpeazụ ekwenyeghị ya.",
+    'last_submission_rejected' => 'Ihe i tinyere ikpeazụ ekwenyeghị ya.',
 
     // Send Money gate (kyc-required.blade.php)
     'kyc_gate_pending_title' => 'Ziga Ego ga-emeghe ozugbo elele ID gị',
     'kyc_gate_pending_body' => "Anyị enwetala akwụkwọ ọzụzụ gị nke gọọmentị na foto gị. Ndị otu anyị na-elele ha ugbu a, ọ na-erikarị otu ụbọchị. Ihe ndị ọzọ niile na akaụntụ gị na-arụ ọrụ nkịtị n'oge a.",
     'kyc_gate_rejected_title' => 'Ziga Ego chọrọ nyocha onye ị bụ ọhụrụ',
-    'kyc_gate_rejected_body' => "Ihe i tinyere ikpeazụ ekwenyeghị ya. Legharịa anya ọzọ ma tinyeghachi ya. Ọ na-ewe naanị otu nkeji.",
+    'kyc_gate_rejected_body' => 'Ihe i tinyere ikpeazụ ekwenyeghị ya. Legharịa anya ọzọ ma tinyeghachi ya. Ọ na-ewe naanị otu nkeji.',
     'kyc_gate_not_started_title' => 'Gosi onye ị bụ iji zipu ego',
-    'kyc_gate_not_started_body' => "Bulite akwụkwọ ọzụzụ nke gọọmentị na foto onwe gị dị mfe. Ọ bụ nzọụkwụ ikpeazụ imeghepụta akaụntụ gị kpamkpam. Ihe ndị ọzọ niile na-arụ ọrụ ugbua.",
+    'kyc_gate_not_started_body' => 'Bulite akwụkwọ ọzụzụ nke gọọmentị na foto onwe gị dị mfe. Ọ bụ nzọụkwụ ikpeazụ imeghepụta akaụntụ gị kpamkpam. Ihe ndị ọzọ niile na-arụ ọrụ ugbua.',
 
     // Identity verification page (kyc-verify.blade.php)
-    'kyc_approved_title' => "Egosila onye ị bụ",
+    'kyc_approved_title' => 'Egosila onye ị bụ',
     'kyc_approved_body' => 'A tụlere akwụkwọ ọzụzụ gọọmentị gị na foto gị wee kwenye ha. Ziga Ego emeghela kpamkpam.',
     'kyc_approved_body_dated' => 'A tụlere akwụkwọ ọzụzụ gọọmentị gị na foto gị wee kwenye ha na :date. Ziga Ego emeghela kpamkpam.',
     'kyc_pending_title' => 'A na-elele ID gị',
@@ -55,9 +55,9 @@ return [
     'selfie_hint' => '(ìhè dị mma, ihu na-apụta ìhè)',
 
     // Address verification page (address-verify.blade.php)
-    'address_approved_title' => "Egosila gị kpamkpam",
-    'address_approved_body' => "A tụlere ihe akaebe adreesị gị wee kwenye ya. Ị nọzi na Ọkwa 3 — ókè gị kwa ụbọchị bụ :limit.",
-    'address_approved_body_dated' => "A tụlere ihe akaebe adreesị gị wee kwenye ya na :date. Ị nọzi na Ọkwa 3 — ókè gị kwa ụbọchị bụ :limit.",
+    'address_approved_title' => 'Egosila gị kpamkpam',
+    'address_approved_body' => 'A tụlere ihe akaebe adreesị gị wee kwenye ya. Ị nọzi na Ọkwa 3 — ókè gị kwa ụbọchị bụ :limit.',
+    'address_approved_body_dated' => 'A tụlere ihe akaebe adreesị gị wee kwenye ya na :date. Ị nọzi na Ọkwa 3 — ókè gị kwa ụbọchị bụ :limit.',
     'address_pending_title' => 'A na-elele akwụkwọ gị',
     'address_pending_body' => 'I tinyere :type :time. Ndị otu anyị na-elele ihe ndị a n\'aka, ọ na-erikarị otu ụbọchị. Ókè gị kwa ụbọchị nke ugbu a ga-anọgide na :limit ruo mgbe ahụ.',
     'address_resubmit_notice' => 'Biko gbalịa ọzọ n\'okpuru a jiri akwụkwọ ọhụrụ doro anya.',
@@ -69,7 +69,7 @@ return [
     'document_hint' => '(JPG, PNG, ma ọ bụ PDF, nke e nyere n\'ime ọnwa atọ gara aga)',
 
     // Document type option labels (KycController/AddressVerificationController DOCUMENT_TYPES, and the models' documentTypeLabel())
-    'doc_drivers_license' => "Akwụkwọ ikike ịnya ụgbọ ala",
+    'doc_drivers_license' => 'Akwụkwọ ikike ịnya ụgbọ ala',
     'doc_state_id' => 'Kaadị njirimara gọọmentị',
     'doc_passport' => 'Paspọtụ US',
     'doc_other_id' => 'Njirimara ọzọ nke gọọmentị nyere',
@@ -79,7 +79,7 @@ return [
     'doc_other_address' => 'Ihe akaebe adreesị ọzọ',
 
     // Controller flash messages
-    'kyc_submitted_status' => "Daalụ — anyị enwetala ID gị. Akaụntụ gị dị njikere iji mee ihe ka ndị otu anyị na-elele ya, ọ na-erikarị otu ụbọchị. Anyị ga-agwa gị ozugbo ekpebiri ya.",
-    'address_submitted_status' => "Daalụ — anyị enwetala akwụkwọ gị. Anyị ga-agwa gị ozugbo ekpebiri ya, ọ na-erikarị otu ụbọchị.",
+    'kyc_submitted_status' => 'Daalụ — anyị enwetala ID gị. Akaụntụ gị dị njikere iji mee ihe ka ndị otu anyị na-elele ya, ọ na-erikarị otu ụbọchị. Anyị ga-agwa gị ozugbo ekpebiri ya.',
+    'address_submitted_status' => 'Daalụ — anyị enwetala akwụkwọ gị. Anyị ga-agwa gị ozugbo ekpebiri ya, ọ na-erikarị otu ụbọchị.',
     'address_verify_identity_first' => 'Buru ụzọ gosi onye ị bụ — nyocha adreesị bụ nzọụkwụ na-esote ya.',
 ];

@@ -27,6 +27,9 @@ class PlaidInternationalBankProvider extends PlaidBankProvider
     /**
      * Used for both search() and listInstitutions() — so the picker and
      * Admin > Banks > Provider banks see the same rows.
+     *
+     * @param  array<int, array<string, mixed>>  $institutions
+     * @return array<int, array{name: string, country: string|null, swift_code: string|null, currency: string|null, routing_number: string|null, meta: string, source: string}>
      */
     protected function formatInstitutions(array $institutions): array
     {
@@ -36,11 +39,14 @@ class PlaidInternationalBankProvider extends PlaidBankProvider
             ->reject(fn (array $bank) => $isSandbox && preg_match(self::SANDBOX_TEST_INSTITUTIONS, $bank['name']) === 1)
             // Routing numbers are US-only; the second line shows the
             // country instead.
-            ->map(fn (array $bank) => ['meta' => (string) ($bank['country'] ?? '')] + $bank)
+            ->map(fn (array $bank) => array_merge($bank, ['meta' => (string) $bank['country']]))
             ->values()
             ->all();
     }
 
+    /**
+     * @return list<string>
+     */
     protected function countryCodes(): array
     {
         $codes = array_values(array_filter(array_map(

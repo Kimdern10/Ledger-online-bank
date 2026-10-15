@@ -15,6 +15,8 @@ class AddressVerificationController extends Controller
      * KycController uses for id_document_type. A method rather than a class
      * constant since the labels resolve through __() and a PHP class
      * constant can't call a function.
+     *
+     * @return array<string, string>
      */
     private static function documentTypes(): array
     {

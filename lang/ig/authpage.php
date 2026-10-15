@@ -66,7 +66,7 @@ return [
     'field_confirm_new_password' => 'Kwenye okwuntughe ọhụrụ',
     'use_different_email' => 'Jiri ozi-e ọzọ',
     'resend_code' => 'Zigharịa koodu',
-    'status_code_sent_known' => "Ọ bụrụ na akaụntụ dị maka :email, anyị ezitela koodu nwere ọnụọgụ isii na ya.",
+    'status_code_sent_known' => 'Ọ bụrụ na akaụntụ dị maka :email, anyị ezitela koodu nwere ọnụọgụ isii na ya.',
     'status_code_resent' => 'E zigharịala koodu ọhụrụ, ọ bụrụ na ozi-e ahụ nwere akaụntụ.',
     'error_code_invalid' => 'Koodu ahụ ezighị ezi ma ọ bụ agwụla. Rịọ koodu ọhụrụ n\'okpuru.',
     'status_password_reset_done' => 'A hazigharịla okwuntughe gị. Jiri okwuntughe ọhụrụ gị banye.',

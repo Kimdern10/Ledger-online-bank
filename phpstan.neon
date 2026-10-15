@@ -11,3 +11,8 @@ parameters:
         - routes/
 
     level: 7
+
+    # Only used by the Volt page resources/views/pages/settings/⚡profile.blade.php,
+    # which PHPStan doesn't read, so it would otherwise be reported as unused.
+    excludePaths:
+        - app/Concerns/ProfileValidationRules.php

@@ -39,7 +39,7 @@ class BillController extends Controller
                 'id' => $bill->id,
                 'category' => $bill->category,
                 'biller' => $bill->biller,
-                'amount' => number_format($bill->amount, 2),
+                'amount' => number_format((float) $bill->amount, 2),
                 'due_date_label' => 'Due '.$bill->due_date->format('M j'),
             ],
         ], 201);

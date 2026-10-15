@@ -40,7 +40,7 @@ class SupportController extends Controller
         ],
         'card issue' => [
             'keywords' => ['card issue', 'card', 'debit', 'credit card', 'declined', 'freeze my card', 'block my card'],
-            'response' => "Sorry to hear that. Is your card lost/stolen, not working at a terminal, or showing the wrong balance? You can also freeze it instantly from My Cards while we look into it.",
+            'response' => 'Sorry to hear that. Is your card lost/stolen, not working at a terminal, or showing the wrong balance? You can also freeze it instantly from My Cards while we look into it.',
         ],
         'payment problem' => [
             'keywords' => ['payment problem', 'payment', 'transfer', 'send money', 'wire', 'transaction', 'charged twice', 'double charge', 'missing payment', 'failed transfer'],
@@ -55,7 +55,7 @@ class SupportController extends Controller
             'response' => "I can see account status changes go through our review team. Can you tell me a bit more about what you're seeing on your end, and I'll get this looked at?",
         ],
         'balance or statement' => [
-            'keywords' => ['balance', 'statement', 'missing money', "where is my money", 'incorrect balance'],
+            'keywords' => ['balance', 'statement', 'missing money', 'where is my money', 'incorrect balance'],
             'response' => "Let's take a look. Can you tell me which account — checking or savings — and roughly what amount looks off to you?",
         ],
         'bill pay' => [
@@ -78,7 +78,7 @@ class SupportController extends Controller
      * just sits there until an admin opens /admin/support and replies.
      */
     private const DEFAULT_RESPONSES = [
-        "Thanks for the details — a support specialist will follow up shortly. In the meantime, is there anything else I can help clarify?",
+        'Thanks for the details — a support specialist will follow up shortly. In the meantime, is there anything else I can help clarify?',
         "Got it, that's noted for the team. Is there anything else you want to add before someone picks this up?",
         "Thanks for explaining — I've passed this along. Feel free to add any other details while you wait for a reply.",
     ];
@@ -156,7 +156,7 @@ class SupportController extends Controller
 
         if (! $conversation || ! $conversation->isOpen()) {
             return response()->json([
-                'error' => "This conversation has ended — start a new one to keep chatting.",
+                'error' => 'This conversation has ended — start a new one to keep chatting.',
             ], 422);
         }
 
@@ -198,6 +198,8 @@ class SupportController extends Controller
      * `php artisan storage:link` to have been run once) and returns
      * [path, originalName, mimeType] — or [null, null, null] when this
      * request didn't include a file at all.
+     *
+     * @return array{0: string|null, 1: string|null, 2: string|null}
      */
     private function storeAttachment(Request $request): array
     {
@@ -206,9 +208,16 @@ class SupportController extends Controller
         }
 
         $file = $request->file('attachment');
+        $path = $file->store('support-attachments', 'public');
+
+        // store() returns false when the disk couldn't save the file — send
+        // the message without an attachment rather than a broken one.
+        if ($path === false) {
+            return [null, null, null];
+        }
 
         return [
-            $file->store('support-attachments', 'public'),
+            $path,
             $file->getClientOriginalName(),
             $file->getMimeType(),
         ];
@@ -339,7 +348,7 @@ class SupportController extends Controller
     public function stream(Request $request): StreamedResponse
     {
         $user = $request->user();
-        $seenId = max((int) $request->query('after', 0), (int) $request->header('Last-Event-ID', 0));
+        $seenId = max((int) $request->query('after', 0), (int) $request->header('Last-Event-ID', '0'));
 
         return response()->stream(function () use ($user, $seenId) {
             while (ob_get_level() > 0) {
@@ -400,6 +409,9 @@ class SupportController extends Controller
         ]);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function messagePayload(SupportMessage $m): array
     {
         return [

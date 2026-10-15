@@ -66,7 +66,7 @@ return [
     'field_confirm_new_password' => 'Conferma nuova password',
     'use_different_email' => 'Usa un\'altra email',
     'resend_code' => 'Invia di nuovo il codice',
-    'status_code_sent_known' => "Se esiste un account per :email, vi abbiamo inviato un codice a 6 cifre.",
+    'status_code_sent_known' => 'Se esiste un account per :email, vi abbiamo inviato un codice a 6 cifre.',
     'status_code_resent' => 'Un nuovo codice è stato inviato, se quell\'email è associata a un account.',
     'error_code_invalid' => 'Il codice non è valido o è scaduto. Richiedine uno nuovo qui sotto.',
     'status_password_reset_done' => 'La tua password è stata reimpostata. Accedi con la tua nuova password.',

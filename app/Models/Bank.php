@@ -48,11 +48,19 @@ class Bank extends Model
         return $this->isInternational() ? 'International' : 'Domestic';
     }
 
+    /**
+     * @param  Builder<Bank>  $query
+     * @return Builder<Bank>
+     */
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true);
     }
 
+    /**
+     * @param  Builder<Bank>  $query
+     * @return Builder<Bank>
+     */
     public function scopeOfType(Builder $query, string $type): Builder
     {
         return $query->where('type', $type);

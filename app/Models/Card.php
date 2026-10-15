@@ -51,6 +51,8 @@ class Card extends Model
      * own card) and AdminCardController::approve() (an admin approving a
      * request); a customer can never reach this directly, since there's no
      * "add a card" button that skips the request/approval flow any more.
+     *
+     * @param  array<string, mixed>  $overrides
      */
     public static function issueFor(User $user, string $type, array $overrides = []): self
     {
@@ -58,7 +60,7 @@ class Card extends Model
 
         return static::create(array_merge([
             'user_id' => $user->id,
-            'card_number' => static::generateNumber($prefix),
+            'card_number' => self::generateNumber($prefix),
             'cardholder_name' => strtoupper($user->name),
             'type' => $type,
             'status' => 'active',
@@ -80,11 +82,17 @@ class Card extends Model
         return $number;
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return HasMany<CardTransaction, $this>
+     */
     public function transactions(): HasMany
     {
         return $this->hasMany(CardTransaction::class)->orderByDesc('occurred_at');

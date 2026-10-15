@@ -8,7 +8,7 @@ return [
     'filter_all' => 'Ihe niile',
     'filter_sent' => 'E zigara',
     'filter_received' => 'Enatara',
-    'no_transactions_yet' => "Ọ dịbeghị azụmaahịa ugbu a — ozugbo ị zigara ma ọ bụ nata ego, ọ ga-apụta ebe a.",
+    'no_transactions_yet' => 'Ọ dịbeghị azụmaahịa ugbu a — ozugbo ị zigara ma ọ bụ nata ego, ọ ga-apụta ebe a.',
     'no_matches' => 'Ọ dịghị azụmaahịa dabara na nchọ gị.',
     'cancel' => 'Kagbuo',
 ];

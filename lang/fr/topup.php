@@ -21,7 +21,7 @@ return [
     'fee_total_charged' => 'Total facturé',
     'add_money_btn' => 'Ajouter des fonds',
     'processing' => 'Traitement de votre recharge…',
-    'processing_sub' => "Veuillez ne pas fermer ni actualiser cette page.",
+    'processing_sub' => 'Veuillez ne pas fermer ni actualiser cette page.',
     'pin_modal_title' => 'Entrez votre code PIN de transaction',
     'pin_modal_body' => 'Confirmez cette recharge avec votre code PIN de transaction à 4 chiffres.',
     'pin_confirm' => 'Confirmer',

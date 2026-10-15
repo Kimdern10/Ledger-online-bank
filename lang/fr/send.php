@@ -39,7 +39,7 @@ return [
     'note_placeholder' => 'Ajouter une note…',
     'send_btn' => 'Envoyer',
     'processing' => 'Traitement de votre transfert…',
-    'processing_sub' => "Veuillez ne pas fermer ni actualiser cette page.",
+    'processing_sub' => 'Veuillez ne pas fermer ni actualiser cette page.',
     'pin_modal_title' => 'Entrez votre code PIN de transaction',
     'pin_modal_body' => 'Confirmez ce transfert avec votre code PIN de transaction à 4 chiffres.',
     'pin_confirm' => 'Confirmer',

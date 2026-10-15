@@ -6,6 +6,7 @@ use App\Mail\VerificationCodeMail;
 use App\Support\AccountNumbers;
 use App\Support\AccountTier;
 use App\Support\Locale;
+use Carbon\CarbonImmutable;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -16,7 +17,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Contracts\PasskeyUser;
@@ -27,8 +27,8 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property int $id
  * @property bool $is_admin
  * @property string $account_status
- * @property Carbon|null $account_deleted_at
- * @property Carbon|null $permanently_deleted_at
+ * @property CarbonImmutable|null $account_deleted_at
+ * @property CarbonImmutable|null $permanently_deleted_at
  * @property string $account_balance
  * @property string|null $transaction_pin
  * @property string $language
@@ -57,18 +57,18 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property string|null $middle_name
  * @property string $email
  * @property string|null $phone
- * @property Carbon|null $email_verified_at
+ * @property CarbonImmutable|null $email_verified_at
  * @property string $password
  * @property string|null $verification_code
- * @property Carbon|null $verification_code_expires_at
+ * @property CarbonImmutable|null $verification_code_expires_at
  * @property string|null $password_reset_code
- * @property Carbon|null $password_reset_code_expires_at
+ * @property CarbonImmutable|null $password_reset_code_expires_at
  * @property string|null $two_factor_secret
  * @property string|null $two_factor_recovery_codes
- * @property Carbon|null $two_factor_confirmed_at
+ * @property CarbonImmutable|null $two_factor_confirmed_at
  * @property string|null $remember_token
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
  */
 #[Fillable(['first_name', 'last_name', 'middle_name', 'email', 'phone', 'password'])]
 #[Hidden(['password', 'transaction_pin', 'verification_code', 'verification_code_expires_at', 'password_reset_code', 'password_reset_code_expires_at', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
@@ -278,6 +278,9 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
         return $this->monthly_budget !== null ? (float) $this->monthly_budget : 3000.0;
     }
 
+    /**
+     * @return HasMany<AdminBalanceAdjustment, $this>
+     */
     public function adminBalanceAdjustments(): HasMany
     {
         return $this->hasMany(AdminBalanceAdjustment::class);
@@ -294,6 +297,8 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
      * isn't enforced here on purpose; callers (NotificationController::
      * poll()) order it themselves so this relation stays reusable either
      * way.
+     *
+     * @return HasMany<AppNotification, $this>
      */
     public function appNotifications(): HasMany
     {
@@ -343,6 +348,8 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
      * A computed "name" for anything still expecting a single name field
      * (Flux components, any leftover Blade referencing $user->name). There's
      * no "name" column anymore, but this makes $user->name keep working.
+     *
+     * @return Attribute<string, never>
      */
     protected function name(): Attribute
     {
@@ -358,6 +365,8 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
      * clean null (so those views can keep falling back to initials) and
      * turns a real one into a URL through AvatarController, never the raw
      * storage path.
+     *
+     * @return Attribute<string|null, never>
      */
     protected function avatar(): Attribute
     {
@@ -366,6 +375,9 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
         );
     }
 
+    /**
+     * @return HasOne<Profile, $this>
+     */
     public function profile(): HasOne
     {
         return $this->hasOne(Profile::class);
@@ -375,6 +387,8 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
      * This user's one KYC submission — see KycVerification's own docblock
      * for why it's a single row that gets overwritten on resubmission
      * rather than a history of every attempt.
+     *
+     * @return HasOne<KycVerification, $this>
      */
     public function kycVerification(): HasOne
     {
@@ -385,12 +399,17 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
      * This user's one address-verification submission — same
      * one-row-per-user reasoning as kycVerification() above, see
      * AddressVerification's own docblock.
+     *
+     * @return HasOne<AddressVerification, $this>
      */
     public function addressVerification(): HasOne
     {
         return $this->hasOne(AddressVerification::class);
     }
 
+    /**
+     * @return HasMany<Bill, $this>
+     */
     public function bills(): HasMany
     {
         return $this->hasMany(Bill::class);
@@ -399,6 +418,8 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     /**
      * Transfers this user sent (see TransferController::store() — the
      * only kind that exists right now is a Ledger-to-Ledger send).
+     *
+     * @return HasMany<Transfer, $this>
      */
     public function sentTransfers(): HasMany
     {
@@ -407,6 +428,8 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
 
     /**
      * Transfers this user received.
+     *
+     * @return HasMany<Transfer, $this>
      */
     public function receivedTransfers(): HasMany
     {
@@ -417,6 +440,8 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
      * Transfers this user sent to an external bank (see ExternalTransfer —
      * there's no "received" side here, since the recipient isn't a Ledger
      * user at all).
+     *
+     * @return HasMany<ExternalTransfer, $this>
      */
     public function externalTransfers(): HasMany
     {
@@ -427,6 +452,8 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
      * Transfers this user sent through the "International bank" tab (see
      * InternationalTransfer) — same "no received side" reasoning as
      * externalTransfers() above.
+     *
+     * @return HasMany<InternationalTransfer, $this>
      */
     public function internationalTransfers(): HasMany
     {
@@ -438,6 +465,8 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
      * in it, whether they wrote it themselves or an admin replied. See
      * the support_messages migration for why user_id always means "whose
      * conversation this is", not "who sent this one message".
+     *
+     * @return HasMany<SupportMessage, $this>
      */
     public function supportMessages(): HasMany
     {
@@ -449,6 +478,8 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
      * page — see LinkedAccountController and LinkedAccount.php. Feeds the
      * "Already linked" list there, the destination/source chips on Withdraw
      * and Top Up, and the read-only card on the admin per-user page.
+     *
+     * @return HasMany<LinkedAccount, $this>
      */
     public function linkedAccounts(): HasMany
     {
@@ -457,6 +488,8 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
 
     /**
      * Real withdrawals this user has made — see WithdrawalController.
+     *
+     * @return HasMany<Withdrawal, $this>
      */
     public function withdrawals(): HasMany
     {
@@ -465,6 +498,8 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
 
     /**
      * Real top-ups this user has made — see TopUpController.
+     *
+     * @return HasMany<TopUp, $this>
      */
     public function topUps(): HasMany
     {

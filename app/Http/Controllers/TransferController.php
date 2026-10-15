@@ -177,6 +177,8 @@ class TransferController extends Controller
     /**
      * Ledger-to-Ledger: real recipient, found by account number, both
      * balances actually move in one atomic step.
+     *
+     * @param  array<string, mixed>  $data
      */
     private function storeLedgerTransfer(Request $request, array $data): RedirectResponse
     {
@@ -328,6 +330,8 @@ class TransferController extends Controller
      * whether the money is actually there gets checked for real by
      * ProcessScheduledTransfers on the day it runs, since a balance
      * checked now could easily be different by the scheduled date.
+     *
+     * @param  array<string, mixed>  $data
      */
     private function scheduleLedgerTransfer(Request $request, array $data): RedirectResponse
     {
@@ -384,6 +388,8 @@ class TransferController extends Controller
      * (that needs a payment processor like Dwolla or Plaid Transfer, a
      * business agreement, and compliance review that's out of scope here),
      * so nothing pretends to have "arrived" anywhere. No fee is charged.
+     *
+     * @param  array<string, mixed>  $data
      */
     private function storeExternalTransfer(Request $request, array $data): RedirectResponse
     {
@@ -468,6 +474,8 @@ class TransferController extends Controller
      * Same idea as scheduleLedgerTransfer(), for "Another bank" — records
      * the row with status = 'scheduled', no balance movement or funds
      * check until ProcessScheduledTransfers actually runs it.
+     *
+     * @param  array<string, mixed>  $data
      */
     private function scheduleExternalTransfer(Request $request, array $data): RedirectResponse
     {
@@ -504,6 +512,8 @@ class TransferController extends Controller
      * database, and no legitimate API can verify an account holder's name
      * from what's typed here), just with its own fields and its own table.
      * No fee is charged, same as the domestic version.
+     *
+     * @param  array<string, mixed>  $data
      */
     private function storeInternationalTransfer(Request $request, array $data): RedirectResponse
     {
@@ -597,6 +607,8 @@ class TransferController extends Controller
      * bank" — records the row with status = 'scheduled', no balance
      * movement or funds check until ProcessScheduledTransfers actually
      * runs it.
+     *
+     * @param  array<string, mixed>  $data
      */
     private function scheduleInternationalTransfer(Request $request, array $data): RedirectResponse
     {

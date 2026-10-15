@@ -22,7 +22,7 @@ return [
     'save_preferences' => 'Ajiye zaɓuɓɓuka',
 
     // Password
-    'password_intro' => "Shigar da kalmar sirrinka ta yanzu don tabbatar da cewa kai ne da gaske, sannan ka zaɓi sabuwa.",
+    'password_intro' => 'Shigar da kalmar sirrinka ta yanzu don tabbatar da cewa kai ne da gaske, sannan ka zaɓi sabuwa.',
     'current_password' => 'Kalmar sirri ta yanzu',
     'new_password' => 'Sabuwar kalmar sirri',
     'confirm_new_password' => 'Tabbatar da sabuwar kalmar sirri',
@@ -35,7 +35,7 @@ return [
 
     // Transaction PIN
     'pin_intro_has' => "PIN ɗin ma'amalarka yana tabbatar da cewa kai ne da gaske kafin Aika Kuɗi, Cire Kuɗi, ko Cika Kuɗi su motsa kuɗi na gaske. Shigar da PIN ɗinka na yanzu, sannan ka zaɓi sabo.",
-    'pin_intro_new' => "Ƙirƙiri PIN mai lambobi 4. Da zarar an saita shi, Aika Kuɗi, Cire Kuɗi, da Cika Kuɗi duk za su neme shi kafin komai ya motsa da gaske. Wannan shine abin da ke hana wani mutum motsa kuɗinka koda ya shiga zaman ka.",
+    'pin_intro_new' => 'Ƙirƙiri PIN mai lambobi 4. Da zarar an saita shi, Aika Kuɗi, Cire Kuɗi, da Cika Kuɗi duk za su neme shi kafin komai ya motsa da gaske. Wannan shine abin da ke hana wani mutum motsa kuɗinka koda ya shiga zaman ka.',
     'current_pin' => 'PIN na yanzu',
     'new_pin' => 'Sabon PIN',
     'create_pin' => 'Ƙirƙiri PIN',
@@ -44,7 +44,7 @@ return [
     'update_pin' => 'Sabunta PIN',
 
     // Delete account
-    'delete_warning_title' => "Ba za a iya soke wannan daga nan ba.",
+    'delete_warning_title' => 'Ba za a iya soke wannan daga nan ba.',
     'delete_intro' => 'Share asusunka zai fitar da kai har abada. Ba za ka iya sake shiga ba. Ma\'aunin asusunka dole ya zama $0 tukuna, don haka ka motsa duk abin da ya rage ta hanyar Cire Kuɗi ko Aikawa kafin ka ci gaba. Idan wannan kuskure ne daga baya, tuntuɓi :support_link. Ba a share komai ba, don haka ana iya sokewa daga bangaren mu.',
     'support_link_text' => 'Tallafi',
     'current_balance' => 'Ma\'aunin yanzu',

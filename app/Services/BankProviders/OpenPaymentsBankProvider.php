@@ -98,6 +98,10 @@ class OpenPaymentsBankProvider implements BankProviderInterface
             $aspsps = $response->json('aspsps', $response->json() ?? []);
             $needle = mb_strtolower($query);
 
+            if (! is_array($aspsps)) {
+                return [];
+            }
+
             return collect($aspsps)
                 ->map(function (array $a): array {
                     $bic = $this->bicFrom($a);
@@ -129,6 +133,8 @@ class OpenPaymentsBankProvider implements BankProviderInterface
      * The country as sent by the directory, if it sends one at all
      * (confirmed live that it often doesn't). Always a 2-letter uppercase
      * code, or null.
+     *
+     * @param  array<string, mixed>  $aspsp
      */
     private function countryFrom(array $aspsp): ?string
     {
@@ -158,6 +164,8 @@ class OpenPaymentsBankProvider implements BankProviderInterface
 
     /**
      * The directory's BIC field is "bicFi", with a couple of fallbacks.
+     *
+     * @param  array<string, mixed>  $aspsp
      */
     private function bicFrom(array $aspsp): ?string
     {

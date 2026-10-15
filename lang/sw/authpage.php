@@ -54,7 +54,7 @@ return [
     // ---- Forgot / reset password — the live 6-digit-code flow
     // (livewire/auth/forgot-password-code.blade.php, both steps)
     'forgot_password_title' => 'Umesahau nenosiri',
-    'forgot_password_description' => "Weka barua pepe yako nasi tutakutumia msimbo wa tarakimu 6 ili kulirejesha.",
+    'forgot_password_description' => 'Weka barua pepe yako nasi tutakutumia msimbo wa tarakimu 6 ili kulirejesha.',
     'send_reset_code' => 'Tuma msimbo wa kurejesha',
     'or_return_to' => 'Au, rudi',
     'log_in_lowercase' => 'ingia',
@@ -66,7 +66,7 @@ return [
     'field_confirm_new_password' => 'Thibitisha nenosiri jipya',
     'use_different_email' => 'Tumia barua pepe nyingine',
     'resend_code' => 'Tuma tena msimbo',
-    'status_code_sent_known' => "Ikiwa kuna akaunti ya :email, tumeshatuma msimbo wa tarakimu 6 kwenye barua pepe hiyo.",
+    'status_code_sent_known' => 'Ikiwa kuna akaunti ya :email, tumeshatuma msimbo wa tarakimu 6 kwenye barua pepe hiyo.',
     'status_code_resent' => 'Msimbo mpya umetumwa, ikiwa barua pepe hiyo ina akaunti.',
     'error_code_invalid' => 'Msimbo huo si sahihi au umeisha muda wake. Omba mwingine hapa chini.',
     'status_password_reset_done' => 'Nenosiri lako limerejeshwa. Ingia kwa nenosiri lako jipya.',

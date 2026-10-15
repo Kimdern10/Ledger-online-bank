@@ -21,7 +21,7 @@ return [
     'fee_you_will_receive' => 'Vous recevrez',
     'withdraw_btn' => 'Retirer les fonds',
     'processing' => 'Traitement de votre retrait…',
-    'processing_sub' => "Veuillez ne pas fermer ni actualiser cette page.",
+    'processing_sub' => 'Veuillez ne pas fermer ni actualiser cette page.',
     'pin_modal_title' => 'Entrez votre code PIN de transaction',
     'pin_modal_body' => 'Confirmez ce retrait avec votre code PIN de transaction à 4 chiffres.',
     'pin_confirm' => 'Confirmer',

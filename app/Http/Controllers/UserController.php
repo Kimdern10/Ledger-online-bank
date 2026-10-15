@@ -2,64 +2,62 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class UserController extends Controller
 {
-     public function sendout()
+    public function sendout(): View
     {
-        return view ('send');
+        return view('send');
     }
 
-    public function setting()
+    public function setting(): View
     {
-        return view ('setting');
+        return view('setting');
     }
 
-     public function linkaccount()
+    public function linkaccount(): View
     {
-        return view ('link');
+        return view('link');
     }
 
-    public function payBills()
+    public function payBills(): View
     {
-        return view ('paybills');
+        return view('paybills');
     }
 
-      public function receive()
+    public function receive(): View
     {
-        return view ('receive');
+        return view('receive');
     }
 
-    public function withdraw()
+    public function withdraw(): View
     {
-        return view ('withdraw');
+        return view('withdraw');
     }
 
-    public function topUp()
+    public function topUp(): View
     {
-        return view ('topup');
+        return view('topup');
     }
 
-    public function history()
+    public function history(): View
     {
-        return view ('history');
+        return view('history');
     }
 
-    public function scan()
+    public function scan(): View
     {
-        return view ('scan');
+        return view('scan');
     }
 
-    public function card()
+    public function card(): View
     {
         return view('cards');
     }
 
-       public function support()
+    public function support(): View
     {
         return view('support');
     }
-
-    
 }

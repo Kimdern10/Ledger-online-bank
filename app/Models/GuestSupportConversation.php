@@ -30,6 +30,9 @@ class GuestSupportConversation extends Model
         ];
     }
 
+    /**
+     * @return HasMany<GuestSupportMessage, $this>
+     */
     public function messages(): HasMany
     {
         return $this->hasMany(GuestSupportMessage::class);

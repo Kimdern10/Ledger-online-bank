@@ -59,7 +59,7 @@ return [
     'banner_transfer_sent' => 'Votre virement a été envoyé.',
     'banner_international_transfer_sent' => 'Votre virement international a été envoyé.',
     'banner_withdrawal_bank_days' => 'Arrive dans votre banque sous 1 à 3 jours ouvrés.',
-    'banner_topup_fee_note' => "Les frais de traitement ont été facturés par votre carte, et non déduits du montant ajouté à Ledger.",
+    'banner_topup_fee_note' => 'Les frais de traitement ont été facturés par votre carte, et non déduits du montant ajouté à Ledger.',
     'banner_adjustment_credit' => 'Ce dépôt a été effectué sur votre compte par Ledger — contactez le Support si vous avez des questions à ce sujet.',
     'banner_adjustment_debit' => 'Cet ajustement a été effectué sur votre compte par Ledger — contactez le Support si vous avez des questions à ce sujet.',
 
@@ -74,8 +74,8 @@ return [
     'share_text_prefix' => 'Reçu de paiement Ledger',
     'share_title' => 'Reçu Ledger',
     'js_preparing_pdf' => 'Préparation de votre PDF…',
-    'js_pdf_error' => "Impossible de générer le PDF. Réessayez.",
+    'js_pdf_error' => 'Impossible de générer le PDF. Réessayez.',
     'js_preparing_share' => 'Préparation de votre reçu à partager…',
-    'js_share_error' => "Impossible de partager le reçu. Essayez plutôt de le télécharger.",
+    'js_share_error' => 'Impossible de partager le reçu. Essayez plutôt de le télécharger.',
     'js_share_unsupported' => "Le partage n'est pas pris en charge par ce navigateur. Utilisez Télécharger à la place.",
 ];

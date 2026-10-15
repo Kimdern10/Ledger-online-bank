@@ -110,7 +110,7 @@ class PlaidBankProvider implements BankProviderInterface
      * searched. Null when Plaid couldn't be asked or refused.
      * Docs: https://plaid.com/docs/api/institutions/#institutionsget
      *
-     * @return array{banks: list<array<string, mixed>>, total: int}|null
+     * @return array{banks: array<int, array{name: string, country: string|null, swift_code: string|null, currency: string|null, routing_number: string|null, meta: string, source: string}>, total: int}|null
      */
     public function listInstitutions(int $count, int $offset): ?array
     {
@@ -159,22 +159,22 @@ class PlaidBankProvider implements BankProviderInterface
      * Plaid institution rows in the shape the bank pickers expect.
      *
      * @param  array<int, array<string, mixed>>  $institutions
-     * @return list<array<string, mixed>>
+     * @return array<int, array{name: string, country: string|null, swift_code: string|null, currency: string|null, routing_number: string|null, meta: string, source: string}>
      */
     protected function formatInstitutions(array $institutions): array
     {
         return collect($institutions)
             ->map(function (array $inst): array {
-                $routingNumbers = $inst['routing_numbers'] ?? [];
-                $countryCodes = $inst['country_codes'] ?? [];
+                $routingNumber = isset($inst['routing_numbers'][0]) ? (string) $inst['routing_numbers'][0] : null;
+                $country = isset($inst['country_codes'][0]) ? (string) $inst['country_codes'][0] : null;
 
                 return [
                     'name' => (string) ($inst['name'] ?? ''),
-                    'country' => $countryCodes[0] ?? null,
+                    'country' => $country,
                     'swift_code' => null,
                     'currency' => null,
-                    'routing_number' => $routingNumbers[0] ?? null,
-                    'meta' => $routingNumbers ? 'Routing '.$routingNumbers[0] : '',
+                    'routing_number' => $routingNumber,
+                    'meta' => $routingNumber !== null ? 'Routing '.$routingNumber : '',
                     'source' => 'plaid',
                 ];
             })
@@ -214,6 +214,9 @@ class PlaidBankProvider implements BankProviderInterface
         return array_values(array_intersect($this->countryFilter, $this->countryCodes()));
     }
 
+    /**
+     * @return list<string>
+     */
     protected function countryCodes(): array
     {
         $codes = array_values(array_filter(array_map(

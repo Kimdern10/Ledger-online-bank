@@ -53,6 +53,8 @@ class BankSeeder extends Seeder
      * Major U.S. banks and credit unions, spanning the big national banks,
      * large regionals, and a few online-only/card-issuer banks, plus one
      * credit union — a realistic mix for the "Another bank" picker.
+     *
+     * @return array<int, array<string, string>>
      */
     private static function domesticBanks(): array
     {
@@ -83,6 +85,8 @@ class BankSeeder extends Seeder
      * Major international banks spanning the regions Ledger's international
      * transfer feature is most likely to be used with — UK/EU, North
      * America, Africa, and Asia-Pacific.
+     *
+     * @return array<int, array<string, string>>
      */
     private static function internationalBanks(): array
     {

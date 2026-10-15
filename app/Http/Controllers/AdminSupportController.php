@@ -244,7 +244,7 @@ class AdminSupportController extends Controller
     {
         abort_if($user->isAdmin(), 404);
 
-        $seenId = max((int) $request->query('after', 0), (int) $request->header('Last-Event-ID', 0));
+        $seenId = max((int) $request->query('after', 0), (int) $request->header('Last-Event-ID', '0'));
 
         return response()->stream(function () use ($user, $seenId) {
             while (ob_get_level() > 0) {
@@ -303,6 +303,9 @@ class AdminSupportController extends Controller
         ]);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function messagePayload(SupportMessage $m): array
     {
         return [
@@ -372,7 +375,7 @@ class AdminSupportController extends Controller
 
         $conversation = SupportConversation::where('user_id', $user->id)->latest()->first();
 
-        abort_unless($conversation, 404);
+        abort_if($conversation === null, 404);
 
         $conversation->update(['priority' => $conversation->isUrgent() ? 'normal' : 'urgent']);
 

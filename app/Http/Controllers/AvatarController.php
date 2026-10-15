@@ -25,7 +25,7 @@ class AvatarController extends Controller
         $viewer = $request->user();
 
         abort_unless($viewer && ($viewer->id === $user->id || $viewer->isAdmin()), 403);
-        abort_unless($user->profile_picture_path, 404);
+        abort_unless(filled($user->profile_picture_path), 404);
         abort_unless(Storage::disk('local')->exists($user->profile_picture_path), 404);
 
         return Storage::disk('local')->response($user->profile_picture_path);

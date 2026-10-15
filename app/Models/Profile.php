@@ -42,6 +42,9 @@ class Profile extends Model
         'onboarding_completed' => 'boolean',
     ];
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

@@ -148,6 +148,9 @@ class AdminGuestSupportController extends Controller
             ->with('status', 'Conversation ended.');
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function messagePayload(GuestSupportMessage $m): array
     {
         return [

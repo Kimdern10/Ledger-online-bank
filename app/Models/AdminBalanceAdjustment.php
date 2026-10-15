@@ -24,11 +24,17 @@ class AdminBalanceAdjustment extends Model
         'amount' => 'decimal:2',
     ];
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function admin(): BelongsTo
     {
         return $this->belongsTo(User::class, 'admin_id');

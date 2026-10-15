@@ -7,6 +7,10 @@ use App\Support\TransactionStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property string $recipient_name_status
+ * @property string|null $recipient_name_provider
+ */
 class ExternalTransfer extends Model
 {
     use HasReferenceRouteKey;
@@ -55,6 +59,9 @@ class ExternalTransfer extends Model
         });
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function sender(): BelongsTo
     {
         return $this->belongsTo(User::class, 'sender_id');

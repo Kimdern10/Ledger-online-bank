@@ -6,7 +6,7 @@ return [
     'checking_account_number' => 'Nọmba Akaụntụ Nlele',
     'savings_account_number' => 'Nọmba Akaụntụ Ndoro Ego',
     'bank_name' => 'Aha Ụlọ Akụ',
-    'qr_caption' => "Kwuo iji zigara :name ego na Ledger",
+    'qr_caption' => 'Kwuo iji zigara :name ego na Ledger',
     'copy_details' => 'Depụta nkọwa',
     'share' => 'Kesaa',
     'copied' => 'Edepụtala',

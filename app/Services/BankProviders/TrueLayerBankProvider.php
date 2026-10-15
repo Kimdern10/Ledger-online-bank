@@ -98,6 +98,10 @@ class TrueLayerBankProvider implements BankProviderInterface
             $providers = $response->json('items', []);
             $needle = mb_strtolower($query);
 
+            if (! is_array($providers)) {
+                return [];
+            }
+
             return collect($providers)
                 ->map(function (array $p): array {
                     $country = $this->countryFrom($p);
@@ -126,6 +130,8 @@ class TrueLayerBankProvider implements BankProviderInterface
     /**
      * TrueLayer doesn't always put the country in the same field, so check
      * every place it might be and return a 2-letter uppercase code.
+     *
+     * @param  array<string, mixed>  $provider
      */
     private function countryFrom(array $provider): ?string
     {

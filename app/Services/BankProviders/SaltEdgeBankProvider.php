@@ -35,6 +35,9 @@ use Illuminate\Support\Facades\Log;
  * what lets the Send Money picker fill in Country and Currency when a bank
  * is chosen.
  */
+/**
+ * @phpstan-import-type BankRow from BankRows
+ */
 class SaltEdgeBankProvider implements BankProviderInterface
 {
     // v3: the v2 catalog cached before the per-country fetch below was
@@ -109,6 +112,8 @@ class SaltEdgeBankProvider implements BankProviderInterface
     /**
      * Fetch (and cache) the full provider catalog, already normalized.
      * Returns [] on any failure — never throws.
+     *
+     * @return list<BankRow>
      */
     private function catalog(): array
     {
@@ -119,7 +124,7 @@ class SaltEdgeBankProvider implements BankProviderInterface
         $cached = Cache::get(self::CATALOG_CACHE_KEY);
 
         if ($cached !== null) {
-            return $cached;
+            return BankRows::normalize($cached);
         }
 
         $catalog = $this->fetchCatalog();
@@ -142,6 +147,8 @@ class SaltEdgeBankProvider implements BankProviderInterface
      * list by provider id, so the first MAX_PAGES pages were ~99% German
      * banks (confirmed live: DE 986 of 1000) and the Asia-Pacific countries
      * this provider is configured for came back with nothing at all.
+     *
+     * @return list<BankRow>
      */
     private function fetchCatalog(): array
     {
@@ -156,12 +163,15 @@ class SaltEdgeBankProvider implements BankProviderInterface
             array_push($all, ...$this->fetchProviders($countryCode));
         }
 
-        return array_values(array_filter($all, fn (array $b) => $b['name'] !== ''));
+        // Also drops rows without a name.
+        return BankRows::normalize($all);
     }
 
     /**
      * Up to MAX_PAGES pages of one country's providers (or of everything,
      * when $countryCode is null). A failed page keeps what came before it.
+     *
+     * @return array<int, array<string, mixed>>
      */
     private function fetchProviders(?string $countryCode): array
     {

@@ -81,6 +81,10 @@ class TokenIoBankProvider implements BankProviderInterface
 
             $banks = $response->json('banks', []);
 
+            if (! is_array($banks)) {
+                return [];
+            }
+
             return collect($banks)
                 ->map(function (array $b): array {
                     $bic = $this->bicFrom($b);
@@ -112,6 +116,8 @@ class TokenIoBankProvider implements BankProviderInterface
      * Token.io lists a bank's countries as an array — use the first one,
      * and fall back to a single "country" field if that's what comes back.
      * Always returns a 2-letter uppercase code, or null.
+     *
+     * @param  array<string, mixed>  $bank
      */
     private function countryFrom(array $bank): ?string
     {
@@ -138,6 +144,9 @@ class TokenIoBankProvider implements BankProviderInterface
         return ctype_alpha($code) ? $code : null;
     }
 
+    /**
+     * @param  array<string, mixed>  $bank
+     */
     private function bicFrom(array $bank): ?string
     {
         $bic = strtoupper(trim((string) ($bank['bic'] ?? '')));

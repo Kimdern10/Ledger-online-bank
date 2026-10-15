@@ -2,7 +2,7 @@
 
 return [
     'title' => 'Kaadị M',
-    'no_cards_yet' => "Ị nweghị kaadị ọ bụla ugbu a.",
+    'no_cards_yet' => 'Ị nweghị kaadị ọ bụla ugbu a.',
     'add_a_card' => 'Tinye kaadị',
 
     'request_pending_prefix' => 'Arịrịọ gị maka',

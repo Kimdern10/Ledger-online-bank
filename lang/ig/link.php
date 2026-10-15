@@ -6,7 +6,7 @@ return [
     'remove_confirm' => 'Wepụ :label (:detail)?',
     'remove_button' => 'Wepụ',
     'remove_aria' => 'Wepụ :label',
-    'empty_state' => "Ị tinyebeghị akaụntụ ụlọ akụ ma ọ bụ kaadị.",
+    'empty_state' => 'Ị tinyebeghị akaụntụ ụlọ akụ ma ọ bụ kaadị.',
     'add_new' => 'Tinye nke ọhụrụ',
     'bank_account_tab' => 'Akaụntụ ụlọ akụ',
     'card_tab' => 'Kaadị Debit / Kredit',

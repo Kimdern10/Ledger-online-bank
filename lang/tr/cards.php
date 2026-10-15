@@ -2,7 +2,7 @@
 
 return [
     'title' => 'Kartlarım',
-    'no_cards_yet' => "Henüz hiç kartınız yok.",
+    'no_cards_yet' => 'Henüz hiç kartınız yok.',
     'add_a_card' => 'Kart ekle',
 
     'request_pending_prefix' => 'Talebiniz olan',

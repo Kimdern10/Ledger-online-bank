@@ -105,6 +105,9 @@ class CreateAdminCommand extends Command
         }
     }
 
+    /**
+     * @param  array<int, mixed>  $rules
+     */
     private function askValid(string $question, array $rules): string
     {
         while (true) {

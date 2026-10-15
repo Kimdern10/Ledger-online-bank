@@ -66,7 +66,7 @@ return [
     'field_confirm_new_password' => 'Konfirmasi kata sandi baru',
     'use_different_email' => 'Gunakan email lain',
     'resend_code' => 'Kirim ulang kode',
-    'status_code_sent_known' => "Jika akun untuk :email ada, kami telah mengirimkan kode 6 digit ke sana.",
+    'status_code_sent_known' => 'Jika akun untuk :email ada, kami telah mengirimkan kode 6 digit ke sana.',
     'status_code_resent' => 'Kode baru telah dikirim, jika email tersebut memiliki akun.',
     'error_code_invalid' => 'Kode tersebut tidak valid atau telah kedaluwarsa. Minta kode baru di bawah ini.',
     'status_password_reset_done' => 'Kata sandi Anda telah direset. Masuk dengan kata sandi baru Anda.',

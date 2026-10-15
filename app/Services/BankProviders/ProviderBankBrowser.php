@@ -2,7 +2,6 @@
 
 namespace App\Services\BankProviders;
 
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 
 /**
@@ -20,6 +19,8 @@ use Illuminate\Support\Facades\Cache;
  *
  * Pages are cached briefly per source/search/page so moving back and forth
  * doesn't re-call the provider; failures are never cached.
+ *
+ * @phpstan-import-type BankRow from BankRows
  */
 class ProviderBankBrowser
 {
@@ -41,23 +42,19 @@ class ProviderBankBrowser
     }
 
     /**
-     * @return array{banks: LengthAwarePaginator, failed: bool}
+     * One page of a source's banks, plus how many there are in all (for the
+     * page links) and whether the source failed to answer.
+     *
+     * @return array{items: array<int, BankRow>, total: int, failed: bool}
      */
-    public function page(string $source, string $query, int $page, int $perPage, string $path, ?string $country = null): array
+    public function page(string $source, string $query, int $page, int $perPage, ?string $country = null): array
     {
         $provider = $this->sources()[$source]['provider'] ?? null;
         $page = max(1, $page);
 
-        $result = $provider === null || ! $provider->isConfigured()
-            ? ['items' => [], 'total' => 0, 'failed' => false]
+        return $provider === null || ! $provider->isConfigured()
+            ? $this->emptyResult()
             : $this->fetch($source, $provider, $query, $page, $perPage, $country);
-
-        $paginator = new LengthAwarePaginator($result['items'], $result['total'], $perPage, $page, [
-            'path' => $path,
-            'pageName' => 'page',
-        ]);
-
-        return ['banks' => $paginator, 'failed' => $result['failed']];
     }
 
     /**
@@ -91,13 +88,24 @@ class ProviderBankBrowser
 
     public static function countryName(string $code): string
     {
-        $name = class_exists(\Locale::class) ? \Locale::getDisplayRegion('-'.$code, 'en') : '';
+        // getDisplayRegion() returns false when it can't name the region.
+        $name = class_exists(\Locale::class) ? (\Locale::getDisplayRegion('-'.$code, 'en') ?: '') : '';
 
         return $name !== '' && $name !== $code ? $name : $code;
     }
 
     /**
-     * @return array{items: list<array<string, mixed>>, total: int, failed: bool}
+     * No banks: what a source that isn't set up shows.
+     *
+     * @return array{items: array<int, BankRow>, total: int, failed: bool}
+     */
+    private function emptyResult(): array
+    {
+        return ['items' => [], 'total' => 0, 'failed' => false];
+    }
+
+    /**
+     * @return array{items: array<int, BankRow>, total: int, failed: bool}
      */
     private function fetch(string $source, BankProviderInterface $provider, string $query, int $page, int $perPage, ?string $country): array
     {
@@ -105,7 +113,11 @@ class ProviderBankBrowser
         $cached = Cache::get($key);
 
         if (is_array($cached)) {
-            return $cached;
+            return [
+                'items' => BankRows::normalize($cached['items'] ?? null),
+                'total' => is_int($cached['total'] ?? null) ? $cached['total'] : 0,
+                'failed' => false,
+            ];
         }
 
         // Plaid filters by country itself; everyone else is filtered below.
@@ -122,10 +134,13 @@ class ProviderBankBrowser
         } else {
             // search() never throws — an empty list is either "no matches"
             // or a provider failure it has already logged.
-            $all = collect($provider->search($query))
-                ->when($country !== null, fn ($banks) => $banks->filter(fn (array $bank) => strtoupper((string) ($bank['country'] ?? '')) === $country))
-                ->values()
-                ->all();
+            $all = $provider->search($query);
+
+            if ($country !== null) {
+                $all = array_filter($all, fn (array $bank) => strtoupper((string) $bank['country']) === $country);
+            }
+
+            $all = array_values($all);
             $result = [
                 'items' => array_slice($all, ($page - 1) * $perPage, $perPage),
                 'total' => count($all),

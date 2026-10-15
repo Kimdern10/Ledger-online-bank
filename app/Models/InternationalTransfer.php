@@ -11,6 +11,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * "International bank" transfer — see that table's own migration for why
  * this is a separate table from external_transfers rather than reusing it.
  */
+/**
+ * @property string $recipient_name_status
+ * @property string|null $recipient_name_provider
+ */
 class InternationalTransfer extends Model
 {
     use HasReferenceRouteKey;
@@ -65,6 +69,9 @@ class InternationalTransfer extends Model
         });
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function sender(): BelongsTo
     {
         return $this->belongsTo(User::class, 'sender_id');

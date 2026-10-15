@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -18,6 +19,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * conversation button, which closes whatever was open first), or 'timeout'
  * (nobody closed it; an admin set timeout_at and the customer never
  * replied before it passed — see applyTimeoutIfExpired()).
+ *
+ * @property CarbonImmutable|null $timeout_at
+ * @property-read int|null $real_admin_reply_count  Only when loaded with that withCount() alias (see AdminSupportController::index()).
  */
 class SupportConversation extends Model
 {
@@ -39,11 +43,17 @@ class SupportConversation extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return HasMany<SupportMessage, $this>
+     */
     public function messages(): HasMany
     {
         return $this->hasMany(SupportMessage::class);

@@ -25,6 +25,9 @@ class GuestSupportMessage extends Model
         'read_at' => 'datetime',
     ];
 
+    /**
+     * @return BelongsTo<GuestSupportConversation, $this>
+     */
     public function conversation(): BelongsTo
     {
         return $this->belongsTo(GuestSupportConversation::class, 'guest_support_conversation_id');
@@ -34,6 +37,8 @@ class GuestSupportMessage extends Model
      * Null for a guest's own message — see this table's migration for why
      * a guest has no User row to point sender_id at. Set for anything an
      * admin (or the automatic greeting) sent.
+     *
+     * @return BelongsTo<User, $this>
      */
     public function sender(): BelongsTo
     {

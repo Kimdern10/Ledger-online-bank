@@ -12,7 +12,7 @@ return [
     'mock_balance_label' => 'Owó tí ó kù',
     'mock_account_label' => 'Àkọọ́lẹ̀ · Tí a ń lò lójoojúmọ́',
     'entry_fdic' => 'FDIC ṣe ìdánilójú fún owó tí ó tó $250,000',
-    'entry_no_fees' => "Kò sí owó ìsanwó tí a fi pamọ́, láéláé",
+    'entry_no_fees' => 'Kò sí owó ìsanwó tí a fi pamọ́, láéláé',
     'entry_instant' => 'Ìfiránṣẹ́ owó lẹ́sẹ̀kẹsẹ̀, ní gbogbo àkókò',
 
     // ---- Shared field labels (reused across several forms below)

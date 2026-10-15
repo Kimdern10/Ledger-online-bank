@@ -23,11 +23,18 @@ class AppNotification extends Model
         'read_at' => 'datetime',
     ];
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @param  Builder<AppNotification>  $query
+     * @return Builder<AppNotification>
+     */
     public function scopeUnread(Builder $query): Builder
     {
         return $query->whereNull('read_at');
