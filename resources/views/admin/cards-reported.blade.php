@@ -8,9 +8,19 @@
     <p>Every card a customer has marked lost or stolen, most recent first.</p>
   </div>
 
+  @include('partials.admin-decision-filter', [
+    'action' => route('admin.cards.reported'),
+    'search' => $search,
+    'selected' => $status,
+    'field' => 'status',
+    'options' => ['frozen' => 'Frozen', 'closed' => 'Closed'],
+    'allLabel' => 'All statuses',
+    'placeholder' => 'Search by name, email or last 4 digits',
+  ])
+
   <div class="admin-card" style="padding:0; overflow-x:auto;">
     @if($cards->isEmpty())
-      <p class="admin-empty">No cards have been reported lost or stolen.</p>
+      <p class="admin-empty">{{ $search !== '' || $status ? 'No reported cards match your search.' : 'No cards have been reported lost or stolen.' }}</p>
     @else
       <table class="admin-table">
         <thead>

@@ -225,7 +225,7 @@ table.admin-table tr:last-child td{ border-bottom:none; }
 
 /* ---------------------------------------------------------------------
    Shared small helpers — used to be a copy-pasted <style> block on
-   several pages (admin-kyc.blade.php, admin-address.blade.php,
+   several pages (admin/kyc.blade.php, admin/address.blade.php,
    admin/support.blade.php, admin/support-show.blade.php,
    admin/users-show.blade.php). Kept once here instead.
    --------------------------------------------------------------------- */

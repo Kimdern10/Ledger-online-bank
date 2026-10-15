@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>@yield('title', 'Admin') · Ledger Admin</title>
+  @include('partials.favicon')
   <link rel="stylesheet" href="{{ asset('admin_asset/css/admin.css') }}?v={{ filemtime(public_path('admin_asset/css/admin.css')) }}">
 </head>
 <body>

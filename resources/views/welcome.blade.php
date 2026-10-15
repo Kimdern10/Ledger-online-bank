@@ -578,7 +578,7 @@
           <h3 class="h3" style="font-size:19px; margin-top:8px;"><?= e(__('welcome.blog2_title')) ?></h3>
           <p class="lede" style="font-size:14px; margin-top:8px;"><?= e(__('welcome.blog2_desc')) ?></p>
         </div>
-      </a>
+      </a> 
       <a href="#" class="blog-card fade-up" style="animation-delay:0.16s;">
         <div class="blog-card-head" style="background:var(--coral-light);">
           <svg viewBox="0 0 24 24" fill="none" stroke="var(--coral)" stroke-width="1.6"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3Z"/></svg>

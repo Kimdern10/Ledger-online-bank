@@ -104,7 +104,14 @@ new class extends Component
         <div class="text-sm" style="color:var(--ledger-sage);">{{ $status }}</div>
     @endif
 
-    <div wire:ignore id="verifyCodeCountdown" class="text-sm" style="color:var(--ledger-text-2);"></div>
+    {{-- The deadline and translated words ride along as data-* attributes:
+         Livewire serves this component's <script> as a separate JS file that
+         Blade never renders, so {{ }} / @js / @json can't be used inside it. --}}
+    <div wire:ignore id="verifyCodeCountdown" class="text-sm" style="color:var(--ledger-text-2);"
+         data-expires-at="{{ $codeExpiresAt }}"
+         data-expires-in="{{ __('authpage.js_code_expires_in') }}"
+         data-expired="{{ __('authpage.js_code_expired_request') }}"
+         data-no-active-code="{{ __('authpage.js_no_active_code') }}"></div>
 
     <form wire:submit="verify" class="flex flex-col gap-5">
         <flux:input
@@ -125,61 +132,65 @@ new class extends Component
     <flux:button type="button" variant="ghost" wire:click="resend" class="w-full" wire:loading.attr="disabled" wire:target="resend">
         {{ __('authpage.resend_code') }}
     </flux:button>
-
-    <script>
-        (function () {
-            const el = document.getElementById('verifyCodeCountdown');
-            let deadline = @js($codeExpiresAt) ? new Date(@js($codeExpiresAt)).getTime() : null;
-            let interval = null;
-
-            // Resolved server-side with __() and handed over as JSON, same
-            // pattern used by forgot-password-code.blade.php and
-            // send-receipt.blade.php's RECEIPT_I18N.
-            const I18N = {
-                expiresIn: @json(__('authpage.js_code_expires_in')),
-                expired: @json(__('authpage.js_code_expired_request')),
-                noActiveCode: @json(__('authpage.js_no_active_code')),
-            };
-
-            function tick() {
-                if (!deadline) {
-                    // No code currently on file for this account (e.g. it was
-                    // never actually sent) — say so instead of leaving this
-                    // blank, which otherwise looks like the feature is broken.
-                    el.textContent = I18N.noActiveCode;
-                    return;
-                }
-
-                const remaining = Math.max(0, Math.floor((deadline - Date.now()) / 1000));
-                const mm = String(Math.floor(remaining / 60)).padStart(2, '0');
-                const ss = String(remaining % 60).padStart(2, '0');
-
-                el.textContent = remaining > 0
-                    ? `${I18N.expiresIn} ${mm}:${ss}`
-                    : I18N.expired;
-            }
-
-            function startTimer(newDeadline) {
-                if (newDeadline) {
-                    deadline = newDeadline;
-                }
-
-                tick();
-
-                if (interval) {
-                    clearInterval(interval);
-                }
-
-                if (deadline) {
-                    interval = setInterval(tick, 1000);
-                }
-            }
-
-            startTimer();
-
-            Livewire.on('code-sent', (data) => {
-                startTimer(new Date(data.expiresAt).getTime());
-            });
-        })();
-    </script>
 </div>
+
+<script>
+    // Outside the component's root <div> on purpose (same as
+    // forgot-password-code): Livewire then runs it as the component's own
+    // script, after Livewire has loaded. Inside the <div> it ran inline before
+    // Livewire existed, so Livewire.on() threw and "Resend code" never
+    // restarted the countdown.
+    (function () {
+        const el = document.getElementById('verifyCodeCountdown');
+        let deadline = el.dataset.expiresAt ? new Date(el.dataset.expiresAt).getTime() : null;
+        let interval = null;
+
+        // Translated on the server and read from the countdown's own
+        // data-* attributes (see the element above).
+        const I18N = {
+            expiresIn: el.dataset.expiresIn,
+            expired: el.dataset.expired,
+            noActiveCode: el.dataset.noActiveCode,
+        };
+
+        function tick() {
+            if (!deadline) {
+                // No code currently on file for this account (e.g. it was
+                // never actually sent) — say so instead of leaving this
+                // blank, which otherwise looks like the feature is broken.
+                el.textContent = I18N.noActiveCode;
+                return;
+            }
+
+            const remaining = Math.max(0, Math.floor((deadline - Date.now()) / 1000));
+            const mm = String(Math.floor(remaining / 60)).padStart(2, '0');
+            const ss = String(remaining % 60).padStart(2, '0');
+
+            el.textContent = remaining > 0
+                ? `${I18N.expiresIn} ${mm}:${ss}`
+                : I18N.expired;
+        }
+
+        function startTimer(newDeadline) {
+            if (newDeadline) {
+                deadline = newDeadline;
+            }
+
+            tick();
+
+            if (interval) {
+                clearInterval(interval);
+            }
+
+            if (deadline) {
+                interval = setInterval(tick, 1000);
+            }
+        }
+
+        startTimer();
+
+        Livewire.on('code-sent', (data) => {
+            startTimer(new Date(data.expiresAt).getTime());
+        });
+    })();
+</script>

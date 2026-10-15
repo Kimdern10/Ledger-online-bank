@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <meta name="description" content="{{ $description ?? 'Ledger is a modern bank built on an old idea: every dollar should be accounted for. Open an account, move money, and grow your balance in one calm, honest ledger.' }}">
 <title>{{ $title ?? 'Ledger Banking, kept in order' }}</title>
-<link rel="icon" href="{!! asset('img/favicon.svg') !!}" type="image/svg+xml" sizes="18x18">
+@include('partials.favicon')
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,72,400;0,72,500;0,72,600;0,72,700;1,72,400&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">

@@ -57,7 +57,13 @@ class SaltEdgeBankProvider implements BankProviderInterface
      */
     private const NOT_A_COUNTRY = ['XF', 'XO'];
 
-    private const CATALOG_CACHE_MINUTES = 60;
+    /**
+     * A day: downloading the catalogue takes ~12 seconds (measured), and a
+     * bank list barely changes from one day to the next. banks:refresh-catalogs
+     * (scheduled twice a day in routes/console.php) re-downloads it before
+     * it runs out, so a customer's search never waits for the download.
+     */
+    private const CATALOG_CACHE_MINUTES = 60 * 24;
 
     private const MAX_PAGES = 10;
 
@@ -127,6 +133,18 @@ class SaltEdgeBankProvider implements BankProviderInterface
             return BankRows::normalize($cached);
         }
 
+        return $this->refreshCatalog();
+    }
+
+    /**
+     * Downloads the catalogue again and caches it — the old copy stays in
+     * place if the download fails, so a hiccup at Salt Edge never empties
+     * the picker. Returns the banks it got ([] on failure).
+     *
+     * @return list<BankRow>
+     */
+    public function refreshCatalog(): array
+    {
         $catalog = $this->fetchCatalog();
 
         if ($catalog !== []) {

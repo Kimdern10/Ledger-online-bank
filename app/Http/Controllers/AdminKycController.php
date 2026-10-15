@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\FiltersAdminDecisions;
 use App\Models\AppNotification;
 use App\Models\KycVerification;
 use Illuminate\Http\RedirectResponse;
@@ -12,22 +13,36 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AdminKycController extends Controller
 {
+    use FiltersAdminDecisions;
+
     /**
      * Pending first (oldest first, so the longest-waiting customer is seen
      * first), then already-decided ones most-recent first — same shape as
      * AdminCardController::requests().
      */
-    public function requests(): View
+    public function requests(Request $request): View
     {
+        $search = $this->decisionSearch($request);
+        $decision = $this->decisionFilter($request, ['approved', 'rejected']);
+
         $pending = KycVerification::with('user')->where('status', 'pending')->oldest()
-            ->paginate(15, ['*'], 'pending_page');
+            ->paginate(15, ['*'], 'pending_page')
+            ->withQueryString();
 
         $decided = KycVerification::with(['user', 'reviewer'])
             ->where('status', '!=', 'pending')
+            ->when($decision, fn ($query) => $query->where('status', $decision))
+            ->tap(fn ($query) => $this->whereCustomerMatches($query, $search))
             ->latest('reviewed_at')
-            ->paginate(15, ['*'], 'decided_page');
+            ->paginate(15, ['*'], 'decided_page')
+            ->withQueryString();
 
-        return view('admin-kyc', ['pending' => $pending, 'decided' => $decided]);
+        return view('admin.kyc', [
+            'pending' => $pending,
+            'decided' => $decided,
+            'search' => $search,
+            'decision' => $decision,
+        ]);
     }
 
     /**

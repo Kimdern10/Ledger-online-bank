@@ -154,7 +154,9 @@
     if(backdrop) backdrop.classList.add('open');
     toggle.setAttribute('aria-expanded', 'true');
     toggle.innerHTML = iconClose;
-    document.body.style.overflow = 'hidden';
+    // The page behind stays put until a menu item (or the X / backdrop) is
+    // chosen — see html.nav-locked in welcome.css.
+    document.documentElement.classList.add('nav-locked');
     // Lets the floating support-chat bubble (.gs-launcher, see
     // guest-support-widget.blade.php) move out from behind the open
     // drawer instead of floating awkwardly over it — see the
@@ -167,7 +169,7 @@
     if(backdrop) backdrop.classList.remove('open');
     toggle.setAttribute('aria-expanded', 'false');
     toggle.innerHTML = iconMenu;
-    document.body.style.overflow = '';
+    document.documentElement.classList.remove('nav-locked');
     document.body.classList.remove('nav-open');
   }
 
@@ -181,6 +183,9 @@
 
   if(backdrop){
     backdrop.addEventListener('click', closeNav);
+    // Dragging on the dimmed page behind the drawer does nothing — on some
+    // phones a touch-drag there would otherwise still nudge the page.
+    backdrop.addEventListener('touchmove', function(e){ e.preventDefault(); }, {passive:false});
   }
 
   nav.querySelectorAll('a').forEach(function(link){
@@ -816,37 +821,78 @@ document.addEventListener('DOMContentLoaded', function(){
   var prev = document.getElementById('benefitPrev');
   var next = document.getElementById('benefitNext');
   if(!track || !prev || !next) return;
+
+  // Slides by itself in an endless loop: the cards are copied once onto the
+  // end, the track steps one card at a time, and on reaching the copies it
+  // jumps back to the matching original without animating — so it never
+  // visibly rewinds, and it still moves on wide screens where all four
+  // cards fit at once.
+  var AUTOPLAY_MS = 3500;
+  var originals = Array.prototype.slice.call(track.children);
+  var count = originals.length;
+  if(!count) return;
+
+  originals.forEach(function(slide){
+    var copy = slide.cloneNode(true);
+    copy.setAttribute('aria-hidden', 'true');
+    track.appendChild(copy);
+  });
+
   var index = 0;
+  var timer = null;
+  var hovering = false;
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  function slidesPerView(){
-    var w = window.innerWidth;
-    if(w <= 600) return 1;
-    if(w <= 900) return 2;
-    return 4;
+  function moveTo(i, animate){
+    index = i;
+    track.style.transition = animate ? '' : 'none';
+    track.style.transform = 'translateX(-' + (track.children[index].offsetLeft - track.children[0].offsetLeft) + 'px)';
+    if(!animate){
+      void track.offsetWidth; // apply the jump before the next animated move
+      track.style.transition = '';
+    }
   }
 
-  function update(){
-    var total = track.children.length;
-    var perView = slidesPerView();
-    var max = Math.max(0, total - perView);
-    if(index > max) index = max;
-    if(index < 0) index = 0;
-    var pct = (100 / total) * index;
-    track.style.transform = 'translateX(-' + pct + '%)';
+  function forward(){
+    if(index >= count){ moveTo(index - count, false); }
+    moveTo(index + 1, true);
   }
 
-  next.addEventListener('click', function(){
-    var total = track.children.length;
-    var perView = slidesPerView();
-    if(index < total - perView) index++;
-    update();
+  function backward(){
+    if(index <= 0){ moveTo(index + count, false); }
+    moveTo(index - 1, true);
+  }
+
+  // Once a move onto a copy finishes, swap to the identical original.
+  track.addEventListener('transitionend', function(e){
+    if(e.target === track && index >= count){ moveTo(index - count, false); }
   });
-  prev.addEventListener('click', function(){
-    if(index > 0) index--;
-    update();
-  });
-  window.addEventListener('resize', update);
-  update();
+
+  function stop(){
+    if(timer){ clearInterval(timer); timer = null; }
+  }
+
+  function start(){
+    stop();
+    if(reduceMotion || hovering || document.hidden) return;
+    timer = setInterval(forward, AUTOPLAY_MS);
+  }
+
+  next.addEventListener('click', function(){ forward(); start(); });
+  prev.addEventListener('click', function(){ backward(); start(); });
+
+  // Pauses while someone is reading a card (hover or keyboard focus) and
+  // while the tab is in the background.
+  var carousel = track.closest('.carousel-viewport') || track;
+  carousel.addEventListener('mouseenter', function(){ hovering = true; stop(); });
+  carousel.addEventListener('mouseleave', function(){ hovering = false; start(); });
+  carousel.addEventListener('focusin', function(){ hovering = true; stop(); });
+  carousel.addEventListener('focusout', function(){ hovering = false; start(); });
+  document.addEventListener('visibilitychange', start);
+
+  window.addEventListener('resize', function(){ moveTo(index, false); });
+  moveTo(0, false);
+  start();
 })();
 
 // ---------- Trust stat rings ----------

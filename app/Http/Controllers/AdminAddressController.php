@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\FiltersAdminDecisions;
 use App\Models\AddressVerification;
 use App\Models\AppNotification;
 use Illuminate\Http\RedirectResponse;
@@ -12,21 +13,35 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AdminAddressController extends Controller
 {
+    use FiltersAdminDecisions;
+
     /**
      * Same "pending oldest-first, decided most-recent-first" shape
      * AdminKycController::requests() uses.
      */
-    public function requests(): View
+    public function requests(Request $request): View
     {
+        $search = $this->decisionSearch($request);
+        $decision = $this->decisionFilter($request, ['approved', 'rejected']);
+
         $pending = AddressVerification::with('user')->where('status', 'pending')->oldest()
-            ->paginate(15, ['*'], 'pending_page');
+            ->paginate(15, ['*'], 'pending_page')
+            ->withQueryString();
 
         $decided = AddressVerification::with(['user', 'reviewer'])
             ->where('status', '!=', 'pending')
+            ->when($decision, fn ($query) => $query->where('status', $decision))
+            ->tap(fn ($query) => $this->whereCustomerMatches($query, $search))
             ->latest('reviewed_at')
-            ->paginate(15, ['*'], 'decided_page');
+            ->paginate(15, ['*'], 'decided_page')
+            ->withQueryString();
 
-        return view('admin-address', ['pending' => $pending, 'decided' => $decided]);
+        return view('admin.address', [
+            'pending' => $pending,
+            'decided' => $decided,
+            'search' => $search,
+            'decision' => $decision,
+        ]);
     }
 
     /**

@@ -754,3 +754,13 @@ body.nav-open .gs-launcher{
 @supports (overflow-x: clip){
   html, body{ overflow-x: clip; }
 }
+
+/* ============ Mobile menu open: page behind can't scroll ============
+   Added to <html> by welcome.js while the drawer is open, and removed as
+   soon as a link, the X or the backdrop is chosen. Only <html> is locked:
+   it controls page scrolling now that it has an overflow of its own (the
+   overflow-x: clip above). Locking <body> too would turn it into its own
+   scroll box and unstick the header (and the X button) off the screen.
+   The drawer itself can still scroll without dragging the page along. */
+html.nav-locked{ overflow:hidden; }
+.main-nav{ overscroll-behavior:contain; }

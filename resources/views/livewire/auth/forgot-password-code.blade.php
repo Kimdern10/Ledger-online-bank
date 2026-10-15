@@ -26,6 +26,36 @@ new class extends Component
     public ?string $status = null;
 
     /**
+     * When the code on screen runs out (ISO 8601), for the countdown.
+     */
+    public ?string $codeExpiresAt = null;
+
+    /**
+     * Where step 2 is remembered between page loads, so refreshing the
+     * "Enter your code" step doesn't drop the visitor back to step 1. Kept in
+     * the session rather than the URL so the email never shows in the
+     * address bar.
+     */
+    private const SESSION_KEY = 'password_reset_code_step';
+
+    public function mount(): void
+    {
+        $remembered = session(self::SESSION_KEY);
+
+        if (is_array($remembered) && is_string($remembered['email'] ?? null) && is_string($remembered['expires_at'] ?? null)) {
+            $this->email = $remembered['email'];
+            $this->codeExpiresAt = $remembered['expires_at'];
+            $this->step = 2;
+        }
+    }
+
+    private function rememberCodeStep(string $expiresAt): void
+    {
+        $this->codeExpiresAt = $expiresAt;
+        session([self::SESSION_KEY => ['email' => $this->email, 'expires_at' => $expiresAt]]);
+    }
+
+    /**
      * Step 1: look up the account and, if one exists, email it a 6-digit
      * code (see User's password_reset_code columns). The same status
      * message shows either way — this never reveals whether an email is
@@ -50,6 +80,7 @@ new class extends Component
         // account — same anti-enumeration reasoning as the status message.
         $this->status = __('authpage.status_code_sent_known', ['email' => $this->email]);
         $this->step = 2;
+        $this->rememberCodeStep($expiresAt->toIso8601String());
         $this->dispatch('code-sent', expiresAt: $expiresAt->toIso8601String());
     }
 
@@ -68,6 +99,7 @@ new class extends Component
 
         $this->code = '';
         $this->status = __('authpage.status_code_resent');
+        $this->rememberCodeStep($expiresAt->toIso8601String());
         $this->dispatch('code-sent', expiresAt: $expiresAt->toIso8601String());
     }
 
@@ -123,6 +155,8 @@ new class extends Component
 
         event(new PasswordReset($user));
 
+        session()->forget(self::SESSION_KEY);
+
         session()->flash('status', __('authpage.status_password_reset_done'));
 
         $this->redirect(route('login'), navigate: true);
@@ -135,7 +169,9 @@ new class extends Component
         $this->password = '';
         $this->password_confirmation = '';
         $this->status = null;
+        $this->codeExpiresAt = null;
         $this->resetErrorBag();
+        session()->forget(self::SESSION_KEY);
         $this->dispatch('code-cleared');
     }
 }; ?>
@@ -147,7 +183,13 @@ new class extends Component
          by JS until a code actually gets sent) and every update — first
          send, resend, or clearing back to step 1 — goes through a
          dispatched browser event instead of a fresh render. --}}
-    <div wire:ignore id="resetCodeCountdown" class="text-sm text-center" style="color:var(--ledger-text-2); display:none;"></div>
+    {{-- The translated words ride along as data-* attributes: Livewire serves
+         this component's <script> as a separate JS file that Blade never
+         renders, so {{ }} / @json can't be used inside it. --}}
+    <div wire:ignore id="resetCodeCountdown" class="text-sm text-center" style="color:var(--ledger-text-2); display:none;"
+         data-expires-in="{{ __('authpage.js_code_expires_in') }}"
+         data-expired="{{ __('authpage.js_code_expired_resend') }}"
+         data-expires-at="{{ $codeExpiresAt }}"></div>
 
     @if ($step === 1)
         <div>
@@ -234,12 +276,11 @@ new class extends Component
         let deadline = null;
         let interval = null;
 
-        // Resolved server-side with __() and handed over as JSON, same
-        // pattern send-receipt.blade.php's RECEIPT_I18N uses — keeps this a
-        // plain .blade.php script block rather than needing a build step.
+        // Translated on the server and read from the countdown's own data-*
+        // attributes (see the element above).
         const I18N = {
-            expiresIn: @json(__('authpage.js_code_expires_in')),
-            expired: @json(__('authpage.js_code_expired_resend')),
+            expiresIn: el.dataset.expiresIn,
+            expired: el.dataset.expired,
         };
 
         function tick() {
@@ -264,6 +305,11 @@ new class extends Component
                 clearInterval(interval);
             }
             interval = setInterval(tick, 1000);
+        }
+
+        // After a refresh on step 2, pick the countdown up where it was.
+        if (el.dataset.expiresAt) {
+            startTimer(el.dataset.expiresAt);
         }
 
         Livewire.on('code-sent', (data) => startTimer(data.expiresAt));

@@ -397,7 +397,7 @@ class AdminController extends Controller
             ->orderBy('account_deleted_at')
             ->paginate(20);
 
-        return view('admin-trash', ['users' => $users]);
+        return view('admin.trash', ['users' => $users]);
     }
 
     /**

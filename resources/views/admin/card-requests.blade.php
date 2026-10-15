@@ -55,9 +55,18 @@
   </div>
 
   <p class="section-label" style="margin:0 0 8px;">Decided recently</p>
+  @include('partials.admin-decision-filter', [
+    'action' => route('admin.card-requests'),
+    'search' => $search,
+    'selected' => $decision,
+    'field' => 'decision',
+    'options' => ['approved' => 'Approved', 'declined' => 'Declined'],
+    'allLabel' => 'All decisions',
+    'placeholder' => 'Search by customer name or email',
+  ])
   <div class="admin-card" style="padding:0; overflow-x:auto;">
     @if($decided->isEmpty())
-      <p class="admin-empty">No requests have been decided yet.</p>
+      <p class="admin-empty">{{ $search !== '' || $decision ? 'No decisions match your search.' : 'No requests have been decided yet.' }}</p>
     @else
       <table class="admin-table">
         <thead>
