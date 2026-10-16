@@ -78,4 +78,12 @@ return [
     'js_preparing_share' => 'Uw betalingsbewijs wordt voorbereid om te delen…',
     'js_share_error' => 'Het betalingsbewijs kon niet worden gedeeld. Probeer in plaats daarvan PDF downloaden.',
     'js_share_unsupported' => 'Delen wordt niet ondersteund in deze browser. Gebruik in plaats daarvan PDF downloaden.',
+    'row_recipient_name_check' => 'Naam ontvanger',
+    'recipient_name_verified' => 'Geverifieerd — naam teruggegeven door de ontvangende bank',
+    'recipient_name_match' => 'Naam komt overeen met de rekening (naam ingevoerd door afzender)',
+    'recipient_name_close_match' => 'Komt slechts gedeeltelijk overeen — niet geverifieerd door de bank',
+    'recipient_name_no_match' => 'Komt niet overeen met de rekening — niet geverifieerd door de bank',
+    'recipient_name_unavailable' => 'Verificatie niet beschikbaar — niet geverifieerd door de bank',
+    'recipient_name_failed' => 'Verificatie mislukt — niet geverifieerd door de bank',
+    'recipient_name_manual' => '',
 ];

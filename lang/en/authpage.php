@@ -130,4 +130,4 @@ return [
     'reset_by_text_note' => 'We will text it to the phone number on your account.',
     'code_texted_for_prefix' => 'Enter the 6-digit code we texted to the phone on the account for',
     'code_texted_for_suffix' => ', then choose a new password.',
-    'status_code_texted_known' => 'If :email has an account with a phone number, we have texted a 6-digit code to it.',];
+    'status_code_texted_known' => 'If :email has an account with a phone number, we have texted a 6-digit code to it.', ];

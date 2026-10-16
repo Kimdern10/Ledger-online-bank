@@ -20,4 +20,5 @@ return [
     'delete_account' => 'Eliminar cuenta',
     'logout' => 'Cerrar sesión',
     'no_banks_listed' => 'Aún no hay bancos disponibles.',
+    'security' => 'Seguridad: dos factores y passkeys',
 ];

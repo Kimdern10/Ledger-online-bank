@@ -78,4 +78,12 @@ return [
     'js_preparing_share' => 'جارٍ تجهيز إيصالك للمشاركة…',
     'js_share_error' => 'تعذّرت مشاركة الإيصال. جرّب التنزيل بدلاً من ذلك.',
     'js_share_unsupported' => 'المشاركة غير مدعومة في هذا المتصفح. استخدم التنزيل بدلاً من ذلك.',
+    'row_recipient_name_check' => 'اسم المستلم',
+    'recipient_name_verified' => 'تم التحقق — الاسم مُرسل من بنك المستلم',
+    'recipient_name_match' => 'الاسم مطابق للحساب (الاسم أدخله المرسل)',
+    'recipient_name_close_match' => 'تطابق جزئي فقط — لم يتحقق منه البنك',
+    'recipient_name_no_match' => 'غير مطابق للحساب — لم يتحقق منه البنك',
+    'recipient_name_unavailable' => 'التحقق غير متاح — لم يتحقق منه البنك',
+    'recipient_name_failed' => 'فشل التحقق — لم يتحقق منه البنك',
+    'recipient_name_manual' => '',
 ];

@@ -43,4 +43,5 @@ return [
     'nav_message' => 'Ujumbe',
     'nav_profile' => 'Wasifu',
     'nav_send_money' => 'Tuma pesa',
+    'nav_dashboard' => 'Dashibodi',
 ];

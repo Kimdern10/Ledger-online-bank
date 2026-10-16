@@ -20,4 +20,5 @@ return [
     'delete_account' => 'Xóa tài khoản',
     'logout' => 'Đăng xuất',
     'no_banks_listed' => 'Chưa có ngân hàng nào được liệt kê.',
+    'security' => 'Bảo mật: hai lớp & passkey',
 ];

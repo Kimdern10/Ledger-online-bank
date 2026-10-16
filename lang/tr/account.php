@@ -52,4 +52,5 @@ return [
     'delete_my_account' => 'Hesabımı sil',
     'delete_confirm_dialog' => 'Hesabınızı kalıcı olarak silmek istediğinizden emin misiniz?',
     'withdraw_first' => 'Önce kalan bakiyenizi çekin veya gönderin.',
+    'phone_hint' => 'Kayıt ve şifre sıfırlama kodlarını SMS ile almak için ülke kodunuzu ekleyin (örneğin +234 801 234 5678).',
 ];

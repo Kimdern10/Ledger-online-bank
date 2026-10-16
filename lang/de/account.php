@@ -52,4 +52,5 @@ return [
     'delete_my_account' => 'Mein Konto löschen',
     'delete_confirm_dialog' => 'Bist du sicher, dass du dein Konto dauerhaft löschen möchtest?',
     'withdraw_first' => 'Hebe zuerst dein verbleibendes Guthaben ab oder sende es.',
+    'phone_hint' => 'Geben Sie Ihre Landesvorwahl an (zum Beispiel +234 801 234 5678), um Codes für die Registrierung und das Zurücksetzen des Passworts per SMS zu erhalten.',
 ];

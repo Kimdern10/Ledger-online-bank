@@ -20,4 +20,5 @@ return [
     'danger_zone' => 'Zone sensible',
     'delete_account' => 'Supprimer le compte',
     'logout' => 'Déconnexion',
+    'security' => 'Sécurité : double authentification et passkeys',
 ];

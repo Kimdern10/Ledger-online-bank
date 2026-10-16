@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'title' => 'ድጋፍ',
+    'header_title' => 'የ Ledger ድጋፍ',
+    'past_conversations_title' => 'ያለፉ ውይይቶች',
+    'conversation_from' => 'በ :date የተደረገ ውይይት',
+    'no_past_conversations' => 'እስካሁን ያለፉ ውይይቶች የሉም። የሚጨርሱት (ወይም እንደገና የሚጀምሩት) ማንኛውም ነገር እዚህ ይታያል።',
+    'start_new' => 'አዲስ ውይይት ጀምር',
+    'start_new_confirm' => 'አዲስ ውይይት ይጀመር? የአሁኑ ውይይትዎ በያለፉ ውይይቶች ውስጥ ይቀመጣል።',
+    'start_new_button' => 'አዲስ ውይይት ጀምር',
+    'viewing_past' => 'ያለፈ ውይይት እያዩ ነው (ለንባብ ብቻ)።',
+    'assistant_intro' => 'ረዳታችን በመጀመሪያ ይመልሳል። አስፈላጊ ከሆነ እውነተኛ የቡድን አባል ይቀላቀላል።',
+    'back_to_conversations' => 'ወደ ውይይትዎ ተመለስ',
+    'view_past_conversations' => 'ያለፉ ውይይቶችን ይመልከቱ',
+    'greeting' => 'ሰላም :name 👋 ለመርዳት እዚህ ነኝ። ዛሬ በምን ልረዳዎት እችላለሁ?',
+    'quick_card_issue' => 'የካርድ ችግር',
+    'quick_payment_problem' => 'የክፍያ ችግር',
+    'quick_account_access' => 'የመለያ መዳረሻ',
+    'quick_something_else' => 'ሌላ',
+    'attach_file' => 'ምስል ወይም PDF አያይዝ',
+    'type_message' => 'መልዕክት ይጻፉ…',
+    'not_sent_retry' => ' · አልተላከም፣ እንደገና ይሞክሩ',
+    'closed_admin' => 'ቡድናችን ይህን ውይይት ጨርሷል።',
+    'closed_customer' => 'ይህን ውይይት ጨርሰዋል።',
+    'closed_timeout' => 'በጊዜ ምንም ምላሽ ስላልመጣ ይህ ውይይት በራስ-ሰር ተዘግቷል።',
+    'closed_default' => 'ይህ ውይይት አብቅቷል።',
+];

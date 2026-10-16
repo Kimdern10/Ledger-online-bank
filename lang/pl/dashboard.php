@@ -41,4 +41,5 @@ return [
     'nav_message' => 'Wiadomość',
     'nav_profile' => 'Profil',
     'nav_send_money' => 'Wyślij pieniądze',
+    'nav_dashboard' => 'Pulpit',
 ];

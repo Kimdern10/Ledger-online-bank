@@ -15,7 +15,7 @@ use App\Models\User;
  * (all of which move the balance), and demo card purchases (which don't —
  * 'affects_balance' => false keeps them out of money in/out totals).
  *
- * @phpstan-type HistoryItem array{type: string, name: mixed, label: mixed, amount_raw: float, amount_display: string, created_at: mixed, url: string|null, affects_balance: bool}
+ * @phpstan-type HistoryItem array{type: string, name: mixed, label: mixed, amount_raw: float, amount_display: string, created_at: mixed, url: string|null, affects_balance: bool, description: string}
  */
 final class TransactionFeed
 {
@@ -40,6 +40,7 @@ final class TransactionFeed
                 // old transactions. See TransferController::receipt().
                 'url' => route('send.receipt', ['reference' => $transfer->reference, 'from' => 'history']),
                 'affects_balance' => true,
+                'description' => (string) ($transfer->note ?: $transfer->reference),
             ];
         });
 
@@ -53,6 +54,7 @@ final class TransactionFeed
                 'created_at' => $transfer->created_at,
                 'url' => route('send.receipt', ['reference' => $transfer->reference, 'from' => 'history']),
                 'affects_balance' => true,
+                'description' => (string) ($transfer->note ?: $transfer->reference),
             ];
         });
 
@@ -66,6 +68,7 @@ final class TransactionFeed
                 'created_at' => $transfer->created_at,
                 'url' => route('send.receipt', ['reference' => $transfer->reference, 'from' => 'history']),
                 'affects_balance' => true,
+                'description' => (string) ($transfer->note ?: $transfer->reference),
             ];
         });
 
@@ -79,6 +82,7 @@ final class TransactionFeed
                 'created_at' => $transfer->created_at,
                 'url' => route('send.receipt', ['reference' => $transfer->reference, 'from' => 'history']),
                 'affects_balance' => true,
+                'description' => (string) ($transfer->note ?: $transfer->reference),
             ];
         });
 
@@ -92,6 +96,7 @@ final class TransactionFeed
                 'created_at' => $withdrawal->created_at,
                 'url' => route('withdraw.receipt', $withdrawal),
                 'affects_balance' => true,
+                'description' => (string) $withdrawal->reference,
             ];
         });
 
@@ -105,6 +110,7 @@ final class TransactionFeed
                 'created_at' => $topUp->created_at,
                 'url' => route('top-up.receipt', $topUp),
                 'affects_balance' => true,
+                'description' => (string) $topUp->reference,
             ];
         });
 
@@ -133,6 +139,7 @@ final class TransactionFeed
                     // beyond what the row itself already said).
                     'url' => route('history.adjustment.receipt', $adj),
                     'affects_balance' => true,
+                    'description' => $isCredit ? (string) ($adj->sender_bank_name ?: '') : '',
                 ];
             });
 
@@ -153,6 +160,7 @@ final class TransactionFeed
                     // debited $user->balance, so it's shown but left out of
                     // the Money in/out totals below.
                     'affects_balance' => false,
+                    'description' => '',
                 ];
             });
 

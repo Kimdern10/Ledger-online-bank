@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'title' => 'सहाय्य',
+    'header_title' => 'Ledger सहाय्य',
+    'past_conversations_title' => 'मागील संभाषणे',
+    'conversation_from' => ':date चे संभाषण',
+    'no_past_conversations' => 'अजून मागील संभाषणे नाहीत. तुम्ही संपवलेले (किंवा पुन्हा सुरू केलेले) काहीही येथे दिसेल.',
+    'start_new' => 'नवीन संभाषण सुरू करा',
+    'start_new_confirm' => 'नवीन संभाषण सुरू करायचे? तुमचे सध्याचे चॅट मागील संभाषणांमध्ये जतन होईल.',
+    'start_new_button' => 'नवीन संभाषण सुरू करा',
+    'viewing_past' => 'मागील संभाषण पाहत आहात (फक्त वाचण्यासाठी).',
+    'assistant_intro' => 'आमचा सहाय्यक आधी उत्तर देतो. गरज पडताच टीमचा खरा सदस्य सहभागी होतो.',
+    'back_to_conversations' => 'तुमच्या संभाषणांवर परत जा',
+    'view_past_conversations' => 'मागील संभाषणे पहा',
+    'greeting' => 'नमस्कार :name 👋 मी मदतीसाठी येथे आहे. आज मी तुम्हाला कशात मदत करू शकतो?',
+    'quick_card_issue' => 'कार्ड समस्या',
+    'quick_payment_problem' => 'पेमेंट समस्या',
+    'quick_account_access' => 'खाते प्रवेश',
+    'quick_something_else' => 'काहीतरी वेगळे',
+    'attach_file' => 'फोटो किंवा PDF जोडा',
+    'type_message' => 'संदेश टाइप करा…',
+    'not_sent_retry' => ' · पाठवले नाही, पुन्हा प्रयत्न करा',
+    'closed_admin' => 'आमच्या टीमने हे संभाषण संपवले.',
+    'closed_customer' => 'तुम्ही हे संभाषण संपवले.',
+    'closed_timeout' => 'वेळेत उत्तर न आल्याने हे संभाषण आपोआप बंद झाले.',
+    'closed_default' => 'हे संभाषण संपले आहे.',
+];

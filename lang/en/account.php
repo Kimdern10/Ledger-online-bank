@@ -5,7 +5,7 @@ return [
     'first_name' => 'First name',
     'last_name' => 'Last name',
     'middle_name' => 'Middle name',
-    'phone_hint' => 'Include your country code (for example +234 801 234 5678) to get verification and transfer codes by text message.',
+    'phone_hint' => 'Include your country code (for example +234 801 234 5678) to get sign-up and password reset codes by text message.',
     'optional' => '(optional)',
     'email' => 'Email',
     'phone' => 'Phone',

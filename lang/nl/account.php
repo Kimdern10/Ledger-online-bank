@@ -52,4 +52,5 @@ return [
     'delete_my_account' => 'Mijn account verwijderen',
     'delete_confirm_dialog' => 'Weet u zeker dat u uw account permanent wilt verwijderen?',
     'withdraw_first' => 'Neem eerst uw resterende saldo op of verstuur het.',
+    'phone_hint' => 'Voeg je landcode toe (bijvoorbeeld +234 801 234 5678) om codes voor aanmelden en wachtwoordherstel per sms te ontvangen.',
 ];

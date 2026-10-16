@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'title' => 'Ügyfélszolgálat',
+    'header_title' => 'Ledger ügyfélszolgálat',
+    'past_conversations_title' => 'Korábbi beszélgetések',
+    'conversation_from' => 'Beszélgetés: :date',
+    'no_past_conversations' => 'Még nincsenek korábbi beszélgetések. Minden, amit befejez (vagy újrakezd), itt jelenik meg.',
+    'start_new' => 'Új beszélgetés indítása',
+    'start_new_confirm' => 'Új beszélgetést indít? A jelenlegi csevegés a korábbi beszélgetések közé kerül.',
+    'start_new_button' => 'Új beszélgetés indítása',
+    'viewing_past' => 'Korábbi beszélgetés megtekintése (csak olvasható).',
+    'assistant_intro' => 'Először asszisztensünk válaszol. Egy valódi munkatárs azonnal bekapcsolódik, amint szükség van rá.',
+    'back_to_conversations' => 'Vissza a beszélgetéseihez',
+    'view_past_conversations' => 'Korábbi beszélgetések megtekintése',
+    'greeting' => 'Szia, :name 👋 Azért vagyok itt, hogy segítsek. Miben segíthetek ma?',
+    'quick_card_issue' => 'Kártyaprobléma',
+    'quick_payment_problem' => 'Fizetési probléma',
+    'quick_account_access' => 'Hozzáférés a fiókhoz',
+    'quick_something_else' => 'Valami más',
+    'attach_file' => 'Fénykép vagy PDF csatolása',
+    'type_message' => 'Írjon üzenetet…',
+    'not_sent_retry' => ' · nem ment el, próbálja újra',
+    'closed_admin' => 'Csapatunk lezárta ezt a beszélgetést.',
+    'closed_customer' => 'Ön lezárta ezt a beszélgetést.',
+    'closed_timeout' => 'A beszélgetés automatikusan lezárult, mert nem érkezett időben válasz.',
+    'closed_default' => 'Ez a beszélgetés véget ért.',
+];

@@ -78,4 +78,12 @@ return [
     'js_preparing_share' => 'Đang chuẩn bị biên lai của bạn để chia sẻ…',
     'js_share_error' => 'Không thể chia sẻ biên lai. Hãy thử Tải xuống thay thế.',
     'js_share_unsupported' => 'Trình duyệt này không hỗ trợ chia sẻ. Hãy sử dụng Tải xuống thay thế.',
+    'row_recipient_name_check' => 'Tên người nhận',
+    'recipient_name_verified' => 'Đã xác minh — tên do ngân hàng nhận trả về',
+    'recipient_name_match' => 'Tên khớp với tài khoản (tên do người gửi nhập)',
+    'recipient_name_close_match' => 'Chỉ khớp một phần — ngân hàng chưa xác minh',
+    'recipient_name_no_match' => 'Không khớp với tài khoản — ngân hàng chưa xác minh',
+    'recipient_name_unavailable' => 'Không thể xác minh — ngân hàng chưa xác minh',
+    'recipient_name_failed' => 'Xác minh thất bại — ngân hàng chưa xác minh',
+    'recipient_name_manual' => '',
 ];

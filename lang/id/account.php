@@ -52,4 +52,5 @@ return [
     'delete_my_account' => 'Hapus akun saya',
     'delete_confirm_dialog' => 'Apakah Anda yakin ingin menghapus akun Anda secara permanen?',
     'withdraw_first' => 'Tarik tunai atau kirim sisa saldo Anda terlebih dahulu.',
+    'phone_hint' => 'Sertakan kode negara Anda (misalnya +234 801 234 5678) untuk menerima kode pendaftaran dan pengaturan ulang kata sandi lewat SMS.',
 ];

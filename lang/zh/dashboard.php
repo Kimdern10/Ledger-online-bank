@@ -43,4 +43,5 @@ return [
     'nav_message' => '消息',
     'nav_profile' => '个人资料',
     'nav_send_money' => '转账',
+    'nav_dashboard' => '仪表板',
 ];

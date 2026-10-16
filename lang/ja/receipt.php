@@ -78,4 +78,12 @@ return [
     'js_preparing_share' => '共有用の領収書を準備しています…',
     'js_share_error' => '領収書を共有できませんでした。代わりにダウンロードをお試しください。',
     'js_share_unsupported' => 'このブラウザでは共有機能がサポートされていません。代わりにダウンロードをご利用ください。',
+    'row_recipient_name_check' => '受取人名',
+    'recipient_name_verified' => '確認済み — 受取銀行から返された名前',
+    'recipient_name_match' => '名前は口座と一致（送金者が入力した名前）',
+    'recipient_name_close_match' => '一部のみ一致 — 銀行による確認なし',
+    'recipient_name_no_match' => '口座と一致しません — 銀行による確認なし',
+    'recipient_name_unavailable' => '確認できません — 銀行による確認なし',
+    'recipient_name_failed' => '確認に失敗しました — 銀行による確認なし',
+    'recipient_name_manual' => '',
 ];

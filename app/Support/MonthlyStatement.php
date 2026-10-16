@@ -14,12 +14,18 @@ use Carbon\CarbonImmutable;
  * emailed, as a PDF attachment (App\Mail\StatementMail) — there's no page in
  * the app that shows them.
  *
+ * Balances are worked backwards from the customer's balance today: the
+ * closing balance is today's balance minus everything that moved it after
+ * the period, and each row's balance runs forward from the opening one.
+ *
  * @phpstan-import-type HistoryItem from TransactionFeed
+ *
+ * @phpstan-type StatementRow array{type: string, name: mixed, label: mixed, amount_raw: float, amount_display: string, created_at: mixed, url: string|null, affects_balance: bool, description: string, balance: float}
  */
 final class MonthlyStatement
 {
     /**
-     * @param  array<int, HistoryItem>  $items
+     * @param  array<int, StatementRow>  $items
      */
     private function __construct(
         public readonly User $user,
@@ -28,6 +34,8 @@ final class MonthlyStatement
         public readonly array $items,
         public readonly float $moneyIn,
         public readonly float $moneyOut,
+        public readonly float $openingBalance,
+        public readonly float $closingBalance,
     ) {}
 
     /**
@@ -46,19 +54,33 @@ final class MonthlyStatement
         $from = $from->startOfDay();
         $to = $to->endOfDay();
 
-        $items = collect(TransactionFeed::for($user))
-            ->where('affects_balance', true)
+        $moving = collect(TransactionFeed::for($user))->where('affects_balance', true);
+
+        $items = $moving
             ->filter(fn (array $item) => $item['created_at']->between($from, $to))
             ->sortBy('created_at')
             ->values();
+
+        $movedSince = (float) $moving->filter(fn (array $item) => $item['created_at']->greaterThan($to))->sum('amount_raw');
+        $closingBalance = round((float) $user->balance - $movedSince, 2);
+        $openingBalance = round($closingBalance - (float) $items->sum('amount_raw'), 2);
+
+        $running = $openingBalance;
+        $rows = $items->map(function (array $item) use (&$running): array {
+            $running = round($running + $item['amount_raw'], 2);
+
+            return $item + ['balance' => $running];
+        });
 
         return new self(
             $user,
             $from,
             $to,
-            $items->all(),
+            $rows->all(),
             (float) $items->where('amount_raw', '>', 0)->sum('amount_raw'),
             abs((float) $items->where('amount_raw', '<', 0)->sum('amount_raw')),
+            $openingBalance,
+            $closingBalance,
         );
     }
 

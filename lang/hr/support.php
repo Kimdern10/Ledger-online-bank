@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'title' => 'Podrška',
+    'header_title' => 'Ledger podrška',
+    'past_conversations_title' => 'Prethodni razgovori',
+    'conversation_from' => 'Razgovor od :date',
+    'no_past_conversations' => 'Još nema prethodnih razgovora. Sve što završite (ili započnete ispočetka) pojavit će se ovdje.',
+    'start_new' => 'Započni novi razgovor',
+    'start_new_confirm' => 'Započeti novi razgovor? Trenutni razgovor bit će spremljen u prethodne razgovore.',
+    'start_new_button' => 'Započni novi razgovor',
+    'viewing_past' => 'Pregledavate prethodni razgovor (samo za čitanje).',
+    'assistant_intro' => 'Prvi odgovara naš asistent. Pravi član tima uključuje se čim je potrebno.',
+    'back_to_conversations' => 'Natrag na vaše razgovore',
+    'view_past_conversations' => 'Prikaži prethodne razgovore',
+    'greeting' => 'Pozdrav :name 👋 Tu sam da pomognem. S čime vam mogu pomoći danas?',
+    'quick_card_issue' => 'Problem s karticom',
+    'quick_payment_problem' => 'Problem s plaćanjem',
+    'quick_account_access' => 'Pristup računu',
+    'quick_something_else' => 'Nešto drugo',
+    'attach_file' => 'Priloži fotografiju ili PDF',
+    'type_message' => 'Upišite poruku…',
+    'not_sent_retry' => ' · nije poslano, pokušajte ponovno',
+    'closed_admin' => 'Naš je tim završio ovaj razgovor.',
+    'closed_customer' => 'Završili ste ovaj razgovor.',
+    'closed_timeout' => 'Ovaj je razgovor automatski zatvoren jer odgovor nije stigao na vrijeme.',
+    'closed_default' => 'Ovaj je razgovor završio.',
+];

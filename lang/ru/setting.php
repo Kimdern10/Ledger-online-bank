@@ -20,4 +20,5 @@ return [
     'danger_zone' => 'Опасная зона',
     'delete_account' => 'Удалить аккаунт',
     'logout' => 'Выйти',
+    'security' => 'Безопасность: двухфакторная защита и passkeys',
 ];

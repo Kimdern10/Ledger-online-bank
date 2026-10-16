@@ -20,4 +20,5 @@ return [
     'danger_zone' => 'Zona de risco',
     'delete_account' => 'Excluir conta',
     'logout' => 'Sair',
+    'security' => 'Segurança: dois fatores e passkeys',
 ];

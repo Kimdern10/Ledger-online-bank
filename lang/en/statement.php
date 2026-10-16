@@ -20,6 +20,17 @@ return [
     'transaction_count' => '{0} No transactions|{1} 1 transaction|[2,*] :count transactions',
     'empty' => 'No money moved in or out of your account in this period.',
     'total' => 'Total',
+    'account_number' => 'Account number',
+    'opening_balance' => 'Opening balance',
+    'closing_balance' => 'Closing balance',
+    'spend_account' => 'Spend account',
+    'type' => 'Type',
+    'date_time' => 'Date/Time',
+    'category' => 'Category',
+    'to_from' => 'To / From',
+    'balance' => 'Balance',
+    'page' => 'Page',
+    'signature' => 'Authorised signature',
 
     // The covering email (the statement itself is the attached PDF).
     'email_heading' => 'Statement of Account',

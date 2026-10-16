@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'title' => 'Usizo',
+    'header_title' => 'Usizo lwe-Ledger',
+    'past_conversations_title' => 'Izingxoxo ezedlule',
+    'conversation_from' => 'Ingxoxo yangomhla ka-:date',
+    'no_past_conversations' => 'Azikabi khona izingxoxo ezedlule. Noma yini oyiqedayo (noma oqala kabusha) izovela lapha.',
+    'start_new' => 'Qala ingxoxo entsha',
+    'start_new_confirm' => 'Qala ingxoxo entsha? Ingxoxo yakho yamanje izolondolozwa ezingxoxweni ezedlule.',
+    'start_new_button' => 'Qala ingxoxo entsha',
+    'viewing_past' => 'Ubuka ingxoxo edlule (ukufunda kuphela).',
+    'assistant_intro' => 'Umsizi wethu uphendula kuqala. Ilungu lethimba langempela lingena uma lidingeka.',
+    'back_to_conversations' => 'Buyela ezingxoxweni zakho',
+    'view_past_conversations' => 'Buka izingxoxo ezedlule',
+    'greeting' => 'Sawubona :name 👋 Ngilapha ukuze ngisize. Ngingakusiza ngani namuhla?',
+    'quick_card_issue' => 'Inkinga yekhadi',
+    'quick_payment_problem' => 'Inkinga yenkokhelo',
+    'quick_account_access' => 'Ukufinyelela ku-akhawunti',
+    'quick_something_else' => 'Okunye',
+    'attach_file' => 'Namathisela isithombe noma i-PDF',
+    'type_message' => 'Bhala umyalezo…',
+    'not_sent_retry' => ' · akuthunyelwanga, zama futhi',
+    'closed_admin' => 'Ithimba lethu liqede le ngxoxo.',
+    'closed_customer' => 'Uqede le ngxoxo.',
+    'closed_timeout' => 'Le ngxoxo ivaleke ngokuzenzakalelayo ngoba ayikho impendulo eyafika ngesikhathi.',
+    'closed_default' => 'Le ngxoxo iphelile.',
+];

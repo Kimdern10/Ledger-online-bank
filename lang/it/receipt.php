@@ -78,4 +78,12 @@ return [
     'js_preparing_share' => 'Preparazione della ricevuta da condividere…',
     'js_share_error' => 'Impossibile condividere la ricevuta. Prova invece a scaricarla.',
     'js_share_unsupported' => 'La condivisione non è supportata in questo browser. Usa invece Scarica.',
+    'row_recipient_name_check' => 'Nome del beneficiario',
+    'recipient_name_verified' => 'Verificato — nome restituito dalla banca del beneficiario',
+    'recipient_name_match' => 'Il nome corrisponde al conto (nome inserito dal mittente)',
+    'recipient_name_close_match' => 'Corrispondenza solo parziale — non verificato dalla banca',
+    'recipient_name_no_match' => 'Non corrisponde al conto — non verificato dalla banca',
+    'recipient_name_unavailable' => 'Verifica non disponibile — non verificato dalla banca',
+    'recipient_name_failed' => 'Verifica non riuscita — non verificato dalla banca',
+    'recipient_name_manual' => '',
 ];

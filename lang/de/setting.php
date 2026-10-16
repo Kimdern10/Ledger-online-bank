@@ -20,4 +20,5 @@ return [
     'delete_account' => 'Konto löschen',
     'logout' => 'Abmelden',
     'no_banks_listed' => 'Es sind noch keine Banken aufgeführt.',
+    'security' => 'Sicherheit: Zwei-Faktor & Passkeys',
 ];

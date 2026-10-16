@@ -65,11 +65,48 @@ test('the PDF lists only that period, with totals and full dates', function () {
     expect($html)
         ->toContain('Salary October')
         ->not->toContain('Refund September')
-        ->toContain('+$500.00')
-        ->toContain('-$120.50')
-        ->toContain('5 Oct 2026')
-        ->toContain('4471')
+        ->toContain('$500.00')
+        ->toContain('$120.50')
+        ->toContain('05/10/26')
+        ->toContain('01/10/2026 - 31/10/2026')
+        ->toContain('200012344471')
         ->toContain('ada@example.test');
+});
+
+test('the PDF shows opening, closing and running balances with the Ledger stamp and signature', function () {
+    // $954.50 today, nothing moved since October: October opened on
+    // $954.50 - ($500.00 in - $120.50 out) = $575.00.
+    $this->customer->forceFill(['balance' => '954.50'])->save();
+
+    $statement = (new StatementMail($this->customer, '2026-10-01', '2026-10-31'))->statement();
+
+    expect($statement->openingBalance)->toBe(575.0)
+        ->and($statement->closingBalance)->toBe(954.5)
+        ->and(array_column($statement->items, 'balance'))->toBe([1075.0, 954.5]);
+
+    $html = view('pdf.statement', ['statement' => $statement])->render();
+
+    expect($html)
+        ->toContain('Summary')
+        ->toContain('Spend account')
+        ->toContain('Opening balance')
+        ->toContain('$575.00')
+        ->toContain('$1,075.00')
+        ->toContain('$954.50')
+        ->toContain('Date/Time')
+        ->toContain('To / From')
+        ->toContain('Authorised signature')
+        ->toContain('data:image/svg+xml;base64,');
+});
+
+test('a statement for an earlier month subtracts what moved after it', function () {
+    $this->customer->forceFill(['balance' => '954.50'])->save();
+
+    $september = (new StatementMail($this->customer, '2026-09-01', '2026-09-30'))->statement();
+
+    // October's +$500.00 and -$120.50 happened after September closed.
+    expect($september->closingBalance)->toBe(575.0)
+        ->and($september->openingBalance)->toBe(500.0);
 });
 
 test('a requested statement says to contact support if it was not you', function () {
@@ -121,7 +158,8 @@ test('a statement for exact dates lists only those days', function () {
     $html = view('pdf.statement', ['statement' => $mail->statement()])->render();
 
     $mail->assertHasSubject('Your Ledger statement for 1 Oct 2026 – 10 Oct 2026');
-    expect($html)->toContain('Salary October')->not->toContain('120.50');
+    expect($html)->toContain('Salary October')->not->toContain('12/10/26')
+        ->and($mail->statement()->items)->toHaveCount(1);
 });
 
 test('a statement cannot cover future days, days before the account, or a backwards range', function () {

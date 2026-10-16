@@ -52,4 +52,5 @@ return [
     'delete_my_account' => 'Elimina il mio account',
     'delete_confirm_dialog' => 'Sei sicuro di voler eliminare definitivamente il tuo account?',
     'withdraw_first' => 'Preleva o invia prima il saldo rimanente.',
+    'phone_hint' => 'Includi il prefisso del tuo paese (ad esempio +234 801 234 5678) per ricevere via SMS i codici di registrazione e di reimpostazione della password.',
 ];

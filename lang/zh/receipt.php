@@ -78,4 +78,12 @@ return [
     'js_preparing_share' => '正在准备要分享的收据…',
     'js_share_error' => '无法分享收据。请改用下载。',
     'js_share_unsupported' => '此浏览器不支持分享功能。请改用下载。',
+    'row_recipient_name_check' => '收款人姓名',
+    'recipient_name_verified' => '已验证 — 姓名由收款银行返回',
+    'recipient_name_match' => '姓名与账户一致（姓名由付款人填写）',
+    'recipient_name_close_match' => '仅部分匹配 — 未经银行验证',
+    'recipient_name_no_match' => '与账户不一致 — 未经银行验证',
+    'recipient_name_unavailable' => '无法验证 — 未经银行验证',
+    'recipient_name_failed' => '验证失败 — 未经银行验证',
+    'recipient_name_manual' => '',
 ];

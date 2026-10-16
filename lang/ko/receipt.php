@@ -78,4 +78,12 @@ return [
     'js_preparing_share' => '공유할 영수증을 준비하는 중…',
     'js_share_error' => '영수증을 공유할 수 없습니다. 대신 다운로드를 이용해 주세요.',
     'js_share_unsupported' => '이 브라우저에서는 공유 기능이 지원되지 않습니다. 대신 다운로드를 이용해 주세요.',
+    'row_recipient_name_check' => '받는 사람 이름',
+    'recipient_name_verified' => '확인됨 — 수취 은행에서 반환한 이름',
+    'recipient_name_match' => '이름이 계좌와 일치함(보낸 사람이 입력한 이름)',
+    'recipient_name_close_match' => '일부만 일치 — 은행에서 확인하지 않음',
+    'recipient_name_no_match' => '계좌와 일치하지 않음 — 은행에서 확인하지 않음',
+    'recipient_name_unavailable' => '확인 불가 — 은행에서 확인하지 않음',
+    'recipient_name_failed' => '확인 실패 — 은행에서 확인하지 않음',
+    'recipient_name_manual' => '',
 ];

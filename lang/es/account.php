@@ -52,4 +52,5 @@ return [
     'delete_my_account' => 'Eliminar mi cuenta',
     'delete_confirm_dialog' => '¿Estás seguro de que deseas eliminar permanentemente tu cuenta?',
     'withdraw_first' => 'Retira o envía primero tu saldo restante.',
+    'phone_hint' => 'Incluye el código de tu país (por ejemplo +234 801 234 5678) para recibir por SMS los códigos de registro y de restablecimiento de contraseña.',
 ];

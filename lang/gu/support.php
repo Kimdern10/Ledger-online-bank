@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'title' => 'સહાય',
+    'header_title' => 'Ledger સહાય',
+    'past_conversations_title' => 'અગાઉની વાતચીત',
+    'conversation_from' => ':date ની વાતચીત',
+    'no_past_conversations' => 'હજી કોઈ અગાઉની વાતચીત નથી. તમે સમાપ્ત કરેલી (અથવા ફરી શરૂ કરેલી) કોઈપણ વાતચીત અહીં દેખાશે.',
+    'start_new' => 'નવી વાતચીત શરૂ કરો',
+    'start_new_confirm' => 'નવી વાતચીત શરૂ કરવી છે? તમારી વર્તમાન ચૅટ અગાઉની વાતચીતમાં સચવાશે.',
+    'start_new_button' => 'નવી વાતચીત શરૂ કરો',
+    'viewing_past' => 'અગાઉની વાતચીત જોઈ રહ્યા છો (ફક્ત વાંચવા માટે).',
+    'assistant_intro' => 'અમારો સહાયક પહેલા જવાબ આપે છે. જરૂર પડતાં જ ટીમનો ખરો સભ્ય જોડાય છે.',
+    'back_to_conversations' => 'તમારી વાતચીત પર પાછા જાઓ',
+    'view_past_conversations' => 'અગાઉની વાતચીત જુઓ',
+    'greeting' => 'નમસ્તે :name 👋 હું મદદ માટે અહીં છું. આજે હું તમને શેમાં મદદ કરી શકું?',
+    'quick_card_issue' => 'કાર્ડ સમસ્યા',
+    'quick_payment_problem' => 'ચુકવણી સમસ્યા',
+    'quick_account_access' => 'ખાતા ઍક્સેસ',
+    'quick_something_else' => 'બીજું કંઈક',
+    'attach_file' => 'ફોટો અથવા PDF જોડો',
+    'type_message' => 'સંદેશ લખો…',
+    'not_sent_retry' => ' · મોકલાયું નહીં, ફરી પ્રયાસ કરો',
+    'closed_admin' => 'અમારી ટીમે આ વાતચીત સમાપ્ત કરી.',
+    'closed_customer' => 'તમે આ વાતચીત સમાપ્ત કરી.',
+    'closed_timeout' => 'સમયસર જવાબ ન આવતાં આ વાતચીત આપોઆપ બંધ થઈ.',
+    'closed_default' => 'આ વાતચીત સમાપ્ત થઈ ગઈ છે.',
+];

@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'title' => 'Asistență',
+    'header_title' => 'Asistență Ledger',
+    'past_conversations_title' => 'Conversații anterioare',
+    'conversation_from' => 'Conversație din :date',
+    'no_past_conversations' => 'Nicio conversație anterioară încă. Orice conversație încheiată (sau reluată) va apărea aici.',
+    'start_new' => 'Începe o conversație nouă',
+    'start_new_confirm' => 'Începeți o conversație nouă? Conversația actuală va fi salvată în conversațiile anterioare.',
+    'start_new_button' => 'Începe conversație nouă',
+    'viewing_past' => 'Vizualizați o conversație anterioară (doar citire).',
+    'assistant_intro' => 'Asistentul nostru răspunde primul. Un membru real al echipei intervine imediat ce este nevoie.',
+    'back_to_conversations' => 'Înapoi la conversațiile dvs.',
+    'view_past_conversations' => 'Vezi conversațiile anterioare',
+    'greeting' => 'Bună, :name 👋 Sunt aici să vă ajut. Cu ce vă pot ajuta astăzi?',
+    'quick_card_issue' => 'Problemă cu cardul',
+    'quick_payment_problem' => 'Problemă cu plata',
+    'quick_account_access' => 'Acces la cont',
+    'quick_something_else' => 'Altceva',
+    'attach_file' => 'Atașează o fotografie sau un PDF',
+    'type_message' => 'Scrieți un mesaj…',
+    'not_sent_retry' => ' · netrimis, încercați din nou',
+    'closed_admin' => 'Echipa noastră a încheiat această conversație.',
+    'closed_customer' => 'Ați încheiat această conversație.',
+    'closed_timeout' => 'Această conversație s-a închis automat deoarece nu a existat un răspuns la timp.',
+    'closed_default' => 'Această conversație s-a încheiat.',
+];

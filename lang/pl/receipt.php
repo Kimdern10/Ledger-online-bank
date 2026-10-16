@@ -78,4 +78,12 @@ return [
     'js_preparing_share' => 'Przygotowywanie potwierdzenia do udostępnienia…',
     'js_share_error' => 'Nie udało się udostępnić potwierdzenia. Spróbuj zamiast tego pobrać.',
     'js_share_unsupported' => 'Udostępnianie nie jest obsługiwane w tej przeglądarce. Użyj zamiast tego opcji Pobierz.',
+    'row_recipient_name_check' => 'Nazwa odbiorcy',
+    'recipient_name_verified' => 'Zweryfikowano — nazwa zwrócona przez bank odbiorcy',
+    'recipient_name_match' => 'Nazwa zgodna z kontem (nazwa wpisana przez nadawcę)',
+    'recipient_name_close_match' => 'Tylko częściowa zgodność — niezweryfikowane przez bank',
+    'recipient_name_no_match' => 'Niezgodne z kontem — niezweryfikowane przez bank',
+    'recipient_name_unavailable' => 'Weryfikacja niedostępna — niezweryfikowane przez bank',
+    'recipient_name_failed' => 'Weryfikacja nie powiodła się — niezweryfikowane przez bank',
+    'recipient_name_manual' => '',
 ];

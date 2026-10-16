@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'title' => 'תמיכה',
+    'header_title' => 'התמיכה של Ledger',
+    'past_conversations_title' => 'שיחות קודמות',
+    'conversation_from' => 'שיחה מתאריך :date',
+    'no_past_conversations' => 'עדיין אין שיחות קודמות. כל שיחה שתסיים (או שתתחיל מחדש) תופיע כאן.',
+    'start_new' => 'התחל שיחה חדשה',
+    'start_new_confirm' => "להתחיל שיחה חדשה? הצ'אט הנוכחי יישמר בשיחות הקודמות שלך.",
+    'start_new_button' => 'התחל שיחה חדשה',
+    'viewing_past' => 'צפייה בשיחה קודמת (קריאה בלבד).',
+    'assistant_intro' => 'העוזר שלנו עונה ראשון. נציג אמיתי מצטרף ברגע שיש בכך צורך.',
+    'back_to_conversations' => 'חזרה לשיחות שלך',
+    'view_past_conversations' => 'הצג שיחות קודמות',
+    'greeting' => 'שלום :name 👋 אני כאן כדי לעזור. במה אוכל לעזור לך היום?',
+    'quick_card_issue' => 'בעיה בכרטיס',
+    'quick_payment_problem' => 'בעיה בתשלום',
+    'quick_account_access' => 'גישה לחשבון',
+    'quick_something_else' => 'משהו אחר',
+    'attach_file' => 'צרף תמונה או PDF',
+    'type_message' => 'הקלד הודעה…',
+    'not_sent_retry' => ' · לא נשלח, נסה שוב',
+    'closed_admin' => 'הצוות שלנו סיים את השיחה הזו.',
+    'closed_customer' => 'סיימת את השיחה הזו.',
+    'closed_timeout' => 'השיחה נסגרה אוטומטית כי לא התקבלה תשובה בזמן.',
+    'closed_default' => 'השיחה הזו הסתיימה.',
+];

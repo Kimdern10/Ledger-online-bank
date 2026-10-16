@@ -78,4 +78,12 @@ return [
     'js_preparing_share' => 'Makbuzunuz paylaşıma hazırlanıyor…',
     'js_share_error' => "Makbuz paylaşılamadı. Bunun yerine İndir'i deneyin.",
     'js_share_unsupported' => "Paylaşım bu tarayıcıda desteklenmiyor. Bunun yerine İndir'i kullanın.",
+    'row_recipient_name_check' => 'Alıcı adı',
+    'recipient_name_verified' => 'Doğrulandı — ad, alıcı banka tarafından iletildi',
+    'recipient_name_match' => 'Ad hesapla eşleşti (ad gönderen tarafından girildi)',
+    'recipient_name_close_match' => 'Yalnızca kısmen eşleşti — banka tarafından doğrulanmadı',
+    'recipient_name_no_match' => 'Hesapla eşleşmedi — banka tarafından doğrulanmadı',
+    'recipient_name_unavailable' => 'Doğrulama kullanılamıyor — banka tarafından doğrulanmadı',
+    'recipient_name_failed' => 'Doğrulama başarısız — banka tarafından doğrulanmadı',
+    'recipient_name_manual' => '',
 ];

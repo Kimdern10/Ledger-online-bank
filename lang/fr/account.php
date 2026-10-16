@@ -52,4 +52,5 @@ return [
     'delete_my_account' => 'Supprimer mon compte',
     'delete_confirm_dialog' => 'Êtes-vous sûr de vouloir supprimer définitivement votre compte ?',
     'withdraw_first' => "Retirez ou envoyez d'abord votre solde restant.",
+    'phone_hint' => 'Indiquez l’indicatif de votre pays (par exemple +234 801 234 5678) pour recevoir par SMS les codes d’inscription et de réinitialisation du mot de passe.',
 ];

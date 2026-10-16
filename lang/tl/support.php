@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'title' => 'Suporta',
+    'header_title' => 'Ledger Support',
+    'past_conversations_title' => 'Mga nakaraang usapan',
+    'conversation_from' => 'Usapan mula :date',
+    'no_past_conversations' => 'Wala pang nakaraang usapan. Lalabas dito ang anumang tinapos mo (o sinimulan mong muli).',
+    'start_new' => 'Magsimula ng bagong usapan',
+    'start_new_confirm' => 'Magsimula ng bagong usapan? Mase-save ang kasalukuyan mong chat sa mga nakaraang usapan.',
+    'start_new_button' => 'Magsimula ng bagong usapan',
+    'viewing_past' => 'Tinitingnan ang nakaraang usapan (read only).',
+    'assistant_intro' => 'Ang assistant namin ang unang sumasagot. Papasok ang isang tunay na miyembro ng team sa sandaling kailanganin.',
+    'back_to_conversations' => 'Bumalik sa mga usapan mo',
+    'view_past_conversations' => 'Tingnan ang mga nakaraang usapan',
+    'greeting' => 'Hi :name 👋 Narito ako para tumulong. Ano ang maitutulong ko sa iyo ngayon?',
+    'quick_card_issue' => 'Problema sa card',
+    'quick_payment_problem' => 'Problema sa bayad',
+    'quick_account_access' => 'Access sa account',
+    'quick_something_else' => 'Iba pa',
+    'attach_file' => 'Mag-attach ng larawan o PDF',
+    'type_message' => 'Mag-type ng mensahe…',
+    'not_sent_retry' => ' · hindi naipadala, subukang muli',
+    'closed_admin' => 'Tinapos ng aming team ang usapang ito.',
+    'closed_customer' => 'Tinapos mo ang usapang ito.',
+    'closed_timeout' => 'Awtomatikong nagsara ang usapang ito dahil walang sagot sa tamang oras.',
+    'closed_default' => 'Natapos na ang usapang ito.',
+];

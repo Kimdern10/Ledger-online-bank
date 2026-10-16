@@ -43,4 +43,5 @@ return [
     'nav_message' => 'メッセージ',
     'nav_profile' => 'プロフィール',
     'nav_send_money' => '送金',
+    'nav_dashboard' => 'ダッシュボード',
 ];

@@ -43,4 +43,5 @@ return [
     'nav_message' => 'Message',
     'nav_profile' => 'Profil',
     'nav_send_money' => 'Envoyer de l\'argent',
+    'nav_dashboard' => 'Tableau de bord',
 ];

@@ -41,4 +41,5 @@ return [
     'nav_message' => 'Pesan',
     'nav_profile' => 'Profil',
     'nav_send_money' => 'Kirim uang',
+    'nav_dashboard' => 'Dasbor',
 ];

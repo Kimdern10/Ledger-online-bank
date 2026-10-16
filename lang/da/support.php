@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'title' => 'Support',
+    'header_title' => 'Ledger Support',
+    'past_conversations_title' => 'Tidligere samtaler',
+    'conversation_from' => 'Samtale fra :date',
+    'no_past_conversations' => 'Ingen tidligere samtaler endnu. Alt, hvad du afslutter (eller starter forfra), vises her.',
+    'start_new' => 'Start en ny samtale',
+    'start_new_confirm' => 'Starte en ny samtale? Din nuværende chat gemmes under tidligere samtaler.',
+    'start_new_button' => 'Start ny samtale',
+    'viewing_past' => 'Viser en tidligere samtale (skrivebeskyttet).',
+    'assistant_intro' => 'Vores assistent svarer først. Et rigtigt teammedlem træder til, så snart der er brug for det.',
+    'back_to_conversations' => 'Tilbage til dine samtaler',
+    'view_past_conversations' => 'Se tidligere samtaler',
+    'greeting' => 'Hej :name 👋 Jeg er her for at hjælpe. Hvad kan jeg hjælpe dig med i dag?',
+    'quick_card_issue' => 'Kortproblem',
+    'quick_payment_problem' => 'Betalingsproblem',
+    'quick_account_access' => 'Kontoadgang',
+    'quick_something_else' => 'Noget andet',
+    'attach_file' => 'Vedhæft et foto eller en PDF',
+    'type_message' => 'Skriv en besked…',
+    'not_sent_retry' => ' · ikke sendt, prøv igen',
+    'closed_admin' => 'Vores team afsluttede denne samtale.',
+    'closed_customer' => 'Du afsluttede denne samtale.',
+    'closed_timeout' => 'Denne samtale blev lukket automatisk, fordi der ikke kom svar i tide.',
+    'closed_default' => 'Denne samtale er afsluttet.',
+];

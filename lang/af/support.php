@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'title' => 'Ondersteuning',
+    'header_title' => 'Ledger-ondersteuning',
+    'past_conversations_title' => 'Vorige gesprekke',
+    'conversation_from' => 'Gesprek van :date',
+    'no_past_conversations' => 'Nog geen vorige gesprekke nie. Enigiets wat jy beëindig (of oor begin) sal hier verskyn.',
+    'start_new' => "Begin 'n nuwe gesprek",
+    'start_new_confirm' => "Begin 'n nuwe gesprek? Jou huidige gesprek sal by jou vorige gesprekke gestoor word.",
+    'start_new_button' => 'Begin nuwe gesprek',
+    'viewing_past' => "Bekyk 'n vorige gesprek (slegs lees).",
+    'assistant_intro' => "Ons assistent antwoord eerste. 'n Regte spanlid tree in sodra hulle nodig is.",
+    'back_to_conversations' => 'Terug na jou gesprekke',
+    'view_past_conversations' => 'Bekyk vorige gesprekke',
+    'greeting' => 'Hallo :name 👋 Ek is hier om te help. Waarmee kan ek jou vandag help?',
+    'quick_card_issue' => 'Kaartprobleem',
+    'quick_payment_problem' => 'Betalingsprobleem',
+    'quick_account_access' => 'Rekeningtoegang',
+    'quick_something_else' => 'Iets anders',
+    'attach_file' => "Heg 'n foto of PDF aan",
+    'type_message' => "Tik 'n boodskap…",
+    'not_sent_retry' => ' · nie gestuur nie, probeer weer',
+    'closed_admin' => 'Ons span het hierdie gesprek beëindig.',
+    'closed_customer' => 'Jy het hierdie gesprek beëindig.',
+    'closed_timeout' => "Hierdie gesprek is outomaties gesluit omdat daar nie betyds 'n antwoord was nie.",
+    'closed_default' => 'Hierdie gesprek is beëindig.',
+];

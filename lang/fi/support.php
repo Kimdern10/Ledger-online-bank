@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'title' => 'Tuki',
+    'header_title' => 'Ledger-tuki',
+    'past_conversations_title' => 'Aiemmat keskustelut',
+    'conversation_from' => 'Keskustelu :date',
+    'no_past_conversations' => 'Ei vielä aiempia keskusteluja. Kaikki lopettamasi (tai alusta aloittamasi) keskustelut näkyvät täällä.',
+    'start_new' => 'Aloita uusi keskustelu',
+    'start_new_confirm' => 'Aloitetaanko uusi keskustelu? Nykyinen keskustelu tallennetaan aiempiin keskusteluihin.',
+    'start_new_button' => 'Aloita uusi keskustelu',
+    'viewing_past' => 'Tarkastelet aiempaa keskustelua (vain luku).',
+    'assistant_intro' => 'Avustajamme vastaa ensin. Oikea tiimin jäsen tulee mukaan heti kun tarvitaan.',
+    'back_to_conversations' => 'Takaisin keskusteluihisi',
+    'view_past_conversations' => 'Näytä aiemmat keskustelut',
+    'greeting' => 'Hei :name 👋 Olen täällä auttamassa. Missä voin auttaa tänään?',
+    'quick_card_issue' => 'Korttiongelma',
+    'quick_payment_problem' => 'Maksuongelma',
+    'quick_account_access' => 'Tilin käyttö',
+    'quick_something_else' => 'Jokin muu',
+    'attach_file' => 'Liitä kuva tai PDF',
+    'type_message' => 'Kirjoita viesti…',
+    'not_sent_retry' => ' · ei lähetetty, yritä uudelleen',
+    'closed_admin' => 'Tiimimme lopetti tämän keskustelun.',
+    'closed_customer' => 'Lopetit tämän keskustelun.',
+    'closed_timeout' => 'Tämä keskustelu suljettiin automaattisesti, koska vastausta ei tullut ajoissa.',
+    'closed_default' => 'Tämä keskustelu on päättynyt.',
+];

@@ -1,9 +1,9 @@
 <?php
 
+use App\Mail\TransferCodeMail;
 use App\Models\User;
 use App\Support\PhoneNumber;
 use App\Support\Sms;
-use App\Support\TransferCode;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
@@ -59,45 +59,24 @@ test('nothing is sent when Twilio is not set up', function () {
     Http::assertNothingSent();
 });
 
-test('the transfer code can be texted, and the texted code works', function () {
-    $user = User::factory()->create(['phone' => '+234 801 234 5678'])->refresh();
+test('the transfer code is only ever emailed, never texted', function () {
+    $user = User::factory()->create(['phone' => '+2348012345678'])->refresh();
 
     $this->actingAs($user)->postJson(route('transfer-code.send'), ['channel' => 'sms'])
         ->assertOk()
-        ->assertJson(['sent' => true, 'message' => __('transfer_code.texted_to', ['phone' => '•••• 5678'])]);
+        ->assertJson(['sent' => true]);
 
-    Mail::assertNothingSent();
-    expect(TransferCode::check($user, lastTextedCode()))->toBeTrue();
-});
-
-test('the transfer code is still emailed by default', function () {
-    $user = User::factory()->create(['phone' => '+2348012345678'])->refresh();
-
-    $this->actingAs($user)->postJson(route('transfer-code.send'))->assertOk()->assertJson(['sent' => true]);
-
-    Http::assertNothingSent();
-});
-
-test('texting needs a phone number with a country code', function () {
-    $user = User::factory()->create(['phone' => '08012345678'])->refresh();
-
-    $this->actingAs($user)->postJson(route('transfer-code.send'), ['channel' => 'sms'])
-        ->assertStatus(422)
-        ->assertJson(['sent' => false, 'message' => __('transfer_code.no_phone')]);
-
+    Mail::assertSent(TransferCodeMail::class);
     Http::assertNothingSent();
 });
 
 test('each number gets at most three texts every ten minutes', function () {
-    $user = User::factory()->create(['phone' => '+2348012345678'])->refresh();
-
     foreach (range(1, Sms::MAX_PER_WINDOW) as $ignored) {
-        $this->actingAs($user)->postJson(route('transfer-code.send'), ['channel' => 'sms'])->assertOk();
+        expect(Sms::allowed('+2348012345678'))->toBeTrue();
     }
 
-    $this->actingAs($user)->postJson(route('transfer-code.send'), ['channel' => 'sms'])
-        ->assertStatus(429)
-        ->assertJson(['message' => __('transfer_code.sms_too_many')]);
+    expect(Sms::allowed('+2348012345678'))->toBeFalse()
+        ->and(Sms::allowed('+2348099999999'))->toBeTrue();
 });
 
 test('the sign-up code can be texted instead, and verifies the account', function () {

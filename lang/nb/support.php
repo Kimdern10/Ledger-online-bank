@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'title' => 'Kundestøtte',
+    'header_title' => 'Ledger Kundestøtte',
+    'past_conversations_title' => 'Tidligere samtaler',
+    'conversation_from' => 'Samtale fra :date',
+    'no_past_conversations' => 'Ingen tidligere samtaler ennå. Alt du avslutter (eller starter på nytt) vises her.',
+    'start_new' => 'Start en ny samtale',
+    'start_new_confirm' => 'Starte en ny samtale? Den nåværende chatten lagres blant tidligere samtaler.',
+    'start_new_button' => 'Start ny samtale',
+    'viewing_past' => 'Viser en tidligere samtale (skrivebeskyttet).',
+    'assistant_intro' => 'Assistenten vår svarer først. Et ekte teammedlem trer inn så snart det trengs.',
+    'back_to_conversations' => 'Tilbake til samtalene dine',
+    'view_past_conversations' => 'Se tidligere samtaler',
+    'greeting' => 'Hei :name 👋 Jeg er her for å hjelpe. Hva kan jeg hjelpe deg med i dag?',
+    'quick_card_issue' => 'Kortproblem',
+    'quick_payment_problem' => 'Betalingsproblem',
+    'quick_account_access' => 'Kontotilgang',
+    'quick_something_else' => 'Noe annet',
+    'attach_file' => 'Legg ved et bilde eller en PDF',
+    'type_message' => 'Skriv en melding…',
+    'not_sent_retry' => ' · ikke sendt, prøv igjen',
+    'closed_admin' => 'Teamet vårt avsluttet denne samtalen.',
+    'closed_customer' => 'Du avsluttet denne samtalen.',
+    'closed_timeout' => 'Samtalen ble lukket automatisk fordi det ikke kom svar i tide.',
+    'closed_default' => 'Denne samtalen er avsluttet.',
+];

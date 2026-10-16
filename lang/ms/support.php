@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'title' => 'Sokongan',
+    'header_title' => 'Sokongan Ledger',
+    'past_conversations_title' => 'Perbualan lepas',
+    'conversation_from' => 'Perbualan dari :date',
+    'no_past_conversations' => 'Belum ada perbualan lepas. Apa-apa yang anda tamatkan (atau mulakan semula) akan muncul di sini.',
+    'start_new' => 'Mulakan perbualan baharu',
+    'start_new_confirm' => 'Mulakan perbualan baharu? Sembang semasa anda akan disimpan dalam perbualan lepas.',
+    'start_new_button' => 'Mulakan perbualan baharu',
+    'viewing_past' => 'Melihat perbualan lepas (baca sahaja).',
+    'assistant_intro' => 'Pembantu kami membalas dahulu. Ahli pasukan sebenar akan masuk sebaik sahaja diperlukan.',
+    'back_to_conversations' => 'Kembali ke perbualan anda',
+    'view_past_conversations' => 'Lihat perbualan lepas',
+    'greeting' => 'Hai :name 👋 Saya di sini untuk membantu. Apa yang boleh saya bantu hari ini?',
+    'quick_card_issue' => 'Masalah kad',
+    'quick_payment_problem' => 'Masalah pembayaran',
+    'quick_account_access' => 'Akses akaun',
+    'quick_something_else' => 'Perkara lain',
+    'attach_file' => 'Lampirkan foto atau PDF',
+    'type_message' => 'Taip mesej…',
+    'not_sent_retry' => ' · tidak dihantar, cuba lagi',
+    'closed_admin' => 'Pasukan kami telah menamatkan perbualan ini.',
+    'closed_customer' => 'Anda telah menamatkan perbualan ini.',
+    'closed_timeout' => 'Perbualan ini ditutup secara automatik kerana tiada balasan dalam masa yang ditetapkan.',
+    'closed_default' => 'Perbualan ini telah tamat.',
+];

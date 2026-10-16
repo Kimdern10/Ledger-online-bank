@@ -114,51 +114,31 @@ function transferCodeStatus(){
   return status;
 }
 
-// How the current code was sent: 'email' (the default) or 'sms' ("Text it
-// to me instead" — only offered when the account has a textable phone).
-let transferCodeChannel = 'email';
-
-function requestTransferCode(channel){
+function requestTransferCode(){
   const cfg = window.LedgerTransferCode;
   if(!cfg) return;
-  transferCodeChannel = channel || 'email';
   const status = transferCodeStatus();
-  status.textContent = transferCodeChannel === 'sms' ? cfg.i18n.sendingText : cfg.i18n.sending;
+  status.textContent = cfg.i18n.sending;
 
   fetch(cfg.url, {
     method: 'POST',
-    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json', 'X-CSRF-TOKEN': cfg.csrfToken },
-    body: JSON.stringify({ channel: transferCodeChannel }),
+    headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': cfg.csrfToken },
   })
     .then(function(res){ return res.json().catch(function(){ return {}; }); })
     .then(function(data){ showTransferCodeStatus(data && data.sent ? data.message : (data && data.message) || cfg.i18n.sendFailed); })
     .catch(function(){ showTransferCodeStatus(cfg.i18n.sendFailed); });
 }
 
-// "Sent to …" (or why not), then "Resend code" and — when the account has
-// a phone that can be texted — a switch between email and text.
 function showTransferCodeStatus(text){
   const cfg = window.LedgerTransferCode;
   const status = transferCodeStatus();
   status.textContent = text + ' ';
-
-  function link(label, channel){
-    const a = document.createElement('a');
-    a.href = '#';
-    a.textContent = label;
-    a.style.cssText = 'color:inherit; text-decoration:underline; white-space:nowrap;';
-    a.addEventListener('click', function(e){ e.preventDefault(); requestTransferCode(channel); });
-    return a;
-  }
-
-  status.appendChild(link(cfg.i18n.resend, transferCodeChannel));
-
-  if(cfg.canText){
-    status.appendChild(document.createTextNode(' · '));
-    status.appendChild(transferCodeChannel === 'sms'
-      ? link(cfg.i18n.emailInstead, 'email')
-      : link(cfg.i18n.textInstead, 'sms'));
-  }
+  const resend = document.createElement('a');
+  resend.href = '#';
+  resend.textContent = cfg.i18n.resend;
+  resend.style.cssText = 'color:inherit; text-decoration:underline;';
+  resend.addEventListener('click', function(e){ e.preventDefault(); requestTransferCode(); });
+  status.appendChild(resend);
 }
 
 function closePinModal(e){

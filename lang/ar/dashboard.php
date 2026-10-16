@@ -43,4 +43,5 @@ return [
     'nav_message' => 'رسالة',
     'nav_profile' => 'الملف الشخصي',
     'nav_send_money' => 'إرسال أموال',
+    'nav_dashboard' => 'لوحة التحكم',
 ];

@@ -20,4 +20,5 @@ return [
     'delete_account' => 'アカウントを削除',
     'logout' => 'ログアウト',
     'no_banks_listed' => '銀行はまだ登録されていません。',
+    'security' => 'セキュリティ：二要素認証とパスキー',
 ];

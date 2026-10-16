@@ -20,4 +20,5 @@ return [
     'danger_zone' => '危险操作区',
     'delete_account' => '删除账户',
     'logout' => '退出登录',
+    'security' => '安全：双重验证和通行密钥',
 ];

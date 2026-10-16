@@ -43,4 +43,5 @@ return [
     'nav_message' => '메시지',
     'nav_profile' => '프로필',
     'nav_send_money' => '송금',
+    'nav_dashboard' => '대시보드',
 ];

@@ -52,4 +52,5 @@ return [
     'delete_my_account' => '删除我的账户',
     'delete_confirm_dialog' => '您确定要永久删除您的账户吗？',
     'withdraw_first' => '请先提现或转出您的剩余余额。',
+    'phone_hint' => '请填写国家/地区代码（例如 +234 801 234 5678），以便通过短信接收注册和重置密码的验证码。',
 ];

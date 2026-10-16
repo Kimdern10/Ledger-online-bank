@@ -78,4 +78,12 @@ return [
     'js_preparing_share' => 'Inaandaa risiti yako kwa ajili ya kushiriki…',
     'js_share_error' => 'Imeshindwa kushiriki risiti. Jaribu Kupakua badala yake.',
     'js_share_unsupported' => 'Kushiriki hakutumiki kwenye kivinjari hiki. Tumia Kupakua badala yake.',
+    'row_recipient_name_check' => 'Jina la mpokeaji',
+    'recipient_name_verified' => 'Imethibitishwa — jina limerudishwa na benki ya mpokeaji',
+    'recipient_name_match' => 'Jina linalingana na akaunti (jina limewekwa na mtumaji)',
+    'recipient_name_close_match' => 'Linakaribiana tu — halijathibitishwa na benki',
+    'recipient_name_no_match' => 'Halilingani na akaunti — halijathibitishwa na benki',
+    'recipient_name_unavailable' => 'Uthibitisho haupatikani — halijathibitishwa na benki',
+    'recipient_name_failed' => 'Uthibitisho umeshindwa — halijathibitishwa na benki',
+    'recipient_name_manual' => '',
 ];

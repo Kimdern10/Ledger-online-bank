@@ -52,4 +52,5 @@ return [
     'delete_my_account' => 'Xóa tài khoản của tôi',
     'delete_confirm_dialog' => 'Bạn có chắc chắn muốn xóa vĩnh viễn tài khoản của mình không?',
     'withdraw_first' => 'Hãy rút hoặc chuyển số dư còn lại của bạn trước.',
+    'phone_hint' => 'Hãy thêm mã quốc gia của bạn (ví dụ +234 801 234 5678) để nhận mã đăng ký và mã đặt lại mật khẩu qua tin nhắn SMS.',
 ];

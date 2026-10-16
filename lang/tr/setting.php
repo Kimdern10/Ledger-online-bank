@@ -20,4 +20,5 @@ return [
     'delete_account' => 'Hesabı Sil',
     'logout' => 'Çıkış Yap',
     'no_banks_listed' => 'Henüz listelenmiş banka yok.',
+    'security' => 'Güvenlik: iki adımlı doğrulama ve geçiş anahtarları',
 ];

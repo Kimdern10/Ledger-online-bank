@@ -78,4 +78,12 @@ return [
     'js_preparing_share' => 'Menyiapkan struk Anda untuk dibagikan…',
     'js_share_error' => 'Struk tidak dapat dibagikan. Coba Unduh sebagai gantinya.',
     'js_share_unsupported' => 'Berbagi tidak didukung di browser ini. Gunakan Unduh sebagai gantinya.',
+    'row_recipient_name_check' => 'Nama penerima',
+    'recipient_name_verified' => 'Terverifikasi — nama dikembalikan oleh bank penerima',
+    'recipient_name_match' => 'Nama cocok dengan rekening (nama dimasukkan oleh pengirim)',
+    'recipient_name_close_match' => 'Hanya cocok sebagian — tidak diverifikasi oleh bank',
+    'recipient_name_no_match' => 'Tidak cocok dengan rekening — tidak diverifikasi oleh bank',
+    'recipient_name_unavailable' => 'Verifikasi tidak tersedia — tidak diverifikasi oleh bank',
+    'recipient_name_failed' => 'Verifikasi gagal — tidak diverifikasi oleh bank',
+    'recipient_name_manual' => '',
 ];

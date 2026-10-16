@@ -20,4 +20,5 @@ return [
     'danger_zone' => 'Zona pericolosa',
     'delete_account' => 'Elimina account',
     'logout' => 'Esci',
+    'security' => 'Sicurezza: due fattori e passkey',
 ];

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140" viewBox="0 0 140 140">
+  <g transform="rotate(-14 70 70)" opacity="0.88">
+    <circle cx="70" cy="70" r="64" fill="none" stroke="#2B4C8C" stroke-width="3"/>
+    <circle cx="70" cy="70" r="57" fill="none" stroke="#2B4C8C" stroke-width="1"/>
+    <circle cx="70" cy="70" r="36" fill="none" stroke="#2B4C8C" stroke-width="1"/>
+    <text x="70" y="31" text-anchor="middle" font-family="Helvetica" font-weight="bold" font-size="10.5" fill="#2B4C8C">L E D G E R</text>
+    <text x="70" y="118" text-anchor="middle" font-family="Helvetica" font-weight="bold" font-size="8.5" fill="#2B4C8C">V E R I F I E D</text>
+    <circle cx="20" cy="70" r="2.4" fill="#2B4C8C"/>
+    <circle cx="120" cy="70" r="2.4" fill="#2B4C8C"/>
+    <rect x="52" y="52" width="36" height="36" rx="9" fill="#10202F"/>
+    <text x="70" y="81" text-anchor="middle" font-family="Times" font-weight="bold" font-size="28" fill="#C9A24B">L</text>
+  </g>
+</svg>

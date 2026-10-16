@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Mail;
 
 /**
  * The one-time 4-digit code a user confirms each transfer, withdrawal or
- * top-up with — emailed (or, if they choose, texted) fresh every time, in
- * place of a fixed transaction PIN. See TransferCodeController (sends it) and
+ * top-up with — emailed fresh every time, in place of a fixed transaction
+ * PIN. See TransferCodeController (sends it) and
  * Concerns\RequiresTransactionPin (checks it).
  *
  * Only a hash of the code is kept, in the cache, per user:
@@ -50,15 +50,6 @@ class TransferCode
     public static function send(User $user): void
     {
         Mail::to($user->email)->send(new TransferCodeMail(self::issue($user)));
-    }
-
-    /**
-     * Issues a new code and texts it to $phone (the user's own number, see
-     * User::smsPhone()). False when the text couldn't be sent.
-     */
-    public static function sendBySms(User $user, string $phone): bool
-    {
-        return Sms::send($phone, __('transfer_code.sms_body', ['code' => self::issue($user)]));
     }
 
     /**

@@ -52,4 +52,5 @@ return [
     'delete_my_account' => 'Usuń moje konto',
     'delete_confirm_dialog' => 'Czy na pewno chcesz trwale usunąć swoje konto?',
     'withdraw_first' => 'Najpierw wypłać lub wyślij pozostałe saldo.',
+    'phone_hint' => 'Podaj numer kierunkowy kraju (na przykład +234 801 234 5678), aby otrzymywać SMS-em kody rejestracji i resetowania hasła.',
 ];

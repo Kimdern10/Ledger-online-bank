@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'title' => 'Podpora',
+    'header_title' => 'Podpora Ledger',
+    'past_conversations_title' => 'Predchádzajúce konverzácie',
+    'conversation_from' => 'Konverzácia z :date',
+    'no_past_conversations' => 'Zatiaľ žiadne predchádzajúce konverzácie. Všetko, čo ukončíte (alebo začnete odznova), sa zobrazí tu.',
+    'start_new' => 'Začať novú konverzáciu',
+    'start_new_confirm' => 'Začať novú konverzáciu? Aktuálny chat sa uloží medzi predchádzajúce konverzácie.',
+    'start_new_button' => 'Začať novú konverzáciu',
+    'viewing_past' => 'Prezeráte si predchádzajúcu konverzáciu (len na čítanie).',
+    'assistant_intro' => 'Najprv odpovedá náš asistent. Skutočný člen tímu sa zapojí, hneď ako je to potrebné.',
+    'back_to_conversations' => 'Späť na vaše konverzácie',
+    'view_past_conversations' => 'Zobraziť predchádzajúce konverzácie',
+    'greeting' => 'Dobrý deň, :name 👋 Som tu, aby som pomohol. S čím vám dnes môžem pomôcť?',
+    'quick_card_issue' => 'Problém s kartou',
+    'quick_payment_problem' => 'Problém s platbou',
+    'quick_account_access' => 'Prístup k účtu',
+    'quick_something_else' => 'Niečo iné',
+    'attach_file' => 'Priložiť fotku alebo PDF',
+    'type_message' => 'Napíšte správu…',
+    'not_sent_retry' => ' · neodoslané, skúste znova',
+    'closed_admin' => 'Náš tím túto konverzáciu ukončil.',
+    'closed_customer' => 'Túto konverzáciu ste ukončili.',
+    'closed_timeout' => 'Konverzácia sa automaticky uzavrela, pretože včas neprišla odpoveď.',
+    'closed_default' => 'Táto konverzácia sa skončila.',
+];

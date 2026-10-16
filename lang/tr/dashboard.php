@@ -43,4 +43,5 @@ return [
     'nav_message' => 'Mesaj',
     'nav_profile' => 'Profil',
     'nav_send_money' => 'Para gönder',
+    'nav_dashboard' => 'Panel',
 ];

@@ -78,4 +78,12 @@ return [
     'js_preparing_share' => 'Préparation de votre reçu à partager…',
     'js_share_error' => 'Impossible de partager le reçu. Essayez plutôt de le télécharger.',
     'js_share_unsupported' => "Le partage n'est pas pris en charge par ce navigateur. Utilisez Télécharger à la place.",
+    'row_recipient_name_check' => 'Nom du bénéficiaire',
+    'recipient_name_verified' => 'Vérifié — nom renvoyé par la banque du bénéficiaire',
+    'recipient_name_match' => 'Le nom correspond au compte (nom saisi par l’expéditeur)',
+    'recipient_name_close_match' => 'Correspondance partielle uniquement — non vérifié par la banque',
+    'recipient_name_no_match' => 'Ne correspond pas au compte — non vérifié par la banque',
+    'recipient_name_unavailable' => 'Vérification indisponible — non vérifié par la banque',
+    'recipient_name_failed' => 'Échec de la vérification — non vérifié par la banque',
+    'recipient_name_manual' => '',
 ];

@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'title' => 'Support',
+    'header_title' => 'Ledger Support',
+    'past_conversations_title' => 'Tidigare konversationer',
+    'conversation_from' => 'Konversation från :date',
+    'no_past_conversations' => 'Inga tidigare konversationer ännu. Allt du avslutar (eller börjar om) visas här.',
+    'start_new' => 'Starta en ny konversation',
+    'start_new_confirm' => 'Starta en ny konversation? Din nuvarande chatt sparas bland tidigare konversationer.',
+    'start_new_button' => 'Starta ny konversation',
+    'viewing_past' => 'Visar en tidigare konversation (skrivskyddad).',
+    'assistant_intro' => 'Vår assistent svarar först. En riktig teammedlem kliver in så snart det behövs.',
+    'back_to_conversations' => 'Tillbaka till dina konversationer',
+    'view_past_conversations' => 'Visa tidigare konversationer',
+    'greeting' => 'Hej :name 👋 Jag är här för att hjälpa till. Vad kan jag hjälpa dig med idag?',
+    'quick_card_issue' => 'Kortproblem',
+    'quick_payment_problem' => 'Betalningsproblem',
+    'quick_account_access' => 'Kontoåtkomst',
+    'quick_something_else' => 'Något annat',
+    'attach_file' => 'Bifoga ett foto eller en PDF',
+    'type_message' => 'Skriv ett meddelande…',
+    'not_sent_retry' => ' · inte skickat, försök igen',
+    'closed_admin' => 'Vårt team avslutade den här konversationen.',
+    'closed_customer' => 'Du avslutade den här konversationen.',
+    'closed_timeout' => 'Konversationen stängdes automatiskt eftersom inget svar kom i tid.',
+    'closed_default' => 'Den här konversationen har avslutats.',
+];

@@ -20,4 +20,5 @@ return [
     'delete_account' => 'Account verwijderen',
     'logout' => 'Uitloggen',
     'no_banks_listed' => 'Er zijn nog geen banken vermeld.',
+    'security' => 'Beveiliging: tweestapsverificatie & passkeys',
 ];

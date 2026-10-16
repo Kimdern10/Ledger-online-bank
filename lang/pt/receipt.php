@@ -78,4 +78,12 @@ return [
     'js_preparing_share' => 'Preparando seu recibo para compartilhar…',
     'js_share_error' => 'Não foi possível compartilhar o recibo. Tente Baixar em vez disso.',
     'js_share_unsupported' => 'O compartilhamento não é compatível com este navegador. Use Baixar em vez disso.',
+    'row_recipient_name_check' => 'Nome do destinatário',
+    'recipient_name_verified' => 'Verificado — nome retornado pelo banco recebedor',
+    'recipient_name_match' => 'O nome confere com a conta (nome informado pelo remetente)',
+    'recipient_name_close_match' => 'Correspondência apenas parcial — não verificado pelo banco',
+    'recipient_name_no_match' => 'Não confere com a conta — não verificado pelo banco',
+    'recipient_name_unavailable' => 'Verificação indisponível — não verificado pelo banco',
+    'recipient_name_failed' => 'A verificação falhou — não verificado pelo banco',
+    'recipient_name_manual' => '',
 ];

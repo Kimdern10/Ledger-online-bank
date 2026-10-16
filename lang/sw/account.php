@@ -52,4 +52,5 @@ return [
     'delete_my_account' => 'Futa akaunti yangu',
     'delete_confirm_dialog' => 'Una uhakika unataka kufuta akaunti yako kabisa?',
     'withdraw_first' => 'Toa au tuma salio lako lililobaki kwanza.',
+    'phone_hint' => 'Weka msimbo wa nchi yako (kwa mfano +234 801 234 5678) ili kupokea kwa SMS misimbo ya kujisajili na ya kuweka upya nenosiri.',
 ];

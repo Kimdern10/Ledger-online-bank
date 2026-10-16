@@ -20,4 +20,5 @@ return [
     'danger_zone' => 'Strefa zagrożenia',
     'delete_account' => 'Usuń konto',
     'logout' => 'Wyloguj się',
+    'security' => 'Bezpieczeństwo: weryfikacja dwuetapowa i passkeys',
 ];

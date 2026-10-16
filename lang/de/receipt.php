@@ -78,4 +78,12 @@ return [
     'js_preparing_share' => 'Dein Beleg wird zum Teilen vorbereitet…',
     'js_share_error' => 'Beleg konnte nicht geteilt werden. Versuche stattdessen Herunterladen.',
     'js_share_unsupported' => 'Teilen wird in diesem Browser nicht unterstützt. Verwende stattdessen Herunterladen.',
+    'row_recipient_name_check' => 'Name des Empfängers',
+    'recipient_name_verified' => 'Bestätigt — Name von der Empfängerbank übermittelt',
+    'recipient_name_match' => 'Name stimmt mit dem Konto überein (Name vom Absender eingegeben)',
+    'recipient_name_close_match' => 'Nur teilweise Übereinstimmung — nicht von der Bank bestätigt',
+    'recipient_name_no_match' => 'Stimmt nicht mit dem Konto überein — nicht von der Bank bestätigt',
+    'recipient_name_unavailable' => 'Prüfung nicht verfügbar — nicht von der Bank bestätigt',
+    'recipient_name_failed' => 'Prüfung fehlgeschlagen — nicht von der Bank bestätigt',
+    'recipient_name_manual' => '',
 ];

@@ -41,4 +41,5 @@ return [
     'nav_message' => 'Tin nhắn',
     'nav_profile' => 'Hồ sơ',
     'nav_send_money' => 'Chuyển tiền',
+    'nav_dashboard' => 'Bảng điều khiển',
 ];

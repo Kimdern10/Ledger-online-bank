@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'title' => 'Taageero',
+    'header_title' => 'Taageerada Ledger',
+    'past_conversations_title' => 'Sheekooyinkii hore',
+    'conversation_from' => 'Sheeko taariikhda :date',
+    'no_past_conversations' => 'Weli sheeko hore ma jirto. Wax kasta oo aad dhammayso (ama dib u bilowdo) halkan ayay ka soo muuqan doontaa.',
+    'start_new' => 'Bilow sheeko cusub',
+    'start_new_confirm' => 'Ma bilaabaysaa sheeko cusub? Sheekadaada hadda waxaa lagu kaydin doonaa sheekooyinkii hore.',
+    'start_new_button' => 'Bilow sheeko cusub',
+    'viewing_past' => 'Waxaad eegaysaa sheeko hore (akhris oo kaliya).',
+    'assistant_intro' => 'Caawiyahayaga ayaa marka hore ka jawaaba. Xubin dhab ah oo kooxda ka mid ah ayaa soo gala haddii loo baahdo.',
+    'back_to_conversations' => 'Ku noqo sheekadaada',
+    'view_past_conversations' => 'Eeg sheekooyinkii hore',
+    'greeting' => 'Salaan :name 👋 Halkan ayaan u joogaa inaan ku caawiyo. Maxaan maanta kaaga caawin karaa?',
+    'quick_card_issue' => 'Dhibaato kaar',
+    'quick_payment_problem' => 'Dhibaato lacag-bixin',
+    'quick_account_access' => 'Gelitaanka akoonka',
+    'quick_something_else' => 'Kale',
+    'attach_file' => 'Ku lifaaq sawir ama PDF',
+    'type_message' => 'Qor fariin…',
+    'not_sent_retry' => ' · lama dirin, isku day mar kale',
+    'closed_admin' => 'Kooxdayadu waxay dhammaysay sheekadan.',
+    'closed_customer' => 'Waxaad dhammaysay sheekadan.',
+    'closed_timeout' => 'Sheekadan si toos ah ayaa loo xiray sababtoo ah jawaab kuma imaan wakhtigii.',
+    'closed_default' => 'Sheekadani way dhammaatay.',
+];
