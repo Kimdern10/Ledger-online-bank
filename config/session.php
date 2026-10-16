@@ -38,6 +38,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Idle Sign-Out (minutes)
+    |--------------------------------------------------------------------------
+    |
+    | Signed-in customers and admins are signed out after this many minutes
+    | with no clicks, taps, typing or scrolling in any of their open tabs,
+    | after a one-minute warning (see resources/views/partials/
+    | idle-logout.blade.php). 0 turns it off.
+    |
+    */
+
+    'idle_timeout' => (int) env('SESSION_IDLE_TIMEOUT', 15),
+
+    /*
+    |--------------------------------------------------------------------------
     | Session Encryption
     |--------------------------------------------------------------------------
     |

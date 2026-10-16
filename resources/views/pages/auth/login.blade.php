@@ -5,6 +5,11 @@
         <!-- Session Status -->
         <x-auth-session-status class="text-center" :status="session('status')" />
 
+        {{-- Arrived here from the idle sign-out (partials/idle-logout.blade.php). --}}
+        @if (request()->boolean('timeout') && ! session('status'))
+            <x-auth-session-status class="text-center" :status="__('authpage.idle_signed_out')" />
+        @endif
+
         <x-passkey-verify
             :label="__('authpage.passkey_signin')"
             :loading-label="__('authpage.passkey_authenticating')"

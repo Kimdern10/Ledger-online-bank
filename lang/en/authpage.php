@@ -27,6 +27,12 @@ return [
     'login_description' => 'Enter your email and password below to log in',
     'forgot_password_link' => 'Forgot your password?',
     'remember_me' => 'Remember me',
+
+    // Idle sign-out (partials/idle-logout.blade.php)
+    'idle_warning_title' => 'Are you still there?',
+    'idle_warning_body' => 'For your security, you will be signed out soon because nothing has happened for a while. Signing out in',
+    'idle_stay_signed_in' => 'Stay signed in',
+    'idle_signed_out' => 'You were signed out because nothing happened for a while. Please log in again.',
     'no_account' => "Don't have an account?",
     'sign_up' => 'Sign up',
     'passkey_signin' => 'Sign in with a passkey',
@@ -109,4 +115,19 @@ return [
     'wallet_frozen' => 'Your wallet is frozen. You can still sign in and see your account, but no money can be sent or received. Contact support to unfreeze it.',
     'account_disabled' => 'This account has been closed. Contact support if you think this is a mistake.',
     'account_blocked_default' => 'This account cannot sign in right now.',
-];
+
+    // Codes by text message (App\Support\Sms) — sign-up and password reset.
+    'sms_verification_code' => 'Ledger: your verification code is :code. It expires in 10 minutes. Never share it with anyone.',
+    'sms_reset_code' => 'Ledger: your password reset code is :code. It expires in 10 minutes. If you did not ask for this, ignore it.',
+    'text_code_instead' => 'Text the code to :phone instead',
+    'status_code_texted' => 'We texted a new code to :phone.',
+    'sms_add_phone' => 'To get codes by text, add your phone number with its country code (for example +234 801 234 5678) in Profile settings.',
+    'sms_failed' => "We couldn't send a text message right now. Use the code we emailed you, or try again later.",
+    'sms_too_many' => 'Too many text messages were sent to this number. Please wait 10 minutes and try again.',
+    'reset_send_by' => 'Send the code by',
+    'reset_by_email' => 'Email',
+    'reset_by_text' => 'Text message',
+    'reset_by_text_note' => 'We will text it to the phone number on your account.',
+    'code_texted_for_prefix' => 'Enter the 6-digit code we texted to the phone on the account for',
+    'code_texted_for_suffix' => ', then choose a new password.',
+    'status_code_texted_known' => 'If :email has an account with a phone number, we have texted a 6-digit code to it.',];

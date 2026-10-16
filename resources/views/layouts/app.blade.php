@@ -15,6 +15,7 @@
 <body>
 
 @include('partials.sweetalert')
+@include('partials.idle-logout')
 
 <div class="app">
 
@@ -84,10 +85,16 @@ smartsupp('email', @json(auth()->user()->email));
     url: @json(route('transfer-code.send')),
     checkUrl: @json(route('transfer-code.check')),
     csrfToken: @json(csrf_token()),
+    // Whether "Text it to me instead" is offered — only with a phone number
+    // that can be texted (User::smsPhone()).
+    canText: @json(auth()->user()->smsPhone() !== null),
     i18n: {
       sending: @json(__('transfer_code.sending')),
+      sendingText: @json(__('transfer_code.sending_text')),
       sendFailed: @json(__('transfer_code.send_failed')),
       resend: @json(__('transfer_code.resend')),
+      textInstead: @json(__('transfer_code.text_instead')),
+      emailInstead: @json(__('transfer_code.email_instead')),
       incorrect: @json(__('transfer_code.incorrect')),
     },
   };

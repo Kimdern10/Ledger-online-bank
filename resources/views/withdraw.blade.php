@@ -27,13 +27,6 @@
   @if(session('withdrawError'))
     <div class="send-alert fade-in d1">{{ session('withdrawError') }}</div>
   @endif
-  {{-- No transaction PIN created yet — see RequiresTransactionPin. --}}
-  @if(session('pinRequired'))
-    <div class="send-alert fade-in d1">
-      {{ __('withdraw.pin_required_prefix') }}
-      <a href="{{ route('setting.transaction-pin') }}" style="text-decoration:underline; color:inherit;">{{ __('withdraw.pin_required_link') }}</a>.
-    </div>
-  @endif
   @if($errors->any())
     <div class="send-alert fade-in d1">
       <ul style="margin:0; padding-left:18px;">

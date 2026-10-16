@@ -55,7 +55,9 @@
 
       <div class="field-group">
         <p class="label">{{ __('account.phone') }} <span style="font-weight:400; color:var(--text-3);">{{ __('account.optional') }}</span></p>
-        <input type="tel" class="text-input" name="phone" value="{{ old('phone', auth()->user()->phone) }}">
+        <input type="tel" class="text-input" name="phone" value="{{ old('phone', auth()->user()->phone) }}" placeholder="+234 801 234 5678">
+        {{-- Text-message codes need the country code — App\Support\PhoneNumber. --}}
+        <p style="font-size:12px; color:var(--text-3); margin:6px 0 0;">{{ __('account.phone_hint') }}</p>
       </div>
 
       <div class="pay-btn-wrap" style="margin-top:8px;">

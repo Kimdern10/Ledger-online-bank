@@ -23,6 +23,7 @@
 
       <p class="admin-nav-section">Overview</p>
       <a href="{!! route('admin.dashboard') !!}" class="admin-nav-link {!! request()->routeIs('admin.dashboard') ? 'active' : '' !!}">Dashboard</a>
+      <a href="{!! route('admin.activity') !!}" class="admin-nav-link {!! request()->routeIs('admin.activity') ? 'active' : '' !!}">Activity log</a>
 
       <p class="admin-nav-section">User management</p>
       <a href="{!! route('admin.users') !!}" class="admin-nav-link {!! (request()->routeIs('admin.users') || request()->routeIs('admin.users.show')) ? 'active' : '' !!}">Users</a>
@@ -141,6 +142,7 @@
   </div>
 
   @include('partials.sweetalert')
+  @include('partials.idle-logout')
 
   {{-- Individual admin pages push their own small <script> blocks in here
        via @section('scripts') ... @endsection. Today that's only pages

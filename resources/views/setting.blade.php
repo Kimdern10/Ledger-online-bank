@@ -90,11 +90,14 @@
            setting-banks.blade.php / BankListController) removed from this
            list per request. The route/controller/view are untouched in case
            they're wanted back — just no longer linked from here. --}}
-      <a href="{{ route('setting.transaction-pin') }}" class="setting-item">
+      {{-- Two-factor sign-in and passkeys (pages/settings/⚡security.blade.php).
+           Took the place of the old Transaction PIN item: transfers now use a
+           one-time code emailed for each transfer instead of a PIN. --}}
+      <a href="{{ route('security.edit') }}" class="setting-item">
         <div class="s-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
         </div>
-        <span class="label">{{ __('setting.transaction_pin') }}<span class="linked-tag">{{ auth()->user()->hasTransactionPin() ? __('setting.pin_set') : __('setting.pin_not_set') }}</span></span>
+        <span class="label">{{ __('setting.security') }}</span>
         <svg class="s-chev" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6"/></svg>
       </a>
       <a href="{{ route('setting.password') }}" class="setting-item">

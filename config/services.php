@@ -123,4 +123,12 @@ return [
         'country_codes' => env('SALTEDGE_COUNTRY_CODES', 'JP,SG,HK,CN,IN,PH,VN,MY,TH,KR,ID,TW'),
     ],
 
+    // Text-message codes (sign-up, password reset, transfer codes) — see
+    // App\Support\Sms. From twilio.com/console: Account SID, Auth Token and
+    // a Twilio phone number (or Messaging Service SID) to send from.
+    'twilio' => [
+        'sid' => env('TWILIO_SID'),
+        'token' => env('TWILIO_AUTH_TOKEN'),
+        'from' => env('TWILIO_FROM'),
+    ],
 ];

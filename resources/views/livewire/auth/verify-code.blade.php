@@ -1,5 +1,7 @@
 <?php
 
+use App\Support\PhoneNumber;
+use App\Support\Sms;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -90,6 +92,39 @@ new class extends Component
         $this->status = __('authpage.status_new_code_sent');
         $this->dispatch('code-sent', expiresAt: $this->codeExpiresAt);
     }
+
+    /**
+     * "Text the code to •••• 5678 instead" — a fresh code by text message to
+     * the phone on the account (only shown when there's one that can be
+     * texted). Limited per number, since texts cost money.
+     */
+    public function textCode(): void
+    {
+        $user = Auth::user();
+        $phone = $user->smsPhone();
+
+        if ($phone === null) {
+            $this->status = __('authpage.sms_add_phone');
+
+            return;
+        }
+
+        if (! Sms::allowed($phone)) {
+            $this->status = __('authpage.sms_too_many');
+
+            return;
+        }
+
+        if (! $user->sendVerificationCodeBySms()) {
+            $this->status = __('authpage.sms_failed');
+
+            return;
+        }
+
+        $this->codeExpiresAt = optional($user->verification_code_expires_at)->toIso8601String();
+        $this->status = __('authpage.status_code_texted', ['phone' => PhoneNumber::masked($phone)]);
+        $this->dispatch('code-sent', expiresAt: $this->codeExpiresAt);
+    }
 }; ?>
 
 <div class="flex flex-col gap-6">
@@ -132,6 +167,13 @@ new class extends Component
     <flux:button type="button" variant="ghost" wire:click="resend" class="w-full" wire:loading.attr="disabled" wire:target="resend">
         {{ __('authpage.resend_code') }}
     </flux:button>
+
+    {{-- Only with a phone number that can be texted (User::smsPhone()). --}}
+    @if ($smsPhone = auth()->user()->smsPhone())
+        <flux:button type="button" variant="ghost" wire:click="textCode" class="w-full" wire:loading.attr="disabled" wire:target="textCode" style="margin-top:-12px;">
+            {{ __('authpage.text_code_instead', ['phone' => \App\Support\PhoneNumber::masked($smsPhone)]) }}
+        </flux:button>
+    @endif
 </div>
 
 <script>

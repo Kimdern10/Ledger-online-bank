@@ -3,6 +3,7 @@
 use App\Concerns\PasswordValidationRules;
 use App\Mail\PasswordResetCodeMail;
 use App\Models\User;
+use App\Support\Sms;
 use Carbon\CarbonInterface;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Mail;
@@ -26,6 +27,11 @@ new class extends Component
     public ?string $status = null;
 
     /**
+     * How the code is sent: 'email' or 'sms' (to the phone on the account).
+     */
+    public string $channel = 'email';
+
+    /**
      * When the code on screen runs out (ISO 8601), for the countdown.
      */
     public ?string $codeExpiresAt = null;
@@ -45,6 +51,7 @@ new class extends Component
         if (is_array($remembered) && is_string($remembered['email'] ?? null) && is_string($remembered['expires_at'] ?? null)) {
             $this->email = $remembered['email'];
             $this->codeExpiresAt = $remembered['expires_at'];
+            $this->channel = ($remembered['channel'] ?? 'email') === 'sms' ? 'sms' : 'email';
             $this->step = 2;
         }
     }
@@ -52,7 +59,7 @@ new class extends Component
     private function rememberCodeStep(string $expiresAt): void
     {
         $this->codeExpiresAt = $expiresAt;
-        session([self::SESSION_KEY => ['email' => $this->email, 'expires_at' => $expiresAt]]);
+        session([self::SESSION_KEY => ['email' => $this->email, 'expires_at' => $expiresAt, 'channel' => $this->channel]]);
     }
 
     /**
@@ -65,6 +72,7 @@ new class extends Component
     {
         $this->validate([
             'email' => ['required', 'string', 'email'],
+            'channel' => ['required', 'in:email,sms'],
         ]);
 
         // Computed once and reused for both the DB write and the browser
@@ -78,7 +86,9 @@ new class extends Component
 
         // The countdown starts either way, whether or not that email has an
         // account — same anti-enumeration reasoning as the status message.
-        $this->status = __('authpage.status_code_sent_known', ['email' => $this->email]);
+        $this->status = $this->channel === 'sms'
+            ? __('authpage.status_code_texted_known', ['email' => $this->email])
+            : __('authpage.status_code_sent_known', ['email' => $this->email]);
         $this->step = 2;
         $this->rememberCodeStep($expiresAt->toIso8601String());
         $this->dispatch('code-sent', expiresAt: $expiresAt->toIso8601String());
@@ -103,14 +113,32 @@ new class extends Component
         $this->dispatch('code-sent', expiresAt: $expiresAt->toIso8601String());
     }
 
+    /**
+     * Saves a fresh code and sends it the chosen way. By text it only goes to
+     * an account that has a textable phone number, within the per-number
+     * limit — otherwise nothing is sent, and the visitor still sees the same
+     * message, so this never reveals which accounts exist or have a phone.
+     */
     private function issueCodeFor(User $user, CarbonInterface $expiresAt): void
     {
+        $phone = $this->channel === 'sms' ? $user->smsPhone() : null;
+
+        if ($this->channel === 'sms' && ($phone === null || ! Sms::allowed($phone))) {
+            return;
+        }
+
         $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
         $user->forceFill([
             'password_reset_code' => $code,
             'password_reset_code_expires_at' => $expiresAt,
         ])->save();
+
+        if ($phone !== null) {
+            Sms::send($phone, __('authpage.sms_reset_code', ['code' => $code]));
+
+            return;
+        }
 
         Mail::to($user->email)->send(new PasswordResetCodeMail($code));
     }
@@ -207,6 +235,22 @@ new class extends Component
                 placeholder="email@example.com"
             />
 
+            {{-- Email, or a text to the phone on the account (App\Support\Sms). --}}
+            <div>
+                <p class="text-sm font-medium" style="margin:0 0 8px;">{{ __('authpage.reset_send_by') }}</p>
+                <div style="display:flex; gap:18px;">
+                    <label style="display:flex; align-items:center; gap:6px; font-size:14px; cursor:pointer;">
+                        <input type="radio" wire:model.live="channel" value="email" name="channel"> {{ __('authpage.reset_by_email') }}
+                    </label>
+                    <label style="display:flex; align-items:center; gap:6px; font-size:14px; cursor:pointer;">
+                        <input type="radio" wire:model.live="channel" value="sms" name="channel"> {{ __('authpage.reset_by_text') }}
+                    </label>
+                </div>
+                @if ($channel === 'sms')
+                    <p class="text-xs" style="margin:6px 0 0; color:var(--ledger-text-2);">{{ __('authpage.reset_by_text_note') }}</p>
+                @endif
+            </div>
+
             <flux:button variant="primary" type="submit" class="w-full" style="margin-top:12px;" wire:loading.attr="disabled" wire:target="sendCode" data-test="email-password-reset-link-button">
                 {{ __('authpage.send_reset_code') }}
             </flux:button>
@@ -220,7 +264,11 @@ new class extends Component
         <div>
             <h1 class="text-2xl font-semibold" style="font-family:'Newsreader',serif;">{{ __('authpage.enter_your_code') }}</h1>
             <p class="mt-1 text-sm" style="color:var(--ledger-text-2);">
-                {{ __('authpage.code_sent_to_prefix') }} <strong>{{ $email }}</strong> {{ __('authpage.code_sent_to_suffix') }}
+                @if ($channel === 'sms')
+                    {{ __('authpage.code_texted_for_prefix') }} <strong>{{ $email }}</strong>{{ __('authpage.code_texted_for_suffix') }}
+                @else
+                    {{ __('authpage.code_sent_to_prefix') }} <strong>{{ $email }}</strong> {{ __('authpage.code_sent_to_suffix') }}
+                @endif
             </p>
         </div>
 

@@ -52,8 +52,8 @@ class AppNotification extends Model
      * The one place every real event in the app that's worth telling
      * someone about creates a bell notification — see the notify_
      * transactions_email-gated Mail::send() calls in TransferController,
-     * WithdrawalController, TopUpController, AdminController::
-     * adjustBalance(), and ProcessScheduledTransfers, each of which now
+     * WithdrawalController, TopUpController and AdminController::
+     * adjustBalance(), each of which now
      * has a matching call to this right alongside the email. Deliberately
      * NOT gated by notify_transactions_email — that's an email-only
      * preference (see NotificationSettingController); the bell is a

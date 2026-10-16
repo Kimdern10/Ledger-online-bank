@@ -6,6 +6,8 @@ use App\Mail\VerificationCodeMail;
 use App\Support\AccountNumbers;
 use App\Support\AccountTier;
 use App\Support\Locale;
+use App\Support\PhoneNumber;
+use App\Support\Sms;
 use Carbon\CarbonImmutable;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -547,6 +549,28 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
      */
     public function sendEmailVerificationNotification(): void
     {
+        Mail::to($this->email)->send(new VerificationCodeMail($this->issueVerificationCode()));
+    }
+
+    /**
+     * The same sign-up code, by text message to the phone on the account
+     * instead of by email ("Text me the code instead" on the verify page).
+     * False when there's no textable phone number or the text failed.
+     */
+    public function sendVerificationCodeBySms(): bool
+    {
+        $phone = $this->smsPhone();
+
+        return $phone !== null
+            && Sms::send($phone, __('authpage.sms_verification_code', ['code' => $this->issueVerificationCode()]));
+    }
+
+    /**
+     * A fresh 6-digit sign-up code, valid for 10 minutes — replaces any
+     * earlier one.
+     */
+    private function issueVerificationCode(): string
+    {
         $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
         $this->forceFill([
@@ -554,6 +578,16 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
             'verification_code_expires_at' => now()->addMinutes(10),
         ])->save();
 
-        Mail::to($this->email)->send(new VerificationCodeMail($code));
+        return $code;
+    }
+
+    /**
+     * The phone number on the account in the international form text
+     * messages need (e.g. +2348012345678), or null when there isn't one that
+     * can be texted — see App\Support\PhoneNumber.
+     */
+    public function smsPhone(): ?string
+    {
+        return PhoneNumber::forSms($this->phone);
     }
 }

@@ -22,7 +22,9 @@
      bottom that shrinks as it counts down, then closes itself (e.g. the
      "Your transfer has been sent." on send-receipt.blade.php).
 --}}
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{{-- Served from this site (copied from node_modules by `npm run copy:vendor`)
+     rather than a CDN, which took up to 3 s on a first visit. --}}
+<script src="{{ asset('assets/vendor/sweetalert2.all.min.js') }}?v=11.26.25"></script>
 <style>
   /* The shrinking countdown line under ledgerToast() — in the app's green. */
   .swal2-timer-progress-bar { background: #2F6F62; }

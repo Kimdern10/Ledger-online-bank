@@ -27,7 +27,6 @@ use App\Http\Controllers\ProfileSettingController;
 use App\Http\Controllers\RecipientVerificationController;
 use App\Http\Controllers\SupportController;
 use App\Http\Controllers\TopUpController;
-use App\Http\Controllers\TransactionPinController;
 use App\Http\Controllers\TransferCodeController;
 use App\Http\Controllers\TransferController;
 use App\Http\Controllers\UserController;
@@ -98,18 +97,6 @@ Route::get('/send/receipt/{reference}', [TransferController::class, 'showReceipt
     ->middleware(['auth', 'not-admin'])
     ->name('send.receipt');
 
-Route::post('/send/scheduled/{transfer}/cancel', [TransferController::class, 'cancelScheduled'])
-    ->middleware(['auth', 'not-admin'])
-    ->name('send.scheduled.cancel');
-
-Route::post('/send/scheduled/external/{externalTransfer}/cancel', [TransferController::class, 'cancelScheduledExternal'])
-    ->middleware(['auth', 'not-admin'])
-    ->name('send.scheduled.cancel.external');
-
-Route::post('/send/scheduled/international/{internationalTransfer}/cancel', [TransferController::class, 'cancelScheduledInternational'])
-    ->middleware(['auth', 'not-admin'])
-    ->name('send.scheduled.cancel.international');
-
 Route::get('/setting', [UserController::class, 'setting'])
     ->middleware(['auth', 'not-admin'])
     ->name('setting');
@@ -130,13 +117,6 @@ Route::post('/notifications/read-all', [NotificationController::class, 'markAllR
 Route::post('/notifications/clear-all', [NotificationController::class, 'clearAll'])
     ->middleware(['auth', 'not-admin'])
     ->name('notifications.clear-all');
-
-Route::get('/setting/transaction-pin', [TransactionPinController::class, 'edit'])
-    ->middleware(['auth', 'not-admin'])
-    ->name('setting.transaction-pin');
-Route::post('/setting/transaction-pin', [TransactionPinController::class, 'update'])
-    ->middleware(['auth', 'not-admin'])
-    ->name('setting.transaction-pin.update');
 
 Route::get('/setting/profile', [ProfileSettingController::class, 'edit'])
     ->middleware(['auth', 'not-admin'])
@@ -238,6 +218,11 @@ Route::get('/top-up/receipt/{topUp}', [TopUpController::class, 'receipt'])
 Route::get('/history', [HistoryController::class, 'index'])
     ->middleware(['auth', 'not-admin'])
     ->name('history');
+// "Get a statement": emails a chosen month's statement to the account's own
+// email (statements aren't shown in the app). At most 5 every 10 minutes.
+Route::post('/history/statement', [HistoryController::class, 'emailStatement'])
+    ->middleware(['auth', 'not-admin', 'throttle:5,10'])
+    ->name('history.statement.email');
 Route::get('/history/adjustment/{adjustment}', [HistoryController::class, 'adjustmentReceipt'])
     ->middleware(['auth', 'not-admin'])
     ->name('history.adjustment.receipt');
@@ -396,8 +381,10 @@ Route::middleware(['auth', 'not-admin', 'account.active', 'onboarding.complete',
 });
 
 // Admin middleware routes — auth, admin
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+// 'admin.activity' writes Admin > Activity log for every change made here.
+Route::middleware(['auth', 'admin', 'admin.activity'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/activity', [AdminController::class, 'activity'])->name('activity');
     Route::get('/users', [AdminController::class, 'users'])->name('users');
     Route::get('/users/{user}', [AdminController::class, 'show'])->name('users.show');
     Route::post('/users/{user}/status', [AdminController::class, 'updateStatus'])->name('users.status');

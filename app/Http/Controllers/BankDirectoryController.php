@@ -385,6 +385,39 @@ class BankDirectoryController extends Controller
     }
 
     /**
+     * Every configured provider's results for $query, one provider after
+     * another. One provider failing just contributes nothing; it never
+     * breaks the search.
+     *
+     * Asking them side by side in separate PHP processes (Laravel's
+     * Concurrency) was tried and measured slower here — 5-7 s instead of
+     * 2.5-3 s — because starting each process costs more than it saves.
+     * Real side-by-side requests would need each provider rebuilt around
+     * Http::pool().
+     *
+     * @param  BankProviderInterface[]  $providers
+     * @return list<list<array<string, mixed>>>
+     */
+    private function searchProviders(array $providers, string $query): array
+    {
+        $results = [];
+
+        foreach ($providers as $provider) {
+            if (! $provider->isConfigured()) {
+                continue;
+            }
+
+            try {
+                $results[] = array_values($provider->search($query));
+            } catch (\Throwable $e) {
+                Log::warning('Bank provider search failed ('.get_class($provider).'): '.$e->getMessage());
+            }
+        }
+
+        return $results;
+    }
+
+    /**
      * @param  array<int, array<string, mixed>>  $local  Already-formatted local Bank rows (see localResults()).
      * @param  BankProviderInterface[]  $providers
      * @param  bool  $liveWhenEmpty  Ask the live providers even when the query is empty.
@@ -430,21 +463,7 @@ class BankDirectoryController extends Controller
         // interleave them round-robin (one result from each provider per
         // round) rather than draining one provider's whole result list
         // before moving to the next — see class doc comment for why.
-        $providerResults = [];
-
-        foreach ($providers as $provider) {
-            if (! $provider->isConfigured()) {
-                continue;
-            }
-
-            // One provider being down or slow-failing must never break the
-            // whole search — it just contributes nothing this time.
-            try {
-                $providerResults[] = array_values($provider->search($query));
-            } catch (\Throwable $e) {
-                Log::warning('Bank provider search failed ('.get_class($provider).'): '.$e->getMessage());
-            }
-        }
+        $providerResults = $this->searchProviders($providers, $query);
 
         $maxCount = $providerResults === [] ? 0 : max(array_map('count', $providerResults));
 

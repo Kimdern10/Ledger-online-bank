@@ -45,14 +45,14 @@ function fakeCashfree(array $body, int $http = 200): void
 }
 
 /**
- * A scheduled transfer — same validation, PIN check and recipient-name
- * bookkeeping as "send now", without needing a balance.
+ * Sends a $25 transfer straight away (topping the sender up first so the
+ * balance check passes).
  */
-function scheduleTransfer(User $user, array $fields): TestResponse
+function sendTransfer(User $user, array $fields): TestResponse
 {
+    $user->forceFill(['balance' => 1000])->save();
+
     return test()->actingAs($user)->post(route('send.store'), array_merge([
-        'when' => 'later',
-        'scheduled_date' => now()->addDays(3)->toDateString(),
         'amount' => '25',
         'transaction_pin' => TransferCode::issue($user),
     ], $fields));
@@ -219,7 +219,7 @@ test('a transfer with the Cashfree-returned name is saved as verified', function
     fakeCashfree(['account_status' => 'VALID', 'name_at_bank' => 'PRIYA SHARMA']);
     verifyRecipient($this->user, IN_ACCOUNT);
 
-    scheduleTransfer($this->user, indiaTransfer())->assertSessionHasNoErrors();
+    sendTransfer($this->user, indiaTransfer())->assertSessionHasNoErrors();
 
     $transfer = InternationalTransfer::sole();
 
@@ -232,7 +232,7 @@ test('changing the name after Cashfree returned one makes it manual', function (
     fakeCashfree(['account_status' => 'VALID', 'name_at_bank' => 'PRIYA SHARMA']);
     verifyRecipient($this->user, IN_ACCOUNT);
 
-    scheduleTransfer($this->user, indiaTransfer(['intl_recipient_name' => 'Someone Else']));
+    sendTransfer($this->user, indiaTransfer(['intl_recipient_name' => 'Someone Else']));
 
     expect(InternationalTransfer::sole()->recipient_name_status)->toBe('manual');
 });
@@ -241,7 +241,7 @@ test('a Chase transfer stores the match result for exactly the name that was che
     fakePlaid(91);
     verifyRecipient($this->user, US_ACCOUNT + ['name' => 'Kathy Padgett']);
 
-    scheduleTransfer($this->user, chaseTransfer($changes + [
+    sendTransfer($this->user, chaseTransfer($changes + [
         // A forged claim from the browser changes nothing.
         'recipient_name_status' => 'verified',
     ]))->assertSessionHasNoErrors();
@@ -263,7 +263,7 @@ test('one sender\'s check never verifies another sender\'s transfer', function (
     $otherSender = User::factory()->create(['kyc_status' => 'approved'])->refresh();
     $otherSender->forceFill(['transaction_pin' => Hash::make('4821')])->save();
 
-    scheduleTransfer($otherSender, chaseTransfer());
+    sendTransfer($otherSender, chaseTransfer());
 
     expect(ExternalTransfer::sole()->recipient_name_status)->toBe('manual');
 });
@@ -272,7 +272,7 @@ test('mismatches, close matches and failures are stored as such and labelled not
     fakePlaid($score, 'database_insights_pass', $http);
     verifyRecipient($this->user, US_ACCOUNT + ['name' => 'Kathy Padgett']);
 
-    scheduleTransfer($this->user, chaseTransfer());
+    sendTransfer($this->user, chaseTransfer());
 
     $transfer = ExternalTransfer::sole();
 
@@ -292,14 +292,14 @@ test('a transfer still goes through when the provider said the account is invali
         ->assertJson(['status' => 'invalid', 'message' => null])
         ->assertDontSee('send.payee_invalid');
 
-    scheduleTransfer($this->user, chaseTransfer())
+    sendTransfer($this->user, chaseTransfer())
         ->assertSessionHasNoErrors()
         ->assertSessionMissing('sendError');
 
     expect(ExternalTransfer::count())->toBe(1);
 });
 test('a transfer nobody checked is saved as manual', function () {
-    scheduleTransfer($this->user, chaseTransfer())->assertSessionHasNoErrors();
+    sendTransfer($this->user, chaseTransfer())->assertSessionHasNoErrors();
 
     $transfer = ExternalTransfer::sole();
 
@@ -311,7 +311,7 @@ test('a transfer nobody checked is saved as manual', function () {
 test('the receipt shows the recipient name status', function () {
     fakeCashfree(['account_status' => 'VALID', 'name_at_bank' => 'PRIYA SHARMA']);
     verifyRecipient($this->user, IN_ACCOUNT);
-    scheduleTransfer($this->user, indiaTransfer());
+    sendTransfer($this->user, indiaTransfer());
 
     $this->actingAs($this->user)
         ->get(route('send.receipt', InternationalTransfer::sole()))
@@ -348,7 +348,7 @@ test('the send page never shows the verification-unavailable message', function 
 ]);
 
 test('a receipt with a manually entered name shows no verification line', function () {
-    scheduleTransfer($this->user, chaseTransfer())->assertSessionHasNoErrors();
+    sendTransfer($this->user, chaseTransfer())->assertSessionHasNoErrors();
 
     $this->actingAs($this->user)
         ->get(route('send.receipt', ExternalTransfer::sole()))
@@ -362,7 +362,7 @@ test('a receipt with a manually entered name shows no verification line', functi
 test('a receipt with a provider-matched name still shows it', function () {
     fakePlaid(91);
     verifyRecipient($this->user, US_ACCOUNT + ['name' => 'Kathy Padgett']);
-    scheduleTransfer($this->user, chaseTransfer());
+    sendTransfer($this->user, chaseTransfer());
 
     $this->actingAs($this->user)
         ->get(route('send.receipt', ExternalTransfer::sole()))

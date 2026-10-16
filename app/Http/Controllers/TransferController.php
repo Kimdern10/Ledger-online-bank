@@ -52,14 +52,8 @@ class TransferController extends Controller
      *    storeInternationalTransfer().
      *
      * "Linked bank" has no real rails behind it at all and is rejected
-     * outright. "Schedule" under When IS real: instead of moving money
-     * right away, it creates the same Transfer/ExternalTransfer/
-     * InternationalTransfer row with status = 'scheduled' and no balance
-     * movement yet — see scheduleLedgerTransfer()/scheduleExternalTransfer()
-     * /scheduleInternationalTransfer() below — and
-     * `php artisan transfers:process-scheduled` (run daily via the
-     * scheduler — see routes/console.php) is what actually moves the money
-     * once the date arrives.
+     * outright. Every transfer goes out straight away — there's no
+     * scheduling.
      */
     public function store(Request $request): RedirectResponse
     {
@@ -72,11 +66,7 @@ class TransferController extends Controller
 
         $data = $request->validate([
             'mode' => ['required', 'in:ledger,bank,international,linked'],
-            'when' => ['required', 'in:now,later'],
             'amount' => ['required', 'numeric', 'min:0.01', 'max:999999.99'],
-            // Tomorrow at the earliest — "today" is what Send now is for,
-            // so this keeps the two modes from overlapping in meaning.
-            'scheduled_date' => ['required_if:when,later', 'nullable', 'date', 'after:today'],
             'recipient_name' => ['required_if:mode,ledger', 'nullable', 'string', 'max:150'],
             'recipient_account_number' => ['required_if:mode,ledger', 'nullable', 'string', 'max:20'],
             'bank_name' => ['required_if:mode,bank', 'nullable', 'string', 'max:150'],
@@ -103,28 +93,15 @@ class TransferController extends Controller
             );
         }
 
-        // See RequiresTransactionPin — checked last, right before anything
-        // actually happens (money moving now, or a scheduled row being
-        // created), so a user still gets pointed at whatever's wrong with
+        // See RequiresTransactionPin — checked last, right before any money
+        // moves, so a user still gets pointed at whatever's wrong with
         // the form itself first rather than being asked for a PIN on a
         // submission that was never going through anyway.
         if ($blocked = $this->blockedByTransactionPin($request, $request->user(), 'sendError')) {
             return $blocked;
         }
 
-        if ($data['when'] === 'later') {
-            return match ($data['mode']) {
-                'bank' => $this->scheduleExternalTransfer($request, $data),
-                'international' => $this->scheduleInternationalTransfer($request, $data),
-                default => $this->scheduleLedgerTransfer($request, $data),
-            };
-        }
-
-        // Only "send now" ever actually moves money the moment this
-        // request is handled, so only it is checked against today's tier
-        // limit — see EnforcesTierLimits. A scheduled transfer doesn't move
-        // anything yet (ProcessScheduledTransfers does, on the day it
-        // runs), so there's nothing to count against *today's* limit here.
+        // Checked against today's tier limit — see EnforcesTierLimits.
         if ($blocked = $this->blockedByTierLimit($request, $request->user(), (float) $data['amount'], 'sendError')) {
             return $blocked;
         }
@@ -323,62 +300,6 @@ class TransferController extends Controller
     }
 
     /**
-     * Ledger-to-Ledger, but scheduled: same recipient lookup as
-     * storeLedgerTransfer(), but nothing about the balance moves yet — this
-     * just records the row with status = 'scheduled' and the date it
-     * should go out. No insufficient-funds check happens here either;
-     * whether the money is actually there gets checked for real by
-     * ProcessScheduledTransfers on the day it runs, since a balance
-     * checked now could easily be different by the scheduled date.
-     *
-     * @param  array<string, mixed>  $data
-     */
-    private function scheduleLedgerTransfer(Request $request, array $data): RedirectResponse
-    {
-        $sender = $request->user();
-
-        $recipient = User::where('is_admin', false)
-            ->where(function ($query) use ($data) {
-                $query->where('checking_account_number', $data['recipient_account_number'])
-                    ->orWhere('savings_account_number', $data['recipient_account_number']);
-            })
-            ->first();
-
-        if (! $recipient) {
-            return back()->withInput()->with('sendError', "We couldn't find a Ledger account with that number.");
-        }
-
-        if ($recipient->id === $sender->id) {
-            return back()->withInput()->with('sendError', "You can't send money to your own account.");
-        }
-
-        // A frozen wallet takes nothing in (see User::isWalletFrozen()).
-        if ($recipient->isWalletFrozen()) {
-            return back()->withInput()->with('sendError', "This account can't receive money right now.");
-        }
-
-        $amount = (float) $data['amount'];
-
-        $transfer = Transfer::create([
-            'reference' => 'LDG'.now()->format('ymd').strtoupper(Str::random(6)),
-            'sender_id' => $sender->id,
-            'recipient_id' => $recipient->id,
-            'amount' => $amount,
-            'status' => 'scheduled',
-            'scheduled_for' => $data['scheduled_date'],
-            'category' => $data['category'] ?? null,
-            'note' => $data['note'] ?? null,
-        ]);
-
-        return redirect()->route('send')->with('sendSuccess', sprintf(
-            'Your transfer of $%s to %s is scheduled for %s. You can cancel it any time before then from History.',
-            number_format($amount, 2),
-            $recipient->name,
-            $transfer->scheduled_for->format('M j, Y'),
-        ));
-    }
-
-    /**
      * "Another bank": there is no recipient to look up or credit inside
      * our own database — the money is genuinely leaving Ledger. This
      * mirrors what a real bank's own ledger does for an outgoing ACH/wire:
@@ -468,42 +389,6 @@ class TransferController extends Controller
         );
 
         return redirect()->route('send.receipt', $externalTransfer)->with('transferSent', true);
-    }
-
-    /**
-     * Same idea as scheduleLedgerTransfer(), for "Another bank" — records
-     * the row with status = 'scheduled', no balance movement or funds
-     * check until ProcessScheduledTransfers actually runs it.
-     *
-     * @param  array<string, mixed>  $data
-     */
-    private function scheduleExternalTransfer(Request $request, array $data): RedirectResponse
-    {
-        $sender = $request->user();
-        $amount = (float) $data['amount'];
-
-        $externalTransfer = ExternalTransfer::create([
-            'reference' => 'LDG'.now()->format('ymd').strtoupper(Str::random(6)),
-            'sender_id' => $sender->id,
-            'amount' => $amount,
-            'status' => 'scheduled',
-            'scheduled_for' => $data['scheduled_date'],
-            'fee' => 0,
-            'recipient_name' => $data['bank_recipient_name'],
-            ...$this->recipientNameFields($sender, 'US', $data['bank_account_number'], $data['bank_routing_number'], $data['bank_recipient_name']),
-            'bank_name' => $data['bank_name'],
-            'account_number' => $data['bank_account_number'],
-            'routing_number' => $data['bank_routing_number'],
-            'category' => $data['category'] ?? null,
-            'note' => $data['note'] ?? null,
-        ]);
-
-        return redirect()->route('send')->with('sendSuccess', sprintf(
-            'Your transfer of $%s to %s is scheduled for %s. You can cancel it any time before then from History.',
-            number_format($amount, 2),
-            $externalTransfer->recipient_name,
-            $externalTransfer->scheduled_for->format('M j, Y'),
-        ));
     }
 
     /**
@@ -600,110 +485,6 @@ class TransferController extends Controller
         );
 
         return redirect()->route('send.receipt', $internationalTransfer)->with('transferSent', true);
-    }
-
-    /**
-     * Same idea as scheduleExternalTransfer() above, for "International
-     * bank" — records the row with status = 'scheduled', no balance
-     * movement or funds check until ProcessScheduledTransfers actually
-     * runs it.
-     *
-     * @param  array<string, mixed>  $data
-     */
-    private function scheduleInternationalTransfer(Request $request, array $data): RedirectResponse
-    {
-        $sender = $request->user();
-        $amount = (float) $data['amount'];
-
-        // Locked in at schedule time, same as storeInternationalTransfer()
-        // above — the rate quoted when this was scheduled is what shows on
-        // the receipt later, not whatever the table says by the time it
-        // actually goes out.
-        $currency = strtoupper($data['intl_currency']);
-        $rate = CurrencyRates::rate($currency);
-
-        $internationalTransfer = InternationalTransfer::create([
-            'reference' => 'LDG'.now()->format('ymd').strtoupper(Str::random(6)),
-            'sender_id' => $sender->id,
-            'amount' => $amount,
-            'status' => 'scheduled',
-            'scheduled_for' => $data['scheduled_date'],
-            'fee' => 0,
-            'recipient_name' => $data['intl_recipient_name'],
-            ...$this->recipientNameFields($sender, $data['intl_country'], $data['intl_account_number'], $data['intl_bank_code'] ?? null, $data['intl_recipient_name']),
-            'bank_name' => $data['intl_bank_name'],
-            'country' => $data['intl_country'],
-            'swift_code' => strtoupper($data['intl_swift_code']),
-            'account_number' => $data['intl_account_number'],
-            'currency' => $currency,
-            'exchange_rate' => $rate,
-            'converted_amount' => $rate === null ? null : round($amount * $rate, 2),
-            'category' => $data['category'] ?? null,
-            'note' => $data['note'] ?? null,
-        ]);
-
-        return redirect()->route('send')->with('sendSuccess', sprintf(
-            'Your transfer of $%s to %s is scheduled for %s. You can cancel it any time before then from History.',
-            number_format($amount, 2),
-            $internationalTransfer->recipient_name,
-            $internationalTransfer->scheduled_for->format('M j, Y'),
-        ));
-    }
-
-    /**
-     * Cancels a still-pending scheduled Ledger-to-Ledger transfer — the
-     * "Cancel" button next to a scheduled row in History (see
-     * HistoryController). Scoped to the sender only (a recipient has
-     * nothing to cancel — the money was never taken from them), and only
-     * while it's still actually scheduled: once ProcessScheduledTransfers
-     * has run it, cancelling would try to undo a transfer that already
-     * completed, which isn't what this button is for.
-     */
-    public function cancelScheduled(Request $request, Transfer $transfer): RedirectResponse
-    {
-        abort_unless($transfer->sender_id === $request->user()->id, 404);
-
-        if ($transfer->status !== 'scheduled') {
-            return back()->with('sendError', 'That transfer already went out and can no longer be cancelled.');
-        }
-
-        $transfer->update(['status' => 'cancelled']);
-
-        return back()->with('sendSuccess', 'Scheduled transfer cancelled — nothing was sent.');
-    }
-
-    /**
-     * Same as cancelScheduled() above, for a scheduled "Another bank"
-     * transfer.
-     */
-    public function cancelScheduledExternal(Request $request, ExternalTransfer $externalTransfer): RedirectResponse
-    {
-        abort_unless($externalTransfer->sender_id === $request->user()->id, 404);
-
-        if ($externalTransfer->status !== 'scheduled') {
-            return back()->with('sendError', 'That transfer already went out and can no longer be cancelled.');
-        }
-
-        $externalTransfer->update(['status' => 'cancelled']);
-
-        return back()->with('sendSuccess', 'Scheduled transfer cancelled — nothing was sent.');
-    }
-
-    /**
-     * Same as cancelScheduled()/cancelScheduledExternal() above, for a
-     * scheduled "International bank" transfer.
-     */
-    public function cancelScheduledInternational(Request $request, InternationalTransfer $internationalTransfer): RedirectResponse
-    {
-        abort_unless($internationalTransfer->sender_id === $request->user()->id, 404);
-
-        if ($internationalTransfer->status !== 'scheduled') {
-            return back()->with('sendError', 'That transfer already went out and can no longer be cancelled.');
-        }
-
-        $internationalTransfer->update(['status' => 'cancelled']);
-
-        return back()->with('sendSuccess', 'Scheduled transfer cancelled — nothing was sent.');
     }
 
     /**
@@ -884,12 +665,10 @@ class TransferController extends Controller
         // See HistoryController::index() for where this gets set.
         $hideSendAnother = $request->query('from') === 'history';
 
-        // A transfer isn't always 'completed' any more — History's Cancel
-        // button now links straight to this same receipt while it's still
-        // 'scheduled', and it can also be viewed afterwards as 'cancelled'
-        // /'failed' (see HistoryController and ProcessScheduledTransfers).
-        // This is what keeps the page from claiming money already moved
-        // ("Payment sent", a green checkmark) when it hasn't.
+        // New transfers are always 'completed'; the other banners only show
+        // for an older row from when transfers could be scheduled. This keeps
+        // the page from claiming money moved ("Payment sent", a green
+        // checkmark) when it didn't.
         [$statusIcon, $statusBanner] = match ($transfer->status) {
             'scheduled' => ['clock', __('receipt.banner_scheduled', ['date' => $transfer->scheduled_for->format('M j, Y')])],
             'cancelled' => ['x', __('receipt.banner_cancelled')],

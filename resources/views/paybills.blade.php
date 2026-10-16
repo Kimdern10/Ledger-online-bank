@@ -216,7 +216,9 @@
 
 <!-- Powers the "Remove bill?" confirmation dialog below, in place of the
      browser's plain confirm() popup. -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{{-- Served from this site (copied from node_modules by `npm run copy:vendor`)
+     rather than a CDN, which took up to 3 s on a first visit. --}}
+<script src="{{ asset('assets/vendor/sweetalert2.all.min.js') }}?v=11.26.25"></script>
 
 <script>
   window.LedgerPayBillsConfig = {

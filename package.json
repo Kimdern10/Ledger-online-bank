@@ -4,13 +4,15 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "copy:vendor": "node -e \"require('fs').mkdirSync('public/assets/vendor',{recursive:true});require('fs').copyFileSync('node_modules/sweetalert2/dist/sweetalert2.all.min.js','public/assets/vendor/sweetalert2.all.min.js')\""
     },
     "dependencies": {
         "@laravel/passkeys": "^0.2.0",
         "@tailwindcss/vite": "^4.1.11",
         "concurrently": "^10.0.3",
         "laravel-vite-plugin": "^3.1",
+        "sweetalert2": "^11.26.25",
         "tailwindcss": "^4.0.7",
         "vite": "^8.0.0"
     },

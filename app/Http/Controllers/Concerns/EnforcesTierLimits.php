@@ -12,15 +12,10 @@ use Illuminate\Http\Request;
 
 /**
  * Shared by everything that moves real money out of the account —
- * TransferController (Send Money's "now" branch) and WithdrawalController
- * each call blockedByTierLimit() right after their own
- * blockedByTransactionPin() check, same "checked last, right before
- * anything actually happens" placement that trait already uses.
- * ProcessScheduledTransfers calls movedTodayBy() directly instead (it has
- * no request/redirect to build a blockedByTierLimit()-style response
- * around) right before executing a due scheduled row, so a scheduled
- * transfer can't be used to skip the check that an immediate one would
- * have hit.
+ * TransferController (Send Money) and WithdrawalController each call
+ * blockedByTierLimit() right after their own blockedByTransactionPin()
+ * check, same "checked last, right before anything actually happens"
+ * placement that trait already uses.
  *
  * "Today's total" (see movedTodayBy() below) is every dollar that's actually
  * left the account today across all four rails: Ledger-to-Ledger, Another
@@ -69,13 +64,7 @@ trait EnforcesTierLimits
      * Every dollar that's actually left $user's account today (all times in
      * the app server's own timezone, same as `today()` everywhere else) —
      * completed Ledger-to-Ledger, Another bank (domestic), International
-     * bank, and Withdraw, summed together. A scheduled transfer only counts
-     * once it actually executes and its status flips to 'completed' (see
-     * ProcessScheduledTransfers, which calls this same method before
-     * executing a due row, for the same reason blockedByTierLimit() above
-     * calls it before an immediate one) — while it's still just sitting
-     * there as 'scheduled', no money has moved yet and it shouldn't count
-     * against anything.
+     * bank, and Withdraw, summed together.
      */
     protected function movedTodayBy(User $user): float
     {

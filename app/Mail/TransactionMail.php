@@ -4,6 +4,7 @@ namespace App\Mail;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -22,7 +23,7 @@ use Illuminate\Queue\SerializesModels;
  * constructing this — see NotificationSettingController — so this class
  * itself doesn't need to know about that preference.
  */
-class TransactionMail extends Mailable
+class TransactionMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 

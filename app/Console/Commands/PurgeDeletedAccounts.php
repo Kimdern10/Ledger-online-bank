@@ -19,9 +19,9 @@ use Illuminate\Support\Facades\Log;
  * that class's own comment for why.
  *
  * You can also always run `php artisan accounts:purge-deleted` by hand any
- * time, e.g. to test this without waiting for the scheduler — same caveat
- * as ProcessScheduledTransfers about the scheduler needing to actually be
- * running locally for the daily version to fire on its own.
+ * time, e.g. to test this without waiting for the scheduler — the daily run
+ * only fires where the scheduler itself is running (`php artisan
+ * schedule:run` every minute, or `schedule:work` locally).
  */
 class PurgeDeletedAccounts extends Command
 {

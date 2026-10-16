@@ -286,13 +286,8 @@
           <span class="label">{{ __('dashboard.more_withdraw') }}</span>
           <svg class="s-chev" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6"/></svg>
         </a>
-        <a href="{{ route('scan') ?? '#' }}" class="setting-item">
-          <div class="s-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><path d="M14 15h5M16.5 12.5v5"/></svg>
-          </div>
-          <span class="label">{{ __('dashboard.more_scan') }}</span>
-          <svg class="s-chev" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6"/></svg>
-        </a>
+        {{-- No Pay / Scan here: it's already the round button in the middle of
+             the phone's bottom bar, and in the sidebar on a computer. --}}
         <a href="{{ route('history') ?? '#' }}" class="setting-item">
           <div class="s-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>

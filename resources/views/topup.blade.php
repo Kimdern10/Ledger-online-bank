@@ -26,13 +26,6 @@
   @if(session('topUpError'))
     <div class="send-alert fade-in d1">{{ session('topUpError') }}</div>
   @endif
-  {{-- No transaction PIN created yet — see RequiresTransactionPin. --}}
-  @if(session('pinRequired'))
-    <div class="send-alert fade-in d1">
-      {{ __('topup.pin_required_prefix') }}
-      <a href="{{ route('setting.transaction-pin') }}" style="text-decoration:underline; color:inherit;">{{ __('topup.pin_required_link') }}</a>.
-    </div>
-  @endif
   @if($errors->any())
     <div class="send-alert fade-in d1">
       <ul style="margin:0; padding-left:18px;">

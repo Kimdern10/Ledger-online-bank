@@ -68,12 +68,10 @@ test('the Ledger tab has the name note and the strings it shows', function () {
 test('the transfer goes to the account holder found by number, whatever name was submitted', function () {
     $recipient = ledgerUser(['first_name' => 'Kathy', 'last_name' => 'Padgett', 'checking_account_number' => '1000000001']);
     $sender = ledgerUser();
-    $sender->forceFill(['transaction_pin' => Hash::make('4821')])->save();
+    $sender->forceFill(['transaction_pin' => Hash::make('4821'), 'balance' => 1000])->save();
 
     $this->actingAs($sender)->post(route('send.store'), [
         'mode' => 'ledger',
-        'when' => 'later',
-        'scheduled_date' => now()->addDays(2)->toDateString(),
         'amount' => '25',
         'recipient_account_number' => '1000000001',
         'recipient_name' => 'Somebody Else',

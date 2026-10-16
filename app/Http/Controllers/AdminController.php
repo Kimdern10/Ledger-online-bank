@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Mail\TransactionMail;
+use App\Models\AdminActivity;
 use App\Models\AppNotification;
 use App\Models\Bill;
 use App\Models\Transfer;
 use App\Models\User;
 use App\Support\AccountAnonymizer;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -53,6 +55,44 @@ class AdminController extends Controller
             'inactiveCount' => (clone $customers)->where('account_status', '!=', 'active')->count(),
             'billCount' => Bill::count(),
             'totalBalance' => (float) (clone $customers)->sum('balance'),
+        ]);
+    }
+
+    /**
+     * Admin > Activity log: every change an admin made (recorded by
+     * RecordAdminActivity), newest first. Search matches the admin, the
+     * customer (name or email) or the message; the dropdown narrows it to
+     * one kind of action.
+     */
+    public function activity(Request $request): View
+    {
+        $search = trim(mb_substr((string) $request->query('q', ''), 0, 100));
+        $action = (string) $request->query('action', '');
+        $action = array_key_exists($action, AdminActivity::ACTION_LABELS) ? $action : null;
+
+        $activities = AdminActivity::with(['admin', 'user'])
+            ->when($action, fn (Builder $query) => $query->where('action', $action))
+            ->when($search !== '', function (Builder $query) use ($search) {
+                $like = '%'.$search.'%';
+                $person = fn (Builder $user) => $user->where(fn (Builder $match) => $match
+                    ->where('first_name', 'like', $like)
+                    ->orWhere('last_name', 'like', $like)
+                    ->orWhere('email', 'like', $like));
+
+                $query->where(fn (Builder $match) => $match
+                    ->where('description', 'like', $like)
+                    ->orWhereHas('admin', $person)
+                    ->orWhereHas('user', $person));
+            })
+            ->latest()
+            ->latest('id')
+            ->paginate(25)
+            ->withQueryString();
+
+        return view('admin.activity', [
+            'activities' => $activities,
+            'search' => $search,
+            'action' => $action,
         ]);
     }
 

@@ -34,13 +34,6 @@
     </a>
   </div>
 
-  {{-- Confirms a transfer was scheduled (not sent — see 'sendSuccess' in
-       TransferController::scheduleLedgerTransfer()/scheduleExternalTransfer())
-       or that a scheduled one was cancelled. --}}
-  @if(session('sendSuccess'))
-    <div class="send-alert send-alert-success fade-in d1">{{ session('sendSuccess') }}</div>
-  @endif
-
   {{-- Business-logic failures (no matching account, insufficient funds, an
        unsupported "send to" mode) land here — TransferController::store()
        flashes 'sendError' rather than treating these as field validation. --}}
@@ -57,14 +50,6 @@
     <div class="send-alert fade-in d1">{{ session('withdrawError') }}</div>
   @endif
 
-  {{-- No transaction PIN created yet — see RequiresTransactionPin. A plain
-       flag rather than text, so this can include a real link. --}}
-  @if(session('pinRequired'))
-    <div class="send-alert fade-in d1">
-      {{ __('send.pin_required_prefix') }}
-      <a href="{{ route('setting.transaction-pin') }}" style="text-decoration:underline; color:inherit;">{{ __('send.pin_required_link') }}</a>.
-    </div>
-  @endif
 
   {{-- Actual field validation (missing recipient, bad amount) --}}
   @if($errors->any())
@@ -80,7 +65,6 @@
   <form method="POST" action="{{ route('send.store') }}" id="sendForm">
     @csrf
     <input type="hidden" name="mode" id="modeInput" value="{{ old('mode', 'ledger') }}">
-    <input type="hidden" name="when" id="whenInput" value="{{ old('when', 'now') }}">
     <input type="hidden" name="amount" id="amountHidden" value="0">
     {{-- Only read when the form submits to WithdrawalController::store()
          (mode = linked) — see setReceiveMode() and selectLinkedChip(). --}}
@@ -231,8 +215,8 @@
         </div>
         {{-- Live preview only — see TransferController::convertPreview().
              The rate actually locked in on the transfer (and shown on its
-             receipt) is looked up fresh, again, at the moment it's sent or
-             scheduled, not carried over from here. --}}
+             receipt) is looked up fresh, again, at the moment it's sent,
+             not carried over from here. --}}
         <p class="receive-note" id="intlConvertedNote" style="display:none;">
           <svg viewBox="0 0 24 24" fill="none"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
           {{ __('send.intl_converted_prefix') }} <strong id="intlConvertedAmount"></strong>

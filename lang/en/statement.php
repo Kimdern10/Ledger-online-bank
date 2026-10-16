@@ -1,0 +1,33 @@
+<?php
+
+// The statement email (resources/views/emails/statement.blade.php).
+return [
+    'email_subject' => 'Your Ledger statement for :period',
+    'statement_for' => 'Statement for :period',
+    'eyebrow' => 'Account statement',
+    'greeting' => 'Hi :name, here is your statement for :period.',
+    'account_holder' => 'Account holder',
+    'account' => 'Account',
+    'period' => 'Period',
+    'issued' => 'Issued',
+    'summary' => 'Summary',
+    'money_in' => 'Money in',
+    'money_out' => 'Money out',
+    'net_change' => 'Net change',
+    'date' => 'Date',
+    'description' => 'Description',
+    'transactions' => 'Transactions',
+    'transaction_count' => '{0} No transactions|{1} 1 transaction|[2,*] :count transactions',
+    'empty' => 'No money moved in or out of your account in this period.',
+    'total' => 'Total',
+
+    // The covering email (the statement itself is the attached PDF).
+    'email_heading' => 'Statement of Account',
+    'email_hello' => 'Hello :name,',
+    'email_attached' => 'Your statement of account for :period is attached to this email as a PDF.',
+    'email_requested_note' => 'If you didn\'t request this statement, please contact our support team through the Ledger app straight away.',
+    'email_monthly_note' => 'We send your statement at the start of every month. You can also request one for any dates from History in the app.',
+    'email_regards' => 'Best regards,',
+    'email_team' => 'Team Ledger',
+    'footer' => 'This statement lists every transaction that moved your balance during this period. If something looks wrong, contact our support team through the app.',
+];

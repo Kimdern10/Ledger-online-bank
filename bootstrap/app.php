@@ -6,6 +6,7 @@ use App\Http\Middleware\EnsureFeatureEnabled;
 use App\Http\Middleware\EnsureKycApproved;
 use App\Http\Middleware\EnsureOnboardingIsComplete;
 use App\Http\Middleware\EnsureUserIsAdmin;
+use App\Http\Middleware\RecordAdminActivity;
 use App\Http\Middleware\RedirectAdminFromUserArea;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Auth\AuthenticationException;
@@ -37,6 +38,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'onboarding.complete' => EnsureOnboardingIsComplete::class,
             'feature' => EnsureFeatureEnabled::class,
             'kyc-approved' => EnsureKycApproved::class,
+            'admin.activity' => RecordAdminActivity::class,
         ]);
 
         // Runs on every web request (not just an aliased route) so a signed
